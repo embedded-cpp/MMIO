@@ -1,0 +1,52 @@
+{
+    "version": 10,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 31,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "debug-gcc",
+            "displayName": "Debug (host gcc)",
+            "description": "Configure project for host GCC in Debug",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/debug-gcc",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++"
+            }
+        },
+        {
+            "name": "debug-arm-none-eabi",
+            "displayName": "Debug (arm-none-eabi-gcc)",
+            "description": "Cross-compile for ARM (arm-none-eabi-gcc) in Debug",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/debug-arm-none-eabi",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_COMPILER": "arm-none-eabi-gcc",
+                "CMAKE_CXX_COMPILER": "arm-none-eabi-g++",
+                "CMAKE_SYSTEM_NAME": "Generic",
+                "CMAKE_TRY_COMPILE_TARGET_TYPE": "STATIC_LIBRARY"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "build-debug-gcc",
+            "configurePreset": "debug-gcc",
+            "description": "Build Debug with host gcc",
+            "configuration": "Debug",
+            "jobs": 6
+        },
+        {
+            "name": "build-debug-arm-none-eabi",
+            "configurePreset": "debug-arm-none-eabi",
+            "description": "Build Debug for arm-none-eabi",
+            "configuration": "Debug",
+            "jobs": 6
+        }
+    ]
+}
