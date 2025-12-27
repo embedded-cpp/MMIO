@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 3.14...3.22)
-
+cmake_minimum_required(VERSION 3.9...3.31)
 project(mmioTests LANGUAGES CXX)
 
 # ---- Options ----
