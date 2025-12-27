@@ -101,7 +101,7 @@ class Register
      */
     constexpr void write(value_type value) noexcept
     {
-        if constexpr (std::is_base_of_v<wo, AccessPolicy>)
+        if constexpr (std::is_base_of_v<wo, AccessPolicy> && std::is_unsigned_v<value_type>)
         {
             *m_raw_ptr = value;
         }
