@@ -1,16 +1,24 @@
 ---
-  BasedOnStyle: Google
-  AccessModifierOffset: '-2'
-  AlignTrailingComments: 'true'
-  AllowAllParametersOfDeclarationOnNextLine: 'false'
-  AlwaysBreakTemplateDeclarations: 'No'
-  BreakBeforeBraces: Attach
-  ColumnLimit: '100'
-  ConstructorInitializerAllOnOneLineOrOnePerLine: 'true'
-  IncludeBlocks: Regroup
-  IndentPPDirectives: AfterHash
-  IndentWidth: '2'
-  NamespaceIndentation: All
-  BreakBeforeBinaryOperators: All
-  BreakBeforeTernaryOperators: 'true'
-...
+Language: Cpp
+BasedOnStyle: LLVM
+ColumnLimit: 140
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AllowShortBlocksOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortLambdasOnASingleLine: All
+AlignEscapedNewlines: Left
+AlignOperands: true
+AlignTrailingComments: true
+BreakConstructorInitializers: BeforeColon
+ReflowComments: false
+AllowShortCaseLabelsOnASingleLine: false
+BinPackParameters: false
+BinPackArguments: false
+PointerAlignment: Left
+IndentCaseLabels: true
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+SpaceInEmptyBlock: true
+AlwaysBreakTemplateDeclarations: Yes
