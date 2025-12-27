@@ -1,12 +1,11 @@
 #include <doctest/doctest.h>
 
-
 #include "mmio.h"
 
 TEST_SUITE("Register Tests - Nominal Cases") {
-  static std::uint64_t dummy_reg = 0;
-  static std::uint64_t* reg_ptr = &dummy_reg;
-  static std::uint64_t reg_addr = reinterpret_cast<std::uintptr_t>(reg_ptr);
+  static std::uint64_t  dummy_reg = 0;
+  static std::uint64_t* reg_ptr   = &dummy_reg;
+  static std::uint64_t  reg_addr  = reinterpret_cast<std::uintptr_t>(reg_ptr);
 
   TEST_CASE("ReadWrite Register") {
     // Init
@@ -15,7 +14,7 @@ TEST_SUITE("Register Tests - Nominal Cases") {
     // Check read
     *reg_ptr = 0xFFFFFFFF;
     CHECK(reg.read() == 0xFFFFFFFF);
-        
+
     // Check write
     reg.write(0xA5A5A5A5);
     CHECK(*reg_ptr == 0xA5A5A5A5);

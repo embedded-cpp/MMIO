@@ -3,31 +3,23 @@
 /**
  * @brief Tag type for no access registers
  */
-struct NoAccess
-{
-};
+struct NoAccess { };
 
 /**
  * @brief Tag type for read-only registers
  */
-struct ReadOnly
-{
-};
+struct ReadOnly { };
 
 /**
  * @brief Tag type for write-only registers
  */
-struct WriteOnly
-{
-};
+struct WriteOnly { };
 
 /**
  * @brief Tag type for read-write registers
  * Inherits from both read_only and write_only
  */
-struct ReadWrite : ReadOnly, WriteOnly
-{
-};
+struct ReadWrite : ReadOnly, WriteOnly { };
 
 // Convenient aliases
 using ro = ReadOnly;

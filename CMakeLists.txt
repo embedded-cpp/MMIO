@@ -29,10 +29,5 @@ set_target_properties(mmio PROPERTIES CXX_STANDARD 17)
 # being a cross-platform target, we enforce standards conformance on MSVC
 target_compile_options(mmio INTERFACE "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive->")
 
-
 # Expose internal headers only for in-tree builds (not exported on install)
-target_include_directories(
-  mmio INTERFACE
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-)
-
+target_include_directories(mmio INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
