@@ -23,11 +23,9 @@ TEST_SUITE("Register Tests - Nominal Cases") {
     reg.modify([](auto& val) { val ^= 0xFFFFFFFF; });
     CHECK(reg.read() == 0x5A5A5A5A);
 
-    // Check operator=
+    // Check operators
     reg = 0x12345678;
     CHECK(*reg_ptr == 0x12345678);
-
-    // Check operator value_type()
     std::uint32_t val{reg};
     CHECK(val == 0x12345678);
   }
