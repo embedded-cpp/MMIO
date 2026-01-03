@@ -5,7 +5,7 @@
 TEST_SUITE("Field Tests - Nominal Cases") {
   static std::uint32_t  dummy_reg = 0;
   static std::uint32_t* reg_ptr   = &dummy_reg;
-  static std::uintptr_t  reg_addr  = reinterpret_cast<std::uintptr_t>(reg_ptr);
+  static std::uintptr_t reg_addr  = reinterpret_cast<std::uintptr_t>(reg_ptr);
 
   TEST_CASE("ReadWrite Register") {
     // Init
