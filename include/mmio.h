@@ -38,7 +38,7 @@ public:
    * @note Available for RW & R registers
    * @return value_type: value read of the register
    */
-  [[nodiscard]] constexpr operator value_type() const noexcept {
+  [[nodiscard]] constexpr explicit operator value_type() const noexcept {
     if constexpr (std::is_base_of_v<ro, AccessPolicy>) {
       return *m_raw_ptr;
     } else {
@@ -65,7 +65,7 @@ public:
    * @return BitProxy proxy object for bit manipulation
    */
   template <std::size_t Pos, std::size_t Width>
-  constexpr auto field() {
+  [[nodiscard]] constexpr auto field() noexcept {
     return Field<Pos, Width, AccessPolicy, Register>{*this};
   }
 
@@ -100,7 +100,7 @@ public:
    * @param func Callable to modify the register contents
    */
   template <typename Func>
-  void modify(Func&& func) {
+  void modify(Func&& func) noexcept {
     if constexpr (std::is_base_of_v<rw, AccessPolicy>) {
       value_type val = *m_raw_ptr;
       func(val); // The user modifies a copy

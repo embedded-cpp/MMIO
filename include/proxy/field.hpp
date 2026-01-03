@@ -15,9 +15,9 @@ class Field {
   static constexpr bool dependent_false_v = false;
 
 public:
-  explicit constexpr Field(Register& reg) : m_reg{reg} { }
+  explicit constexpr Field(Register& reg) noexcept : m_reg{reg} { }
 
-  [[nodiscard]] constexpr value_type read() const {
+  [[nodiscard]] constexpr value_type read() const noexcept {
     if constexpr (std::is_base_of_v<ro, AccessPolicy>) {
       return (*(m_reg.m_raw_ptr) & mask) >> Offset;
     } else {
@@ -26,7 +26,7 @@ public:
   }
 
   template <value_type val>
-  constexpr Register& write(void) {
+  constexpr Register& write(void) noexcept {
     if constexpr (std::is_base_of_v<wo, AccessPolicy>) {
       static_assert(val < (value_type(1) << Width), "Value too large");
 
@@ -41,7 +41,7 @@ public:
     }
   }
 
-  constexpr Register& set_bit() {
+  constexpr Register& set_bit() noexcept {
     static_assert(Width == 1, "set_bit() is only valid for fields of width 1");
 
     if constexpr (std::is_base_of_v<wo, AccessPolicy>) {
@@ -55,7 +55,7 @@ public:
     }
   }
 
-  constexpr Register& clear_bit() {
+  constexpr Register& clear_bit() noexcept {
     static_assert(Width == 1, "clear_bit() is only valid for fields of width 1");
 
     if constexpr (std::is_base_of_v<wo, AccessPolicy>) {
