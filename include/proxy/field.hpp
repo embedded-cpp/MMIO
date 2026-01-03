@@ -25,11 +25,11 @@ public:
     }
   }
 
-  constexpr Register& write(value_type val) {
+  template <value_type val>
+  constexpr Register& write(void) {
     if constexpr (std::is_base_of_v<wo, AccessPolicy>) {
-      value_type max_val = (value_type(1) << Width) - 1;
-      assert((val & ~max_val) == 0 && "Value too large for the field width");
-
+      static_assert(val < (value_type(1) << Width), "Value too large");
+      
       auto tmp = *(m_reg.m_raw_ptr);
       tmp &= ~mask;                  // Clear field
       tmp |= (val << Offset) & mask; // Set field
