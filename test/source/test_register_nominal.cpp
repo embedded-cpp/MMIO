@@ -27,7 +27,7 @@ TEST_SUITE("Register Tests - Nominal Cases") {
     reg = 0x12345678;
     CHECK(*reg_ptr == 0x12345678);
 
-    // Check operator (conversion)
+    // Check operator value_type()
     std::uint32_t val{reg};
     CHECK(val == 0x12345678);
   }
