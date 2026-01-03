@@ -29,7 +29,7 @@ public:
   constexpr Register& write(void) {
     if constexpr (std::is_base_of_v<wo, AccessPolicy>) {
       static_assert(val < (value_type(1) << Width), "Value too large");
-      
+
       auto tmp = *(m_reg.m_raw_ptr);
       tmp &= ~mask;                  // Clear field
       tmp |= (val << Offset) & mask; // Set field
