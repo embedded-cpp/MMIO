@@ -30,7 +30,7 @@ public:
    * @brief Construct a new Register object: this allow manipulating HW register at given address
    * @param[in] address: address of the HW register to handle
    */
-  explicit constexpr Register(value_type address) noexcept : m_raw_ptr(reinterpret_cast<volatile value_type*>(address)) { }
+  explicit constexpr Register(std::uintptr_t address) noexcept : m_raw_ptr(reinterpret_cast<volatile value_type*>(address)) { }
 
   /**
    * @brief Operator to read from the register
@@ -85,7 +85,8 @@ public:
    * @brief Write a register
    * @param[in] value: The value to write
    */
-  constexpr void write(value_type value) noexcept {
+  template <value_type value>
+  constexpr void write() noexcept {
     if constexpr (std::is_base_of_v<wo, AccessPolicy> && std::is_unsigned_v<value_type>) {
       *m_raw_ptr = value;
     } else {
