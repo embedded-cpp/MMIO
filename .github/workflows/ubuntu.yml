@@ -45,12 +45,18 @@ jobs:
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@a31c9398be7ace6bbfaf30c0bd5d415f843d45e9
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }} # Put the name of your token here
         with:
           args: >
-            -Dsonar.projectKey=MMIO
-            -Dsonar.organization=embedded-cpp
-            -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-            -Dsonar.cfamily.compile-commands=build/compile_commands.json
-            -Dsonar.coverageReportPaths=build/sonarqube.xml
+            --define sonar.cfamily.compile-commands="build/compile_commands.json"
+            --define sonar.coverageReportPaths=build/sonarqube.xml
+        # with:
+        #   args: >
+        #     -Dsonar.projectKey=MMIO
+        #     -Dsonar.organization=embedded-cpp
+        #     -Dsonar.host.url=https://sonarcloud.io
+        #     -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        #     -Dsonar.cfamily.compile-commands=build/compile_commands.json
+        #     -Dsonar.coverageReportPaths=build/sonarqube.xml
       
