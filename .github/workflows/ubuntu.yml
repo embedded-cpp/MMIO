@@ -54,7 +54,7 @@ jobs:
             --define sonar.cfamily.compile-commands=build/compile_commands.json
             --define sonar.codeCoveragePlugin=gcovr
             --define sonar.coverageReportPaths=build/sonarqube.xml
-            --define sonar.tests= test/unit/source
+            --define sonar.tests=test/unit/source
             --define sonar.coverage.exclusions="test/unit/source/*"
             --define sonar.sourceEncoding=UTF-8
 
