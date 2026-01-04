@@ -1,6 +1,6 @@
 #include <cstdint>
-#include <doctest/doctest.h>
 
+#include "doctest/doctest.h"
 #include "mmio.h"
 
 TEST_SUITE("Register Tests - Nominal Cases") {
