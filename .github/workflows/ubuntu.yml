@@ -41,7 +41,7 @@ jobs:
         run: cmake --build build --target coverage
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2
+        uses: SonarSource/sonarqube-scan-action@v7
         with:
           args: >
             -Dsonar.projectKey=MMIO
