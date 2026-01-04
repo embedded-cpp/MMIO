@@ -51,12 +51,8 @@ jobs:
           args: >
             --define sonar.cfamily.compile-commands="build/compile_commands.json"
             --define sonar.coverageReportPaths=build/sonarqube.xml
-        # with:
-        #   args: >
-        #     -Dsonar.projectKey=MMIO
-        #     -Dsonar.organization=embedded-cpp
-        #     -Dsonar.host.url=https://sonarcloud.io
-        #     -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-        #     -Dsonar.cfamily.compile-commands=build/compile_commands.json
-        #     -Dsonar.coverageReportPaths=build/sonarqube.xml
-      
+            --define sonar.organization=embedded-cpp
+            --define sonar.projectKey=embedded-cpp_MMIO
+            --define sonar.projectName=MMIO
+            
+
