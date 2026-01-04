@@ -12,7 +12,6 @@ on:
 
 env:
   CTEST_OUTPUT_ON_FAILURE: 1
-  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm_modules
 
 jobs:
@@ -54,3 +53,4 @@ jobs:
             --define sonar.organization=embedded-cpp
             --define sonar.projectKey=embedded-cpp_MMIO
             --define sonar.projectName=MMIO
+            --define sonar.exclusions=**/test/**,**/external/**
