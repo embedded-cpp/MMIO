@@ -1,4 +1,4 @@
-root=@CMAKE_SOURCE_DIR@/..
+root=@CMAKE_SOURCE_DIR@/../..
 
 # Exclure tests et build
 exclude=.*/test/.*

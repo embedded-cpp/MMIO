@@ -8,15 +8,15 @@ option(TEST_INSTALLED_VERSION "Test the version found by find_package" OFF)
 
 # --- Import tools ----
 
-include(../cmake/tools.cmake)
+include(../..//cmake/tools.cmake)
 
 # ---- Dependencies ----
 
-include(../cmake/CPM.cmake)
+include(../../cmake/CPM.cmake)
 
 CPMAddPackage("gh:doctest/doctest@2.4.12")
 CPMAddPackage("gh:TheLartians/Format.cmake@1.7.3")
-CPMAddPackage(NAME mmio SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/..)
+CPMAddPackage(NAME mmio SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/../..)
 
 # ---- Create binary ----
 
