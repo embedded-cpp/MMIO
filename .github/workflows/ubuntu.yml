@@ -49,10 +49,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Put the name of your token here
         with:
           args: >
-            --define sonar.cfamily.compile-commands="build/compile_commands.json"
+            --define sonar.cfamily.compile-commands=build/compile_commands.json
             --define sonar.coverageReportPaths=build/sonarqube.xml
             --define sonar.organization=embedded-cpp
             --define sonar.projectKey=embedded-cpp_MMIO
             --define sonar.projectName=MMIO
-            
-
