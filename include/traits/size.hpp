@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <cstdint>
 
 /**
@@ -8,14 +9,14 @@
  */
 template <std::size_t BitSize>
 struct SizeTrait {
-  static_assert(BitSize == 8 || BitSize == 16 || BitSize == 32 || BitSize == 64, "Unsupported register size");
+  static_assert(BitSize == 8U || BitSize == 16U || BitSize == 32U || BitSize == 64U, "Unsupported register size");
 };
 
 /**
  * @brief Specialization of the base trait for 8-bit register
  */
 template <>
-struct SizeTrait<8> {
+struct SizeTrait<8U> {
   using type = std::uint8_t;
 };
 
@@ -23,7 +24,7 @@ struct SizeTrait<8> {
  * @brief Specialization of the base trait for 16-bit register
  */
 template <>
-struct SizeTrait<16> {
+struct SizeTrait<16U> {
   using type = std::uint16_t;
 };
 
@@ -31,7 +32,7 @@ struct SizeTrait<16> {
  * @brief Specialization of the base trait for 32-bit register
  */
 template <>
-struct SizeTrait<32> {
+struct SizeTrait<32U> {
   using type = std::uint32_t;
 };
 
@@ -39,6 +40,6 @@ struct SizeTrait<32> {
  * @brief Specialization of the base trait for 64-bit register
  */
 template <>
-struct SizeTrait<64> {
+struct SizeTrait<64U> {
   using type = std::uint64_t;
 };

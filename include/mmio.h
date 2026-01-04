@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
+#include <type_traits>
 
 #include "policy/access.hpp"
 #include "proxy/field.hpp"

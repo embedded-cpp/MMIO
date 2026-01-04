@@ -1,11 +1,11 @@
+#include <cstdint>
 #include <doctest/doctest.h>
 
 #include "mmio.h"
 
 TEST_SUITE("Field Tests - Nominal Cases") {
-  static std::uint32_t  dummy_reg = 0;
-  static std::uint32_t* reg_ptr   = &dummy_reg;
-  static std::uintptr_t reg_addr  = reinterpret_cast<std::uintptr_t>(reg_ptr);
+  static std::uint32_t        dummy_reg = 0;
+  static const std::uintptr_t reg_addr  = reinterpret_cast<std::uintptr_t>(&dummy_reg);
 
   TEST_CASE("ReadWrite Register") {
     // Init
@@ -26,7 +26,7 @@ TEST_SUITE("Field Tests - Nominal Cases") {
   TEST_CASE("ReadOnly Register") {
     // Init
     Register<32, ro> reg{reg_addr};
-    *reg_ptr = 0xAA;
+    dummy_reg = 0xAA;
     // Check read
     CHECK(reg.field<0, 8>().read() == 0xAA);
   }
@@ -37,11 +37,11 @@ TEST_SUITE("Field Tests - Nominal Cases") {
 
     // Check write
     reg.field<0, 8>().write<0x55>();
-    CHECK(*reg_ptr == 0x55);
+    CHECK(dummy_reg == 0x55);
     // Check set/clear bit
     reg.field<7, 1>().set_bit();
-    CHECK(*reg_ptr == 0xD5);
+    CHECK(dummy_reg == 0xD5);
     reg.field<7, 1>().clear_bit();
-    CHECK(*reg_ptr == 0x55);
+    CHECK(dummy_reg == 0x55);
   }
 }
