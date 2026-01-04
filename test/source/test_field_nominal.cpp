@@ -44,4 +44,16 @@ TEST_SUITE("Field Tests - Nominal Cases") {
     reg.field<7, 1>().clear_bit();
     CHECK(dummy_reg == 0x55);
   }
+
+  TEST_CASE("make_field function"){
+    // Init
+    Register<32, rw> reg{reg_addr};
+
+    auto field = make_field<4, 4, rw>(reg);
+
+    // Check write
+    field.write<0xA>();
+    CHECK(reg.read() == 0xA0);
+    CHECK(field.read() == 0xA);
+  }
 }

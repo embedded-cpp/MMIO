@@ -49,6 +49,16 @@ doctest_discover_tests(${PROJECT_NAME})
 # ---- code coverage ----
 
 if(ENABLE_TEST_COVERAGE)
-  target_compile_options(mmio INTERFACE -O0 -g -fprofile-arcs -ftest-coverage)
-  target_link_options(mmio INTERFACE -fprofile-arcs -ftest-coverage)
+  find_program(GCOV_EXECUTABLE gcov REQUIRED)
+
+  configure_file(gcovr.cfg.in gcovr.cfg @ONLY)
+
+  add_custom_target(coverage
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMENT "Running gcovr to process coverage results"
+    COMMAND gcovr --config ${CMAKE_CURRENT_BINARY_DIR}/gcovr.cfg .
+  )
+
+  target_compile_options(${PROJECT_NAME} PRIVATE -O0 -g --coverage)
+  target_link_options(${PROJECT_NAME} PRIVATE --coverage)
 endif()
