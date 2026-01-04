@@ -45,7 +45,7 @@ TEST_SUITE("Field Tests - Nominal Cases") {
     CHECK(dummy_reg == 0x55);
   }
 
-  TEST_CASE("make_field function"){
+  TEST_CASE("make_field function") {
     // Init
     Register<32, rw> reg{reg_addr};
 

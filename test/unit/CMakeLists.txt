@@ -53,7 +53,8 @@ if(ENABLE_TEST_COVERAGE)
 
   configure_file(gcovr.cfg.in gcovr.cfg @ONLY)
 
-  add_custom_target(coverage
+  add_custom_target(
+    coverage
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Running gcovr to process coverage results"
     COMMAND gcovr --config ${CMAKE_CURRENT_BINARY_DIR}/gcovr.cfg .
