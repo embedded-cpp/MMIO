@@ -51,7 +51,7 @@ jobs:
             --define sonar.organization=embedded-cpp
             --define sonar.projectKey=embedded-cpp_MMIO
             --define sonar.projectName=MMIO
-            --define sonar.sources=include,test/unit/source
+            --define sonar.sources=include
             --define sonar.tests=test/unit/source
             --define sonar.cfamily.compile-commands=build/compile_commands.json
             --define sonar.coverageReportPaths=build/sonarqube.xml
