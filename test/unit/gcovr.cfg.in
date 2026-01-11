@@ -11,8 +11,11 @@ exclude=.*/doctest/.*
 exclude=.*/Catch2/.*
 exclude=.*/googletest/.*
 
+exclude-unreachable-branches = no
+
 cobertura = @CMAKE_BINARY_DIR@/cobertura.xml 
 sonarqube = @CMAKE_BINARY_DIR@/sonarqube.xml 
 html-details = @CMAKE_BINARY_DIR@/coverage.html 
+
 gcov-executable = @GCOV_EXECUTABLE@
 gcov-parallel = yes
