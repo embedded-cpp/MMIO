@@ -1,0 +1,155 @@
+---
+Checks: >
+  clang-analyzer-*,
+  bugprone-*,
+  cppcoreguidelines-*,
+  performance-*,
+  portability-*,
+  readability-*,
+  misc-*,
+
+  -modernize-*,
+  -readability-magic-numbers,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-pro-type-vararg,
+  -cppcoreguidelines-avoid-c-arrays,
+
+  -performance-noexcept-move-constructor,
+  -performance-unnecessary-value-param,
+
+WarningsAsErrors: '*'
+
+HeaderFilterRegex: '.*'
+AnalyzeTemporaryDtors: false
+FormatStyle: none
+User: ''
+
+CheckOptions:
+
+  # ============================================================
+  # clang-analyzer (safety critical)
+  # ============================================================
+  - key: clang-analyzer-core.CallAndMessageModeling
+    value: 'true'
+
+  - key: clang-analyzer-core.DivideZero
+    value: 'true'
+
+  - key: clang-analyzer-core.NullDereference
+    value: 'true'
+
+  - key: clang-analyzer-core.StackAddressEscape
+    value: 'true'
+
+  - key: clang-analyzer-core.UndefinedBinaryOperatorResult
+    value: 'true'
+
+  - key: clang-analyzer-deadcode.DeadStores
+    value: 'true'
+
+  - key: clang-analyzer-security.insecureAPI.strcpy
+    value: 'true'
+
+  - key: clang-analyzer-security.insecureAPI.memcpy
+    value: 'true'
+
+  # ============================================================
+  # bugprone (MISRA-aligned)
+  # ============================================================
+  - key: bugprone-assert-side-effect
+    value: 'true'
+
+  - key: bugprone-branch-clone.IgnoreMacros
+    value: 'true'
+
+  - key: bugprone-dangling-handle.IgnoreContainers
+    value: 'true'
+
+  - key: bugprone-exception-escape.FunctionsThatShouldNotThrow
+    value: 'main,ISR'
+
+  - key: bugprone-narrowing-conversions.WarnOnFloatingPointNarrowing
+    value: 'true'
+
+  - key: bugprone-signed-char-misuse
+    value: 'true'
+
+  # ============================================================
+  # cppcoreguidelines
+  # ============================================================
+  - key: cppcoreguidelines-explicit-virtual-functions.AllowOverridesWithoutVirtualKeyword
+    value: 'false'
+
+  - key: cppcoreguidelines-init-variables.IncludeStyle
+    value: 'brace'
+
+  - key: cppcoreguidelines-narrowing-conversions.IgnoreConversionFromTypes
+    value: 'uint8_t,uint16_t,uint32_t,int8_t,int16_t,int32_t'
+
+  - key: cppcoreguidelines-pro-type-const-cast
+    value: 'true'
+
+  - key: cppcoreguidelines-pro-type-reinterpret-cast
+    value: 'true'
+
+  - key: cppcoreguidelines-pro-type-static-cast-downcast
+    value: 'true'
+
+  - key: cppcoreguidelines-special-member-functions.AllowMissingMoveFunctions
+    value: 'true'
+
+  # ============================================================
+  # performance 
+  # ============================================================
+  - key: performance-for-range-copy.WarnOnAllAutoCopies
+    value: 'false'
+
+  - key: performance-move-const-arg.CheckTriviallyCopyableMove
+    value: 'false'
+
+  # ============================================================
+  # readability (style strict & readable)
+  # ============================================================
+  - key: readability-identifier-naming.IgnoreMacros
+    value: 'true'
+
+  - key: readability-identifier-naming.ClassCase
+    value: 'snake_case'
+
+  - key: readability-identifier-naming.StructCase
+    value: 'snake_case'
+
+  - key: readability-identifier-naming.FunctionCase
+    value: 'snake_case'
+
+  - key: readability-identifier-naming.VariableCase
+    value: 'snake_case'
+
+  - key: readability-identifier-naming.MemberCase
+    value: 'snake_case'
+
+  - key: readability-identifier-naming.ConstantCase
+    value: 'UPPER_CASE'
+
+  - key: readability-implicit-bool-conversion.AllowIntegerConditions
+    value: 'false'
+
+  # ============================================================
+  # misc
+  # ============================================================
+  - key: misc-non-private-member-variables-in-classes.IgnoreClassesWithAllPublicMembers
+    value: 'true'
+
+  - key: misc-unused-parameters.IgnoreVirtual
+    value: 'true'
+
+  - key: misc-unused-parameters.IgnoreMain
+    value: 'true'
+
+  # ============================================================
+  # portability
+  # ============================================================
+  - key: portability-simd-intrinsics.Suggest
+    value: 'false'

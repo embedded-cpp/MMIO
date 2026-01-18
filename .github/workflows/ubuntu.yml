@@ -12,7 +12,6 @@ on:
 
 env:
   CTEST_OUTPUT_ON_FAILURE: 1
-  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm_modules
 
 jobs:
@@ -27,16 +26,19 @@ jobs:
           path: "**/cpm_modules"
           key: ${{ github.workflow }}-cpm-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
 
+      - name: install requirements
+        run: sudo apt update && sudo apt install -y gcovr
+
       - name: configure
-        run: cmake -Stest -Bbuild -DENABLE_TEST_COVERAGE=1 -DCMAKE_BUILD_TYPE=Debug
+        run: cmake -Stest/unit -Bbuild -DENABLE_TEST_COVERAGE=1 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
       - name: build
         run: cmake --build build -j4
 
       - name: test
         run: |
-          cd build
-          ctest --build-config Debug
+          ctest --build-config Debug --test-dir build
 
-      - name: collect code coverage
-        run: bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
+      - name: generate coverage reports
+        run: cmake --build build --target coverage
+      
