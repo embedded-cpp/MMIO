@@ -59,6 +59,19 @@ namespace mmio {
             }
         }
 
+        constexpr Register& write(value_type val) noexcept {
+            if constexpr (std::is_base_of_v<wo, AccessPolicy>) {
+                auto tmp = *(m_reg.m_raw_ptr);
+                tmp &= ~mask; // Clear field
+                tmp |= (val << Offset) & mask; // Set field
+                *(m_reg.m_raw_ptr) = tmp;
+
+                return m_reg;
+            } else {
+                static_assert(dependent_false_v<Field>, "Field is not writable.");
+            }
+        }
+
         constexpr Register& set_bit() noexcept {
             static_assert(Width == 1, "set_bit() is only valid for fields of width 1");
 
@@ -79,6 +92,20 @@ namespace mmio {
             if constexpr (std::is_base_of_v<wo, AccessPolicy>) {
                 auto tmp = *(m_reg.m_raw_ptr);
                 tmp &= ~mask;
+                *(m_reg.m_raw_ptr) = tmp;
+
+                return m_reg;
+            } else {
+                static_assert(dependent_false_v<Field>, "Field is not writable.");
+            }
+        }
+
+        constexpr Register& toggle_bit() noexcept {
+            static_assert(Width == 1, "toggle_bit() is only valid for fields of width 1");
+
+            if constexpr (std::is_base_of_v<wo, AccessPolicy>) {
+                auto tmp = *(m_reg.m_raw_ptr);
+                tmp ^= mask;
                 *(m_reg.m_raw_ptr) = tmp;
 
                 return m_reg;

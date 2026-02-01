@@ -116,6 +116,14 @@ namespace mmio {
             }
         }
 
+        constexpr void write(value_type value) noexcept {
+            if constexpr (std::is_base_of_v<wo, AccessPolicy> && std::is_unsigned_v<value_type>) {
+                *m_raw_ptr = value;
+            } else {
+                static_assert(dependent_false_v<AccessPolicy>, "Cannot write to read-only reg.");
+            }
+        }
+
         /**
          * @brief Modify the reg with a callable (only if read-write)
          * @tparam Func Callable type, callable with signature void(value_type&)

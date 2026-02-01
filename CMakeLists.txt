@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.9...3.31)
 project(
   mmio
   VERSION 1.0
-  LANGUAGES CXX
+  LANGUAGES CXX ASM
 )
 
 # ---- Include guards ----
@@ -20,7 +20,7 @@ endif()
 
 include(cmake/CPM.cmake)
 
-# PackageProject.cmake will be used to make our target installable
+# PackageProject.cmake will be used to make our targets installable
 CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.8.0")
 # ---- Add source files ----
 
@@ -28,15 +28,16 @@ CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.8.0")
 add_library(${PROJECT_NAME} INTERFACE)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 
-# being a cross-platform target, we enforce standards conformance on MSVC
+# being a cross-platform targets, we enforce standards conformance on MSVC
 target_compile_options(${PROJECT_NAME} INTERFACE "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive->")
 
 # Expose internal headers only for in-tree builds (not exported on install)
 target_include_directories(
   ${PROJECT_NAME} INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+                            $<INSTALL_INTERFACE:include>
 )
 
-# ---- Create an installable target ----
+# ---- Create an installable targets ----
 # this allows users to install and find the library via `find_package()`.
 
 # the location where the project's version header will be placed should match the project's regular
