@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-#ifndef MMIO_H
-#define MMIO_H
+#ifndef MMIO_HPP
+#define MMIO_HPP
 
 #include <cstddef>
 #include <cstdint>
 #include <type_traits>
 
-#include "mmio/policy/access.hpp"
-#include "mmio/proxy/field.hpp"
-#include "mmio/traits/size.hpp"
+#include "mmio/policy/access.hpp" // IWYU pragma: export
+#include "mmio/proxy/field.hpp" // IWYU pragma: export
+#include "mmio/traits/size.hpp" // IWYU pragma: export
 
 namespace mmio {
 
@@ -149,4 +149,4 @@ namespace mmio {
 
 } // namespace mmio
 
-#endif // MMIO_H
+#endif // MMIO_HPP

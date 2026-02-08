@@ -1,6 +1,7 @@
 #include "doctest/doctest.h"
-#include "mmio/mmio.h"
 #include <cstdint>
+
+#include "mmio/mmio.hpp"
 
 using namespace mmio;
 

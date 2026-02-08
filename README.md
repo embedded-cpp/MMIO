@@ -30,7 +30,7 @@ It provides clean abstractions for fields, access policies, and size traits whil
   - `policy/` – access policy definitions
   - `proxy/` – field / register access wrappers
   - `traits/` – utilities like size traits
-  - `mmio.h` – main public header
+  - `mmio.hpp` – main public header
 - `test/` – tests
 - `documentation/` – Doxygen configuration and pages
 - `all/` – meta build for library + tests + docs
@@ -55,7 +55,7 @@ target_link_libraries(your_target PRIVATE MMIO)
 
 You can also include the main header directly:
 ```cpp 
-#include "mmio/mmio.h"
+#include "mmio/mmio.hpp"
 ```
 
 ## Quick Start
@@ -66,7 +66,7 @@ Below is a generic example illustrating the common structure used with MMIO-styl
 Adapt the names and parameters to your own register layout and policies.
 
 ```cpp
-#include "mmio/mmio.h"
+#include "mmio/mmio.hpp"
 
 Example structure (pseudocode-style):
 using CTRL = mmio::reg<0x40000000, mmio::rw, std::uint32_t>;
