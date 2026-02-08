@@ -15,12 +15,12 @@ jobs:
   test-and-analyze:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4 # Update to v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Cache CPM modules
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         with:
           path: ${{ env.CPM_SOURCE_CACHE }}
           key: ${{ runner.os }}-cpm-${{ hashFiles('**/CMakeLists.txt') }}
@@ -57,7 +57,7 @@ jobs:
 
       # --- ÉTAPE 3 : ANALYSE SONAR ---
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v4
+        uses: SonarSource/sonarqube-scan-action@v7
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
