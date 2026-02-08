@@ -7,18 +7,23 @@ on:
         branches: [master, main]
 
 jobs:
-    # 1. On lance les tests unitaires en premier
-    unit-testing:
+    install:
+        uses: ./.github/workflows/install.yml
+        secrets: inherit
+
+    style:
+        uses: ./.github/workflows/style.yml
+        secrets: inherit
+
+    unit-tests:
         uses: ./.github/workflows/unit-tests.yml
         secrets: inherit
 
-    # 2. On lance l'intégration en parallèle des tests unitaires
-    integration-testing:
-        uses: ./.github/workflows/integration.yml
+    integration-tests:
+        uses: ./.github/workflows/integration-tests.yml
         secrets: inherit
 
-    # 3. L'analyse Sonar ne se lance QUE si les tests unitaires réussissent
     sonar-analysis:
-        needs: [unit-testing]
+        needs: [unit-tests]
         uses: ./.github/workflows/sonar.yml
         secrets: inherit

@@ -11,12 +11,12 @@ jobs:
     run-tests:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
               with:
                   fetch-depth: 0
 
             - name: Cache CPM
-              uses: actions/cache@v4
+              uses: actions/cache@v5
               with:
                   path: ${{ env.CPM_SOURCE_CACHE }}
                   key: ${{ runner.os }}-cpm-${{ hashFiles('**/CMakeLists.txt') }}
@@ -32,7 +32,7 @@ jobs:
                   cmake --build ${{ env.BUILD_DIR }} --target coverage
 
             - name: Archive Analysis Data
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v6
               with:
                   name: sonar-data
                   path: |
