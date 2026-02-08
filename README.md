@@ -26,7 +26,7 @@ It provides clean abstractions for fields, access policies, and size traits whil
 
 - `include/`
   - `policy/` – access policy definitions
-  - `proxy/` – field / register access wrappers
+  - `proxy/` – field access wrappers
   - `traits/` – utilities like size traits
   - `mmio.hpp` – main public header
 - `test/` – tests
