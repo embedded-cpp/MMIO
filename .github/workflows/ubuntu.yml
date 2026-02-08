@@ -45,7 +45,7 @@ jobs:
 
       - name: Generate Coverage Report
         run: |
-          run: cmake --build ${{ env.BUILD_DIR }} --target coverage
+          cmake --build ${{ env.BUILD_DIR }} --target coverage
 
       # --- ÉTAPE 2 : TESTS D'INTÉGRATION (Compilation Cross-ARM) ---
       - name: Configure & Build Integration (STM32)
