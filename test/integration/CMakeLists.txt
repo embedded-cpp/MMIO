@@ -32,5 +32,5 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 
 # enable compiler warnings
 if(NOT TEST_INSTALLED_VERSION)
-  target_compile_options(mmio INTERFACE -Wall -Wpedantic -Wextra -Werror)
+    target_compile_options(mmio INTERFACE -Wall -Wpedantic -Wextra -Werror)
 endif()

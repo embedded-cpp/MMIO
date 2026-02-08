@@ -27,21 +27,20 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 
 # enable compiler warnings
 if(NOT TEST_INSTALLED_VERSION)
-  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    target_compile_options(mmio INTERFACE -Wall -Wpedantic -Wextra -Werror)
-  elseif(MSVC)
-    target_compile_options(mmio INTERFACE /W4 /WX)
-    target_compile_definitions(${PROJECT_NAME} PUBLIC DOCTEST_CONFIG_USE_STD_HEADERS)
-  endif()
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+        target_compile_options(mmio INTERFACE -Wall -Wpedantic -Wextra -Werror)
+    elseif(MSVC)
+        target_compile_options(mmio INTERFACE /W4 /WX)
+        target_compile_definitions(${PROJECT_NAME} PUBLIC DOCTEST_CONFIG_USE_STD_HEADERS)
+    endif()
 endif()
 
 # ---- Add mmioTests ----
 
 enable_testing()
 
-# Note: doctest and similar testing frameworks can automatically configure CMake tests. For other
-# testing frameworks add the tests targets instead: add_test(NAME ${PROJECT_NAME} COMMAND
-# ${PROJECT_NAME})
+# Note: doctest and similar testing frameworks can automatically configure CMake tests. For other testing frameworks add
+# the tests targets instead: add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
 
 include(${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
 doctest_discover_tests(${PROJECT_NAME})
@@ -49,34 +48,34 @@ doctest_discover_tests(${PROJECT_NAME})
 # ---- code coverage ----
 
 if(ENABLE_TEST_COVERAGE)
-  find_program(GCOV_EXECUTABLE gcov REQUIRED)
+    find_program(GCOV_EXECUTABLE gcov REQUIRED)
 
-  configure_file(gcovr.cfg.in gcovr.cfg @ONLY)
+    configure_file(gcovr.cfg.in gcovr.cfg @ONLY)
 
-  add_custom_target(
-    coverage
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-    COMMENT "Running gcovr to process coverage results"
-    COMMAND gcovr --config ${CMAKE_CURRENT_BINARY_DIR}/gcovr.cfg .
-  )
+    add_custom_target(
+        coverage
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        COMMENT "Running gcovr to process coverage results"
+        COMMAND gcovr --config ${CMAKE_CURRENT_BINARY_DIR}/gcovr.cfg .
+    )
 
-  target_compile_options(
-    ${PROJECT_NAME}
-    PRIVATE -O0
-            -g
-            --coverage
-            -fno-inline
-            -fno-inline-small-functions
-            -fno-default-inline
-            -fkeep-inline-functions
-  )
-  target_link_options(
-    ${PROJECT_NAME}
-    PRIVATE
-    --coverage
-    -fno-inline
-    -fno-inline-small-functions
-    -fno-default-inline
-    -fkeep-inline-functions
-  )
+    target_compile_options(
+        ${PROJECT_NAME}
+        PRIVATE -O0
+                -g
+                --coverage
+                -fno-inline
+                -fno-inline-small-functions
+                -fno-default-inline
+                -fkeep-inline-functions
+    )
+    target_link_options(
+        ${PROJECT_NAME}
+        PRIVATE
+        --coverage
+        -fno-inline
+        -fno-inline-small-functions
+        -fno-default-inline
+        -fkeep-inline-functions
+    )
 endif()
