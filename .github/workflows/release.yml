@@ -26,6 +26,10 @@ jobs:
         secrets: inherit
 
     create-release:
+        permissions:
+            contents: write
+            pages: write
+            id-token: write
         needs: [unit-tests, integration-tests, documentation]
         runs-on: ubuntu-latest
         if: startsWith(github.ref, 'refs/tags/')
