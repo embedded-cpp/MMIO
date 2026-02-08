@@ -1,6 +1,6 @@
 [![Develop](https://github.com/embedded-cpp/MMIO/actions/workflows/develop.yml/badge.svg)](https://github.com/embedded-cpp/MMIO/actions/workflows/develop.yml)
 [![Release](https://github.com/embedded-cpp/MMIO/actions/workflows/release.yml/badge.svg)](https://github.com/embedded-cpp/MMIO/actions/workflows/release.yml)
-[![Documentation](https://img.shields.io/badge/docs-online-brightgreen)](https://TON_USER.github.io/TON_REPO/)
+[![Documentation](https://img.shields.io/badge/docs-online-brightgreen)](https://embedded-cpp.github.io/MMIO/)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=embedded-cpp_MMIO&metric=alert_status&token=0414d3703cd49f8a7de6c25ba8d49b4826a9bcb9)](https://sonarcloud.io/summary/new_code?id=embedded-cpp_MMIO)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
@@ -26,7 +26,7 @@ It provides clean abstractions for fields, access policies, and size traits whil
 
 - `include/`
   - `policy/` – access policy definitions
-  - `proxy/` – field / register access wrappers
+  - `proxy/` – field access wrappers
   - `traits/` – utilities like size traits
   - `mmio.hpp` – main public header
 - `test/` – tests
