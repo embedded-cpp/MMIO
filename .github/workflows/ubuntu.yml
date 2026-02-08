@@ -5,14 +5,12 @@ on:
     branches: [master, main]
   pull_request:
     branches: [master, main]
-    types: [opened, synchronize, reopened]
 
 env:
   CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm_modules
-  BUILD_DIR: build/test/unit
 
 jobs:
-  test-and-analyze:
+  unit-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -25,33 +23,67 @@ jobs:
           path: ${{ env.CPM_SOURCE_CACHE }}
           key: ${{ runner.os }}-cpm-${{ hashFiles('**/CMakeLists.txt') }}
 
-      - name: Install Dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y gcovr gcc-arm-none-eabi
+      - name: Install Tools
+        run: sudo apt update && sudo apt install -y gcovr
 
-      - name: Configure Unit Tests
+      - name: Configure & Build
         run: |
-          cmake -S test/unit -B ${{ env.BUILD_DIR }} \
+          cmake -S test/unit -B build/unit \
             -DENABLE_TEST_COVERAGE=ON \
-            -DCMAKE_BUILD_TYPE=Debug \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          cmake --build build/unit -j$(nproc)
 
-      - name: Build & Run Tests
-        run: |
-          cmake --build ${{ env.BUILD_DIR }} -j$(nproc)
-          ctest --test-dir ${{ env.BUILD_DIR }} --output-on-failure
+      - name: Run Tests
+        run: ctest --test-dir build/unit --output-on-failure
 
-      - name: Generate Coverage Report
-        run: |
-          cmake --build ${{ env.BUILD_DIR }} --target coverage
+      - name: Generate Coverage
+        run: cmake --build build/unit --target coverage
 
-      - name: Configure & Build Integration (STM32)
+      - name: Upload Analysis Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sonar-data
+          path: |
+            build/unit/compile_commands.json
+            build/unit/sonarqube.xml
+            include/
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        mcu: [STM32F401RE]
+    steps:
+      - uses: actions/checkout@v6
+      
+      - name: Install ARM Toolchain
+        run: sudo apt update && sudo apt install -y gcc-arm-none-eabi
+
+      - name: Build Integration
         run: |
-          cmake -S test/integration -B build/test/integration \
-            -DMCU_NAME=STM32F401RE \
+          cmake -S test/integration -B build/int-${{ matrix.mcu }} \
+            -DMCU_NAME=${{ matrix.mcu }} \
             --toolchain cmake/toolchains/arm-none-eabi-gcc.cmake
-          cmake --build build/test/integration -j$(nproc)
+          cmake --build build/int-${{ matrix.mcu }} -j$(nproc)
+      
+      # C'est ici que tu ajouteras Renode plus tard
+      # - name: Run Renode Simulation
+      #   run: ...
+
+  # --- JOB 3 : ANALYSE SONARCLOUD (Indépendant de l'intégration) ---
+  sonar-analysis:
+    needs: [unit-tests]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Download Analysis Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: sonar-data
+          path: .
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v7
@@ -59,4 +91,5 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.cfamily.compile-commands=${{ env.BUILD_DIR }}/compile_commands.json
+            -Dsonar.cfamily.compile-commands=build/unit/compile_commands.json
+            -Dsonar.coverageReportPaths=build/unit/sonarqube.xml
