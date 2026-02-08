@@ -2,66 +2,64 @@ name: Ubuntu
 
 on:
   push:
-    branches:
-      - master
-      - main
+    branches: [master, main]
   pull_request:
-    branches:
-      - master
-      - main
+    branches: [master, main]
     types: [opened, synchronize, reopened]
 
 env:
-  CTEST_OUTPUT_ON_FAILURE: 1
   CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm_modules
+  BUILD_DIR: build/test/unit
 
 jobs:
-  build:
+  test-and-analyze:
     runs-on: ubuntu-latest
-    env:
-      BUILD_WRAPPER_OUT_DIR: build # Directory where build-wrapper output will be placed
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4 # Update to v4
         with:
           fetch-depth: 0
 
-      - uses: actions/cache@v3
+      - name: Cache CPM modules
+        uses: actions/cache@v3
         with:
-          path: "**/cpm_modules"
-          key: ${{ github.workflow }}-cpm-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+          path: ${{ env.CPM_SOURCE_CACHE }}
+          key: ${{ runner.os }}-cpm-${{ hashFiles('**/CMakeLists.txt') }}
 
-      - name: install requirements
-        run: sudo apt update && sudo apt install -y gcovr gcc-arm-none-eabi
-
-      - name: configure
-        run: cmake -Stest/unit -Bbuild -DENABLE_TEST_COVERAGE=1 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-
-      - name: build
-        run: cmake --build build -j4
-
-      - name: test
+      - name: Install Dependencies
         run: |
-          ctest --build-config Debug --test-dir build
+          sudo apt update
+          sudo apt install -y gcovr gcc-arm-none-eabi
 
-      - name: generate coverage reports
-        run: cmake --build build --target coverage
-      
-      - name: build integration tests (stm32f401re)
+      # --- ÉTAPE 1 : TESTS UNITAIRES & COUVERTURE ---
+      - name: Configure Unit Tests
         run: |
-          cmake -Stest/integration -Bbuild/test/integration -DCMAKE_BUILD_TYPE=Debug -DMCU_NAME=STM32F401RE -DCMAKE_EXPORT_COMPILE_COMMANDS=ON --toolchain cmake/toolchains/arm-none-eabi-gcc.cmake
-          cmake --build build/test/integration -j4
+          cmake -S test/unit -B ${{ env.BUILD_DIR }} \
+            -DENABLE_TEST_COVERAGE=ON \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
-      - name: Install Build Wrapper
-        uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v6
-
-      - name: Run Build Wrapper
+      - name: Build & Run Tests
         run: |
-          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build -j4 --clean-first
+          cmake --build ${{ env.BUILD_DIR }} -j$(nproc)
+          ctest --test-dir ${{ env.BUILD_DIR }} --output-on-failure
 
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v6
+      - name: Generate Coverage Report
+        run: |
+          run: cmake --build ${{ env.BUILD_DIR }} --target coverage
+
+      # --- ÉTAPE 2 : TESTS D'INTÉGRATION (Compilation Cross-ARM) ---
+      - name: Configure & Build Integration (STM32)
+        run: |
+          cmake -S test/integration -B build/test/integration \
+            -DMCU_NAME=STM32F401RE \
+            --toolchain cmake/toolchains/arm-none-eabi-gcc.cmake
+          cmake --build build/test/integration -j$(nproc)
+
+      # --- ÉTAPE 3 : ANALYSE SONAR ---
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            --define "sonar.cfamily.compile-commands=${{ env.BUILD_WRAPPER_OUT_DIR }}/compile_commands.json"
+            -Dsonar.cfamily.compile-commands=${{ env.BUILD_DIR }}/compile_commands.json
