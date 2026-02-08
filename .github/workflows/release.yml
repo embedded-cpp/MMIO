@@ -1,9 +1,11 @@
-name: release
+name: Release
 
 on:
     push:
         branches: [master, main]
         tags: ["v*.*.*"]
+    pull_request:
+        branches: [master, main]
 
 jobs:
     unit-tests:
@@ -15,6 +17,10 @@ jobs:
         secrets: inherit
 
     documentation:
+        permissions:
+            contents: write
+            pages: write
+            id-token: write
         needs: [unit-tests, integration-tests]
         uses: ./.github/workflows/documentation.yml
         secrets: inherit
