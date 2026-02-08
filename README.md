@@ -1,10 +1,8 @@
-[![MacOS](https://github.com/embedded-cpp/MMIO/actions/workflows/macos.yml/badge.svg)](https://github.com/embedded-cpp/MMIO/actions/workflows/macos.yml)
-[![Ubuntu](https://github.com/embedded-cpp/MMIO/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/embedded-cpp/MMIO/actions/workflows/ubuntu.yml)
-[![Windows](https://github.com/embedded-cpp/MMIO/actions/workflows/windows.yml/badge.svg)](https://github.com/embedded-cpp/MMIO/actions/workflows/windows.yml)
-[![Style](https://github.com/embedded-cpp/MMIO/actions/workflows/style.yml/badge.svg)](https://github.com/embedded-cpp/MMIO/actions/workflows/style.yml)
-[![Documentation](https://github.com/embedded-cpp/MMIO/actions/workflows/documentation.yaml/badge.svg)](https://github.com/embedded-cpp/MMIO/actions/workflows/documentation.yaml)
-[![Install](https://github.com/embedded-cpp/MMIO/actions/workflows/install.yml/badge.svg)](https://github.com/embedded-cpp/MMIO/actions/workflows/install.yml)
+[![Develop](https://github.com/embedded-cpp/MMIO/actions/workflows/develop.yml/badge.svg)](https://github.com/embedded-cpp/MMIO/actions/workflows/develop.yml)
+[![Release](https://github.com/embedded-cpp/MMIO/actions/workflows/release.yml/badge.svg)](https://github.com/embedded-cpp/MMIO/actions/workflows/release.yml)
+[![Documentation](https://img.shields.io/badge/docs-online-brightgreen)](https://TON_USER.github.io/TON_REPO/)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=embedded-cpp_MMIO&metric=alert_status&token=0414d3703cd49f8a7de6c25ba8d49b4826a9bcb9)](https://sonarcloud.io/summary/new_code?id=embedded-cpp_MMIO)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 <p align="center">
   <img src="https://repository-images.githubusercontent.com/254842585/4dfa7580-7ffb-11ea-99d0-46b8fe2f4170" height="175" width="auto" />
