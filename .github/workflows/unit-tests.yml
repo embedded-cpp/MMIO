@@ -1,7 +1,7 @@
 name: Unit Tests
 
 on:
-    workflow_call: # Permet l'appel par ubuntu.yml
+    workflow_call:
 
 env:
     CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm_modules

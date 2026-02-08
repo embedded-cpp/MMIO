@@ -1,4 +1,4 @@
-name: Ubuntu Pipeline
+name: develop
 
 on:
     push:
@@ -7,19 +7,32 @@ on:
         branches: [master, main]
 
 jobs:
-    install:
-        uses: ./.github/workflows/install.yml
-        secrets: inherit
-
     style:
         uses: ./.github/workflows/style.yml
         secrets: inherit
 
+    macos:
+        needs: [style]
+        uses: ./.github/workflows/macos.yml
+        secrets: inherit
+
+    windows:
+        needs: [style]
+        uses: ./.github/workflows/windows.yml
+        secrets: inherit
+
+    install:
+        needs: [style]
+        uses: ./.github/workflows/install.yml
+        secrets: inherit
+
     unit-tests:
+        needs: [style]
         uses: ./.github/workflows/unit-tests.yml
         secrets: inherit
 
     integration-tests:
+        needs: [unit-tests]
         uses: ./.github/workflows/integration-tests.yml
         secrets: inherit
 
