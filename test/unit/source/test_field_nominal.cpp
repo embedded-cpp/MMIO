@@ -14,15 +14,22 @@ TEST_SUITE("Field Tests - Nominal Cases") {
         reg<32, rw> reg{reg_addr};
 
         // Check write
-        reg.field<0, 8>().write<0xFF>();
+        reg.field<0, 8>().write<0xAA>();
+        CHECK(reg.read() == 0xAA);
+        CHECK(reg.field<0, 8>().read() == 0xAA);
+
+        // Check runtime write
+        reg.field<0, 8>().write(0xFF);
         CHECK(reg.read() == 0xFF);
         CHECK(reg.field<0, 8>().read() == 0xFF);
 
-        // Check clear/set bit
+        // Check clear/set/toggle bit
         reg.field<1, 1>().clear_bit();
         CHECK(reg.read() == 0xFD);
         reg.field<1, 1>().set_bit();
         CHECK(reg.read() == 0xFF);
+        reg.field<1, 1>().toggle_bit();
+        CHECK(reg.read() == 0xFD);
     }
 
     TEST_CASE("ReadOnly reg") {

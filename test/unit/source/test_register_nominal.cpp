@@ -6,8 +6,9 @@
 using namespace mmio;
 
 TEST_SUITE("reg Tests - Nominal Cases") {
-    static std::uint32_t dummy_reg       = 0;
-    static const std::uintptr_t reg_addr = reinterpret_cast<std::uintptr_t>(&dummy_reg);
+    static std::uint32_t dummy_reg = 0;
+    // volatile to prevent compiler optimizations that could interfere with the test coverage
+    static const volatile std::uintptr_t reg_addr = reinterpret_cast<std::uintptr_t>(&dummy_reg);
 
     TEST_CASE("ReadWrite reg") {
         // Init
@@ -21,9 +22,13 @@ TEST_SUITE("reg Tests - Nominal Cases") {
         reg.write<0xA5A5A5A5>();
         CHECK(dummy_reg == 0xA5A5A5A5);
 
+        // Check runtime write
+        reg.write(0xA5A5A5A5 + 1);
+        CHECK(dummy_reg == 0xA5A5A5A6);
+
         // Check modify
         reg.modify([](auto& val) { val ^= 0xFFFFFFFF; });
-        CHECK(reg.read() == 0x5A5A5A5A);
+        CHECK(reg.read() == 0x5A5A5A59);
 
         // Check operators
         reg = 0x12345678;
@@ -48,6 +53,10 @@ TEST_SUITE("reg Tests - Nominal Cases") {
         // Check write
         reg.write<0xFFFFFFFF>();
         CHECK(dummy_reg == 0xFFFFFFFF);
+
+        // Check runtime write
+        reg.write(0xA5A5A5A5 + 1);
+        CHECK(dummy_reg == 0xA5A5A5A6);
 
         // Check operator=
         reg = 0x12345678;
