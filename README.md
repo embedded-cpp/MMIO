@@ -112,6 +112,7 @@ The project includes CI workflows for:
 
 - **Linux / Windows / macOS** builds
 - **Formatting checks**
+- **Unit tests**
 - **Documentation generation**
 - **Installation verification**
 
