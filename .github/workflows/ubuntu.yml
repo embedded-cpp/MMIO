@@ -30,7 +30,6 @@ jobs:
           sudo apt update
           sudo apt install -y gcovr gcc-arm-none-eabi
 
-      # --- ÉTAPE 1 : TESTS UNITAIRES & COUVERTURE ---
       - name: Configure Unit Tests
         run: |
           cmake -S test/unit -B ${{ env.BUILD_DIR }} \
@@ -47,7 +46,6 @@ jobs:
         run: |
           cmake --build ${{ env.BUILD_DIR }} --target coverage
 
-      # --- ÉTAPE 2 : TESTS D'INTÉGRATION (Compilation Cross-ARM) ---
       - name: Configure & Build Integration (STM32)
         run: |
           cmake -S test/integration -B build/test/integration \
@@ -55,7 +53,6 @@ jobs:
             --toolchain cmake/toolchains/arm-none-eabi-gcc.cmake
           cmake --build build/test/integration -j$(nproc)
 
-      # --- ÉTAPE 3 : ANALYSE SONAR ---
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v7
         env:
