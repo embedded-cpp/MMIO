@@ -1,0 +1,27 @@
+name: Sonar
+
+on:
+    workflow_call:
+
+jobs:
+    analysis:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v6
+              with:
+                  fetch-depth: 0
+
+            - name: Get Analysis Data
+              uses: actions/download-artifact@v7
+              with:
+                  name: sonar-data
+                  path: build/unit
+
+            - name: SonarCloud Scan
+              uses: SonarSource/sonarqube-scan-action@v6
+              env:
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+              with:
+                  args: >
+                      -Dsonar.cfamily.compile-commands=build/unit/compile_commands.json
+                      -Dsonar.coverageReportPaths=build/unit/sonarqube.xml

@@ -1,0 +1,64 @@
+# --- Base ---
+PROJECT_NAME           = "@DOXYGEN_PROJECT_NAME@"
+PROJECT_NUMBER         = @DOXYGEN_PROJECT_VERSION@
+OUTPUT_DIRECTORY       = @DOXYGEN_OUTPUT_DIRECTORY@
+CREATE_SUBDIRS         = NO
+ALLOW_UNICODE_NAMES    = YES
+
+# --- Inputs ---
+INPUT                  = @DOXYGEN_PROJECT_ROOT@/README.md \
+                         @DOXYGEN_PROJECT_ROOT@/include \
+                         @DOXYGEN_PROJECT_ROOT@/documentation/pages
+RECURSIVE              = YES
+USE_MDFILE_AS_MAINPAGE = @DOXYGEN_PROJECT_ROOT@/README.md
+FULL_PATH_NAMES        = YES
+STRIP_FROM_PATH        = @DOXYGEN_PROJECT_ROOT@/include @DOXYGEN_PROJECT_ROOT@
+
+# --- C++ ---
+FILE_PATTERNS          = *.hpp *.cpp *.h *.md
+EXTENSION_MAPPING      = hpp=C++
+# Template management
+IDL_PROPERTY_SUPPORT   = NO 
+INLINE_INHERITED_MEMB  = YES
+BUILTIN_STL_SUPPORT    = YES
+# Header-only needed
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = YES
+
+# --- HTML ---
+GENERATE_HTML          = YES
+HTML_HEADER            = @DOXYGEN_HTML_HEADER@
+HTML_EXTRA_STYLESHEET  = @AWESOME_CSS_DIR@/doxygen-awesome.css \
+                         @AWESOME_CSS_DIR@/doxygen-awesome-sidebar-only.css \
+                         @AWESOME_CSS_DIR@/doxygen-awesome-sidebar-only-darkmode-toggle.css
+
+HTML_EXTRA_FILES       = @AWESOME_CSS_DIR@/doxygen-awesome-darkmode-toggle.js \
+                         @AWESOME_CSS_DIR@/doxygen-awesome-fragment-copy-button.js \
+                         @AWESOME_CSS_DIR@/doxygen-awesome-paragraph-link.js \
+                         @AWESOME_CSS_DIR@/doxygen-awesome-interactive-toc.js \
+                         @AWESOME_CSS_DIR@/doxygen-awesome-tabs.js
+
+GENERATE_TREEVIEW      = YES # optional. Also works without treeview
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+HTML_COLORSTYLE        = LIGHT # required with Doxygen >= 1.9.5
+HTML_COPY_CLIPBOARD    = NO
+PAGE_OUTLINE_PANEL     = NO
+
+# --- XML ---
+GENERATE_XML           = YES
+XML_PROGRAMLISTING     = NO
+
+# --- Useless ---
+GENERATE_LATEX         = NO
+
+# --- Graphism ---
+HAVE_DOT               = YES
+DOT_IMAGE_FORMAT       = svg
+INTERACTIVE_SVG        = YES
+COLLABORATION_GRAPH    = YES
+TEMPLATE_RELATIONS     = YES # Indispensable pour tes templates MMIO
+GRAPHICAL_HIERARCHY    = YES
+DIRECTORY_GRAPH        = YES
+DOT_TRANSPARENT        = YES
