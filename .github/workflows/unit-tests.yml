@@ -1,0 +1,40 @@
+name: Unit Tests
+
+on:
+    workflow_call: # Permet l'appel par ubuntu.yml
+
+env:
+    CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm_modules
+    BUILD_DIR: build/unit
+
+jobs:
+    run-tests:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Cache CPM
+              uses: actions/cache@v4
+              with:
+                  path: ${{ env.CPM_SOURCE_CACHE }}
+                  key: ${{ runner.os }}-cpm-${{ hashFiles('**/CMakeLists.txt') }}
+
+            - name: Install Tools
+              run: sudo apt update && sudo apt install -y gcovr
+
+            - name: Build & Test
+              run: |
+                  cmake -S test/unit -B ${{ env.BUILD_DIR }} -DENABLE_TEST_COVERAGE=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+                  cmake --build ${{ env.BUILD_DIR }} -j$(nproc)
+                  ctest --test-dir ${{ env.BUILD_DIR }} --output-on-failure
+                  cmake --build ${{ env.BUILD_DIR }} --target coverage
+
+            - name: Archive Analysis Data
+              uses: actions/upload-artifact@v4
+              with:
+                  name: sonar-data
+                  path: |
+                      ${{ env.BUILD_DIR }}/compile_commands.json
+                      ${{ env.BUILD_DIR }}/sonarqube.xml

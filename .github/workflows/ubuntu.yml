@@ -1,90 +1,24 @@
-name: Ubuntu
+name: Ubuntu Pipeline
 
 on:
-  push:
-    branches: [master, main]
-  pull_request:
-    branches: [master, main]
-
-env:
-  CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm_modules
+    push:
+        branches: [master, main]
+    pull_request:
+        branches: [master, main]
 
 jobs:
-  unit-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
+    # 1. On lance les tests unitaires en premier
+    unit-testing:
+        uses: ./.github/workflows/unit-tests.yml
+        secrets: inherit
 
-      - name: Cache CPM modules
-        uses: actions/cache@v5
-        with:
-          path: ${{ env.CPM_SOURCE_CACHE }}
-          key: ${{ runner.os }}-cpm-${{ hashFiles('**/CMakeLists.txt') }}
+    # 2. On lance l'intégration en parallèle des tests unitaires
+    integration-testing:
+        uses: ./.github/workflows/integration.yml
+        secrets: inherit
 
-      - name: Install Tools
-        run: sudo apt update && sudo apt install -y gcovr
-
-      - name: Configure & Build
-        run: |
-          cmake -S test/unit -B build/unit \
-            -DENABLE_TEST_COVERAGE=ON \
-            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-          cmake --build build/unit -j$(nproc)
-
-      - name: Run Tests
-        run: ctest --test-dir build/unit --output-on-failure
-
-      - name: Generate Coverage
-        run: cmake --build build/unit --target coverage
-
-      - name: Upload Analysis Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: sonar-data
-          path: |
-            build/unit/compile_commands.json
-            build/unit/sonarqube.xml
-            include/
-
-  integration-tests:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        mcu: [STM32F401RE]
-    steps:
-      - uses: actions/checkout@v6
-      
-      - name: Install ARM Toolchain
-        run: sudo apt update && sudo apt install -y gcc-arm-none-eabi
-
-      - name: Build Integration
-        run: |
-          cmake -S test/integration -B build/integration/${{ matrix.mcu }} \
-            -DMCU_NAME=${{ matrix.mcu }} \
-            --toolchain cmake/toolchains/arm-none-eabi-gcc.cmake
-          cmake --build build/integration/${{ matrix.mcu }} -j$(nproc)
-
-  sonar-analysis:
-    needs: [unit-tests]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: Download Analysis Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: sonar-data
-          path: .
-
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v7
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.cfamily.compile-commands=build/unit/compile_commands.json
-            -Dsonar.coverageReportPaths=build/unit/sonarqube.xml
+    # 3. L'analyse Sonar ne se lance QUE si les tests unitaires réussissent
+    sonar-analysis:
+        needs: [unit-testing]
+        uses: ./.github/workflows/sonar.yml
+        secrets: inherit
