@@ -61,16 +61,11 @@ jobs:
 
       - name: Build Integration
         run: |
-          cmake -S test/integration -B build/int-${{ matrix.mcu }} \
+          cmake -S test/integration -B build/integration/${{ matrix.mcu }} \
             -DMCU_NAME=${{ matrix.mcu }} \
             --toolchain cmake/toolchains/arm-none-eabi-gcc.cmake
-          cmake --build build/int-${{ matrix.mcu }} -j$(nproc)
-      
-      # C'est ici que tu ajouteras Renode plus tard
-      # - name: Run Renode Simulation
-      #   run: ...
+          cmake --build build/integration/${{ matrix.mcu }} -j$(nproc)
 
-  # --- JOB 3 : ANALYSE SONARCLOUD (Indépendant de l'intégration) ---
   sonar-analysis:
     needs: [unit-tests]
     runs-on: ubuntu-latest
