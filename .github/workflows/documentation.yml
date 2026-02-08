@@ -32,11 +32,11 @@ jobs:
 
             - name: Build
               run: |
-                  cmake -Sdocumentation -Bbuild
-                  cmake --build build --target GenerateDocs
+                  cmake -Sdocumentation -Bbuild/documentation
+                  cmake --build build/documentation --target GenerateDocs
 
             - name: Publish
               uses: peaceiris/actions-gh-pages@v4
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
-                  publish_dir: ./build/doxygen/html
+                  publish_dir: ./build/documentation/doxygen/html
