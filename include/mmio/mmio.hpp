@@ -17,12 +17,13 @@
 #ifndef MMIO_HPP
 #define MMIO_HPP
 
+#include <concepts>
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <type_traits>
 
 #include "mmio/policy/access.hpp" // IWYU pragma: export
-#include "mmio/proxy/field.hpp" // IWYU pragma: export
 #include "mmio/traits/size.hpp" // IWYU pragma: export
 
 namespace mmio {
@@ -30,122 +31,194 @@ namespace mmio {
     /**
      * @brief reg class which serves to represent MCU HW reg
      *
+     * @tparam Addr: address of the HW reg
      * @tparam BitSize: size in bits of a reg
      * @tparam read/write policy
      */
-    template <std::size_t BitSize, typename AccessPolicy>
+    template <std::uintptr_t Addr, std::size_t BitSize, access_policy AccessPolicy>
+        requires (supported_size<BitSize>)
     class reg {
-        static_assert(BitSize == 8 || BitSize == 16 || BitSize == 32 || BitSize == 64, "Unsupported reg size");
+    public:
+        using value_type = typename size_trait<BitSize>::type; //<! Alias of internal_type representing reg
+        using policy     = AccessPolicy; //<! Alias of the access policy of the reg
 
-        using value_type = typename SizeTrait<BitSize>::type; //<! Alias of internal_tyoe representing reg
+        static constexpr std::size_t bit_size   = BitSize; //<! Size in bits of the reg
+        static constexpr std::uintptr_t address = Addr; //<! Address of the reg
 
-        static_assert(std::is_same_v<AccessPolicy, rw> || std::is_same_v<AccessPolicy, ro>
-                          || std::is_same_v<AccessPolicy, wo> || std::is_same_v<AccessPolicy, na>,
-            "AccessPolicy must be read-write, read-only, write-only or no-access");
+    private:
+        /**
+         * @brief Check at compile time that the register is properly aligned
+         */
+        static consteval void validate_alignment() {
+            static_assert(address % (BitSize / 8) == 0, "MMIO register not properly aligned");
+        }
 
-        template <typename T>
-        static constexpr bool dependent_false_v = false;
+        /**
+         * @brief Return a reference to the raw register value
+         * @return Reference to the raw register value
+         */
+        static constexpr volatile value_type& raw() noexcept {
+            return *reinterpret_cast<volatile value_type*>(address);
+        }
+
+        /**
+         * @brief Check alignment at compile time by using a static member that calls the validation function
+         */
+        static constexpr auto m_alignment_check = (validate_alignment(), 0);
 
     public:
-        /**
-         * @brief Construct a new reg object: this allow manipulating HW reg at given address
-         * @param[in] address: address of the HW reg to handle
-         */
-        explicit constexpr reg(std::uintptr_t address) noexcept
-            : m_raw_ptr(reinterpret_cast<volatile value_type*>(address)) {}
-
-        /**
-         * @brief Operator to read from the reg
-         * @details Example: uint32_t reader = reg;
-         * @note Available for RW & R regs
-         * @return value_type: value read of the reg
-         */
-        [[nodiscard]] constexpr explicit operator value_type() const noexcept {
-            if constexpr (std::is_base_of_v<ro, AccessPolicy>) {
-                return *m_raw_ptr;
-            } else {
-                static_assert(dependent_false_v<AccessPolicy>, "Cannot read from write-only reg.");
-            }
-        }
-
-        /**
-         * @brief Assignment operator: allow to write the reg
-         * @param[in] value: value to write to the reg
-         */
-        constexpr reg& operator=(value_type value) noexcept {
-            if constexpr (std::is_base_of_v<wo, AccessPolicy>) {
-                *m_raw_ptr = value;
-                return *this;
-            } else {
-                static_assert(dependent_false_v<AccessPolicy>, "Cannot modify read-only reg.");
-            }
-        }
-
-        /**
-         * @brief Access field proxy by offset and width
-         * @param index Bit index [0; BitSize[
-         * @return BitProxy proxy object for bit manipulation
-         */
-        template <std::size_t Pos, std::size_t Width>
-        [[nodiscard]] constexpr auto field() noexcept {
-            return Field<Pos, Width, AccessPolicy, reg>{*this};
-        }
+        // ================= READ =================
 
         /**
          * @brief Read a reg
          * @return The reg value
          */
-        [[nodiscard]] constexpr value_type read() const noexcept {
-            if constexpr (std::is_base_of_v<ro, AccessPolicy>) {
-                return *m_raw_ptr;
-            } else {
-                static_assert(dependent_false_v<AccessPolicy>, "Cannot read from write-only reg.");
-            }
+        [[nodiscard]] static constexpr value_type read() noexcept
+            requires (readable<AccessPolicy>)
+        {
+            return raw();
         }
+
+
+        // ================= WRITE =================
 
         /**
          * @brief Write a reg
          * @param[in] value: The value to write
          */
-        template <value_type value>
-        constexpr void write() noexcept {
-            if constexpr (std::is_base_of_v<wo, AccessPolicy> && std::is_unsigned_v<value_type>) {
-                *m_raw_ptr = value;
-            } else {
-                static_assert(dependent_false_v<AccessPolicy>, "Cannot write to read-only reg.");
-            }
+        static constexpr void write(value_type v) noexcept
+            requires (writable<AccessPolicy>)
+        {
+            raw() = v;
         }
 
-        constexpr void write(value_type value) noexcept {
-            if constexpr (std::is_base_of_v<wo, AccessPolicy> && std::is_unsigned_v<value_type>) {
-                *m_raw_ptr = value;
-            } else {
-                static_assert(dependent_false_v<AccessPolicy>, "Cannot write to read-only reg.");
-            }
-        }
-
+        // ================= MODIF =================
         /**
          * @brief Modify the reg with a callable (only if read-write)
          * @tparam Func Callable type, callable with signature void(value_type&)
          * @param func Callable to modify the reg contents
          */
-        template <typename Func>
-        void modify(Func&& func) noexcept {
-            if constexpr (std::is_base_of_v<rw, AccessPolicy>) {
-                value_type val = *m_raw_ptr;
-                func(val); // The user modifies a copy
-                *m_raw_ptr = val;
-            } else {
-                static_assert(dependent_false_v<AccessPolicy>, "Can only modify read-write regs.");
-            }
+        template <typename F>
+            requires (readable<AccessPolicy> && writable<AccessPolicy> && std::invocable<F, value_type&>)
+        static constexpr void modify(F&& f) noexcept {
+            value_type tmp = raw();
+            std::invoke(f, tmp);
+            raw() = tmp;
+        }
+    };
+
+    template <typename Register, std::size_t Offset, std::size_t Width>
+        requires (Offset + Width <= Register::bit_size)
+    class field {
+        using value_type                 = typename Register::value_type;
+        using policy                     = typename Register::policy;
+        static constexpr value_type mask = ((value_type(1) << Width) - 1) << Offset;
+
+    public:
+        // ================= READ =================
+
+        /**
+         * @brief Read the field value
+         * @return The field value
+         */
+        [[nodiscard]] static constexpr value_type read() noexcept
+            requires (readable<policy>)
+        {
+            return (Register::read() & mask) >> Offset;
         }
 
-    private:
-        volatile value_type* m_raw_ptr; //<! Address of the HW reg
+        // ================= WRITE =================
 
-        template <std::size_t, std::size_t, typename, typename>
-        friend class Field;
+        /**
+         * @brief Write a value to the field
+         * @param[in] v The value to write to the field
+         */
+        static constexpr void write(value_type v) noexcept
+            requires (writable<policy> && readable<policy>)
+        {
+            Register::modify([&](value_type& r) {
+                r &= ~mask;
+                r |= (v << Offset) & mask;
+            });
+        }
+
+        /**
+         * @brief Write a value to the field
+         * @param[in] v The value to write to the field
+         */
+        static constexpr void write(value_type v) noexcept
+            requires (writable<policy> && !readable<policy>)
+        {
+            Register::write((v << Offset) & mask);
+        }
+
+        // ================= MODIF =================
+        /**
+         * @brief Modify the field with a callable (only if writable)
+         * @tparam F field modification function, callable with signature void(value_type&)
+         * @param f field modification function, callable with signature void(value_type&)
+         */
+        template <typename F>
+        static constexpr void modify(F&& f) noexcept
+            requires (writable<policy> && std::invocable<F, value_type&>)
+        {
+            Register::modify([&](value_type& r) {
+                value_type tmp = (r & mask) >> Offset;
+
+                std::invoke(f, tmp);
+
+                r &= ~mask;
+                r |= (tmp << Offset) & mask;
+            });
+        }
+
+        // ================= BIT OPS =================
+        /**
+         * @brief Set the field bits (only for single-bit fields)
+         */
+        static constexpr void set() noexcept
+            requires (writable<policy> && readable<policy> && (Width == 1))
+        {
+            Register::modify([](value_type& r) { r |= mask; });
+        }
+
+        /**
+         * @brief Set the field bits (only for single-bit fields)
+         */
+        static constexpr void set() noexcept
+            requires (writable<policy> && (!readable<policy>) && (Width == 1))
+        {
+            Register::write(mask);
+        }
+
+        /**
+         * @brief Clear the field bits (only for single-bit fields)
+         */
+        static constexpr void clear() noexcept
+            requires (writable<policy> && readable<policy> && (Width == 1))
+        {
+            Register::modify([](value_type& r) { r &= ~mask; });
+        }
+
+        static constexpr void clear() noexcept
+            requires (writable<policy> && !readable<policy> && (Width == 1))
+        {
+            Register::write(0);
+        }
+
+        /**
+         * @brief Toggle the field bits (only for single-bit fields)
+         */
+        static constexpr void toggle() noexcept
+            requires (writable<policy> && readable<policy> && (Width == 1))
+        {
+            Register::modify([](value_type& r) { r ^= mask; });
+        }
     };
+
+    // Convenient alias for single-bit fields
+    template <typename Register, std::size_t Offset>
+    using bit = field<Register, Offset, 1>;
 
 } // namespace mmio
 
