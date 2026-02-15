@@ -97,6 +97,35 @@ namespace mmio {
             raw() = v;
         }
 
+        /**
+         * @brief Writes multiple bit-fields simultaneously in a single hardware operation.
+         *
+         * This function leverages Variadic Templates and Fold Expressions (C++17) to calculate
+         * a merged global mask at compile-time. It ensures that only a single write
+         * instruction (STORE) is generated to configure all specified fields.
+         *
+         * @tparam Fields A list of `mmio::field` or `mmio::bit` types belonging exclusively
+         * to this register.
+         *
+         * @note **Optimization:** The expression `(Fields::mask | ...)` is entirely resolved by the
+         * compiler. The resulting machine code is typically reduced to an immediate constant load
+         * followed by a memory transfer, which is the fastest operation possible.
+         *
+         * @warning **Destructive Behavior:** Since this function calls `write()`,
+         * ALL register bits not included in the provided `Fields` types will be
+         * cleared to zero (0).
+         * - To preserve other bits in the register, use `modify()` (Read-Modify-Write).
+         * - For a clean initial configuration (Cold Boot), `write_set` is the ideal choice.
+         *
+         * @requires The register must have a `writable` access policy.
+         * @requires All `Fields` must be compatible with the register's `value_type`.
+         */
+        template <typename... Fields>
+        static constexpr void write_set() noexcept
+            requires writable<policy>
+        {
+            write((Fields::mask | ...));
+        }
         // ================= MODIFY =================
 
         /**
@@ -133,11 +162,12 @@ namespace mmio {
     template <typename Register, std::size_t Offset, std::size_t Width>
         requires (Offset + Width <= Register::bit_size)
     class field {
-        using value_type                 = typename Register::value_type;
-        using policy                     = typename Register::policy;
-        static constexpr value_type mask = ((value_type(1) << Width) - 1) << Offset;
+        using value_type = typename Register::value_type;
+        using policy     = typename Register::policy;
 
     public:
+        static constexpr value_type mask = ((value_type(1) << Width) - 1) << Offset;
+
         // ================= READ =================
 
         /**

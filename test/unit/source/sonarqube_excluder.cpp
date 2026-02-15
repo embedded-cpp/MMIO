@@ -31,6 +31,7 @@ static constexpr std::uintptr_t MOCK_ADDR = 0x10000U;
 /**
  * @brief dummy function to anchor SonarQube exclusion of test_*.cpp files
  */
+// GCOVR_EXCL_START
 void dummy() {
     void* mem;
     mem = mmap(reinterpret_cast<void*>(MOCK_ADDR), 4096, PROT_READ | PROT_WRITE,
@@ -42,14 +43,14 @@ void dummy() {
     TEST_REG::write(0xDEADBEEF);
     uint32_t val = TEST_REG::read();
     (void) val; // Suppress unused variable warning
-    TEST_REG::modify([](auto& v) { v ^= 0xFFFFFFFF; });
+    TEST_REG::write(0xA5A5A5A5);
 
     TEST_FIELD::write(0xAB);
     uint32_t field_val = TEST_FIELD::read();
     (void) field_val; // Suppress unused variable warning
-    TEST_FIELD::modify([](auto& v) { v ^= 0xFF; });
-
+    TEST_FIELD::write(0xCD);
     if (mem != MAP_FAILED) {
         munmap(mem, 4096);
     }
 }
+// GCOVR_EXCL_STOP

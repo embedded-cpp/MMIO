@@ -46,6 +46,8 @@ TEST_SUITE("mmio") {
             // Init
             volatile uint32_t* MOCK_REG = reinterpret_cast<volatile uint32_t*>(MOCK_ADDR);
             using TEST_REG              = reg<MOCK_ADDR, 32, rw>;
+            using TEST_FIELD0           = field<TEST_REG, 0, 8>;
+            using TEST_FIELD8           = field<TEST_REG, 8, 8>;
 
             // Check read
             *MOCK_REG = 0xFFFFFFFF;
@@ -56,8 +58,12 @@ TEST_SUITE("mmio") {
             CHECK(*MOCK_REG == 0xA5A5A5A5);
 
             // Check modify
-            TEST_REG::modify([](auto& val) { val ^= 0xFFFFFFFF; });
+            TEST_REG::modify([](uint32_t& val) { val ^= 0xFFFFFFFF; });
             CHECK(TEST_REG::read() == 0x5A5A5A5A);
+
+            // Check write_set
+            TEST_REG::write_set<TEST_FIELD0, TEST_FIELD8>();
+            CHECK(*MOCK_REG == 0x0000FFFF);
         }
 
         SUBCASE("field") {
@@ -74,7 +80,7 @@ TEST_SUITE("mmio") {
             CHECK(*MOCK_REG == 0x1234AB78);
 
             // Check modify
-            TEST_FIELD::modify([](auto& val) { val ^= 0xFF; });
+            TEST_FIELD::modify([](uint32_t& val) { val ^= 0xFF; });
             CHECK(*MOCK_REG == 0x12345478);
         }
 
@@ -111,6 +117,10 @@ TEST_SUITE("mmio") {
 
             // Check write (should not compile)
             // TEST_REG::write(0xFFFFFFFF); // Ignore - should not compile
+
+            // Check write_set (should not compile)
+            // TEST_REG::write_set<TEST_FIELD0, TEST_FIELD8>();
+            // CHECK(*MOCK_REG == 0x0000FFFF); // Ignore - should not compile
         }
 
         SUBCASE("field") {
@@ -154,17 +164,23 @@ TEST_SUITE("mmio") {
             // Init
             volatile uint32_t* MOCK_REG = reinterpret_cast<volatile uint32_t*>(MOCK_ADDR);
             using TEST_REG              = reg<MOCK_ADDR, 32, wo>;
+            using TEST_FIELD0           = field<TEST_REG, 0, 8>;
+            using TEST_FIELD8           = field<TEST_REG, 8, 8>;
 
             // Check write
             *MOCK_REG = 0x0;
-            TEST_REG::write(0xFFFFFFFF);
-            CHECK(*MOCK_REG == 0xFFFFFFFF);
+            TEST_REG::write(0xDEADBEEF);
+            CHECK(*MOCK_REG == 0xDEADBEEF);
 
             // Check read (should not compile)
-            // auto val = TEST_REG::read(); // Ignore - should not compile
+            // uint32_t val = TEST_REG::read(); // Ignore - should not compile
 
             // Check modify (should not compile)
-            // TEST_REG::modify([](auto& val) { val ^= 0xFFFFFFFF; }); // Ignore - should not compile
+            // TEST_REG::modify([](uint32_t& val) { val ^= 0xFFFFFFFF; }); // Ignore - should not compile
+
+            // Check write_set
+            TEST_REG::write_set<TEST_FIELD0, TEST_FIELD8>();
+            CHECK(*MOCK_REG == 0x0000FFFF);
         }
 
         SUBCASE("field") {
@@ -179,10 +195,10 @@ TEST_SUITE("mmio") {
             CHECK(*MOCK_REG == 0x0000AB00);
 
             // Check read (should not compile)
-            // auto val = TEST_FIELD::read(); // Ignore - should not compile
+            // uint32_t val = TEST_FIELD::read(); // Ignore - should not compile
 
             // Check modify (should not compile)
-            // TEST_FIELD::modify([](auto& val) { val ^= 0xFF; }); // Ignore - should not compile
+            // TEST_FIELD::modify([](uint32_t& val) { val ^= 0xFF; }); // Ignore - should not compile
         }
 
         SUBCASE("bit") {

@@ -87,12 +87,11 @@ int main(void) {
     USART2::BRR::DIV_MANTISSA::write(8U);  // Mantissa
     USART2::BRR::DIV_FRACTION::write(11U); // Fraction
 
-    USART2::CR1::UE::set();      // USART enable
-    USART2::CR1::TE::set();      // Transmitter enable
-    USART2::CR1::RE::set();      // Receiver enable
-    USART2::CR1::RXNEIE::set();  // RXNE interrupt enable
-    USART2::CR1::TXEIE::clear(); // TXE interrupt disable
-    USART2::CR1::PCE::clear();   // Parity control disable
+    USART2::CR1::write_set<USART2::CR1::UE, // USART enable
+        USART2::CR1::TE,                    // Transmitter enable
+        USART2::CR1::RE,                    // Receiver enable
+        USART2::CR1::RXNEIE                 // RXNE interrupt enable
+        >();
 
     // NVIC USART2 interrupt enable
     using NVIC_ISER1 = reg<0xE000E104U, 32U, rw>;
