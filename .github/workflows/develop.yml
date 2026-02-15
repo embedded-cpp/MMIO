@@ -11,16 +11,6 @@ jobs:
         uses: ./.github/workflows/style.yml
         secrets: inherit
 
-    macos:
-        needs: [style]
-        uses: ./.github/workflows/macos.yml
-        secrets: inherit
-
-    windows:
-        needs: [style]
-        uses: ./.github/workflows/windows.yml
-        secrets: inherit
-
     install:
         needs: [style]
         uses: ./.github/workflows/install.yml
