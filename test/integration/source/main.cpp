@@ -48,7 +48,7 @@ extern "C" void USART2_IRQHandler() {
 
 int main(void) {
     // Systick config: 1ms tick
-    mmio::reg<32U, mmio::rw> SYST_CSR{0xE000E010U}; // CLKSOURCE = processor clock
+    mmio::reg<32U, mmio::rw> SYST_CSR{0xE000E010U};         // CLKSOURCE = processor clock
     SYST_CSR.modify([](auto& reg) { reg |= 0x00000001U; }); // Enable the timer
     mmio::reg<32U, mmio::rw> SYST_RVR{0xE000E014U};
     SYST_RVR.write<16000U - 1U>();
@@ -76,7 +76,7 @@ int main(void) {
     gpioa.MODER.moder2()
         .write<0b10U>() // A2: AF
         .moder3()
-        .write<0b10U>(); // A3: AF
+        .write<0b10U>();                 // A3: AF
     gpioa.AFRL.afrl2().write<0b0111U>(); // A2: AF7 (USART2_TX)
     gpioa.AFRL.afrl3().write<0b0111U>(); // A3: AF7 (USART2_RX)
 

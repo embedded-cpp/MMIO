@@ -17,7 +17,9 @@
 #ifndef SIZE_HPP
 #define SIZE_HPP
 
-
+//<! Internal
+//<! External
+//<! System
 #include <cstddef>
 #include <cstdint>
 

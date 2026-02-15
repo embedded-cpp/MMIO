@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,61 +17,63 @@
 #ifndef MMIO_HPP
 #define MMIO_HPP
 
+//<! Internal
+#include "mmio/policy/access.hpp" // IWYU pragma: export
+#include "mmio/traits/size.hpp"   // IWYU pragma: export
+//<! External
+//<! System
 #include <concepts>
 #include <cstddef>
 #include <cstdint>
 #include <functional>
 #include <type_traits>
+#include <utility>
 
-#include "mmio/policy/access.hpp" // IWYU pragma: export
-#include "mmio/traits/size.hpp" // IWYU pragma: export
 
 namespace mmio {
 
     /**
-     * @brief reg class which serves to represent MCU HW reg
+     * @brief Represents a memory-mapped hardware register.
      *
-     * @tparam Addr: address of the HW reg
-     * @tparam BitSize: size in bits of a reg
-     * @tparam read/write policy
+     * This class is a zero-overhead wrapper around a specific memory address.
+     * It enforces access policies (Read-Only, Write-Only, Read-Write) and
+     * data width constraints at compile time using C++20 concepts.
+     *
+     * @tparam Addr        The physical base address of the register.
+     * @tparam BitSize     The width of the register in bits (e.g., 8, 16, 32, 64).
+     * @tparam AccessPolicy The access permission policy (ro, wo, rw).
      */
     template <std::uintptr_t Addr, std::size_t BitSize, access_policy AccessPolicy>
         requires (supported_size<BitSize>)
     class reg {
     public:
-        using value_type = typename size_trait<BitSize>::type; //<! Alias of internal_type representing reg
-        using policy     = AccessPolicy; //<! Alias of the access policy of the reg
+        using value_type = typename size_trait<BitSize>::type; ///< Underlying integer type (e.g., uint32_t)
+        using policy     = AccessPolicy;                       ///< Access policy alias
 
-        static constexpr std::size_t bit_size   = BitSize; //<! Size in bits of the reg
-        static constexpr std::uintptr_t address = Addr; //<! Address of the reg
+        static constexpr std::size_t bit_size   = BitSize; ///< Register width in bits
+        static constexpr std::uintptr_t address = Addr;    ///< Physical address
+
+        // Compile-time check to ensure the address is aligned to the register size.
+        // Prevents unaligned access faults on architectures like ARM.
+        static_assert(Addr % (BitSize / 8) == 0, "MMIO register address is not properly aligned for its data width.");
 
     private:
         /**
-         * @brief Check at compile time that the register is properly aligned
-         */
-        static consteval void validate_alignment() {
-            static_assert(address % (BitSize / 8) == 0, "MMIO register not properly aligned");
-        }
-
-        /**
-         * @brief Return a reference to the raw register value
-         * @return Reference to the raw register value
+         * @brief Internal helper to get a volatile reference to the hardware address.
+         * @return Volatile reference to the register memory.
          */
         static constexpr volatile value_type& raw() noexcept {
             return *reinterpret_cast<volatile value_type*>(address);
         }
 
-        /**
-         * @brief Check alignment at compile time by using a static member that calls the validation function
-         */
-        static constexpr auto m_alignment_check = (validate_alignment(), 0);
-
     public:
         // ================= READ =================
 
         /**
-         * @brief Read a reg
-         * @return The reg value
+         * @brief Reads the full value of the register.
+         *
+         * @note This operation performs a volatile load from memory.
+         * @return The current value of the register.
          */
         [[nodiscard]] static constexpr value_type read() noexcept
             requires (readable<AccessPolicy>)
@@ -79,12 +81,15 @@ namespace mmio {
             return raw();
         }
 
-
         // ================= WRITE =================
 
         /**
-         * @brief Write a reg
-         * @param[in] value: The value to write
+         * @brief Writes a value to the register.
+         *
+         * @note This operation performs a volatile store to memory.
+         * It overwrites the entire content of the register.
+         *
+         * @param v The value to write.
          */
         static constexpr void write(value_type v) noexcept
             requires (writable<AccessPolicy>)
@@ -92,21 +97,39 @@ namespace mmio {
             raw() = v;
         }
 
-        // ================= MODIF =================
+        // ================= MODIFY =================
+
         /**
-         * @brief Modify the reg with a callable (only if read-write)
-         * @tparam Func Callable type, callable with signature void(value_type&)
-         * @param func Callable to modify the reg contents
+         * @brief Modifies the register value using a Read-Modify-Write (RMW) cycle.
+         *
+         * This function reads the current value, applies the provided callable transformation,
+         * and writes the result back.
+         *
+         * @note This operation is NOT atomic regarding interrupts or multi-threading.
+         * If the register is shared, external locking is required.
+         *
+         * @tparam F Callable type (e.g., lambda) with signature `void(value_type&)`.
+         * @param f  The callable that modifies the value in-place.
          */
         template <typename F>
             requires (readable<AccessPolicy> && writable<AccessPolicy> && std::invocable<F, value_type&>)
         static constexpr void modify(F&& f) noexcept {
             value_type tmp = raw();
-            std::invoke(f, tmp);
+            std::invoke(std::forward<F>(f), tmp);
             raw() = tmp;
         }
     };
 
+    /**
+     * @brief Represents a specific bit-field within a register.
+     *
+     * Provides safer manipulation of sub-sections of a register by handling
+     * bit-shifting and masking automatically.
+     *
+     * @tparam Register The parent `reg` class.
+     * @tparam Offset   The starting bit position (LSB index) of the field.
+     * @tparam Width    The width of the field in bits.
+     */
     template <typename Register, std::size_t Offset, std::size_t Width>
         requires (Offset + Width <= Register::bit_size)
     class field {
@@ -118,8 +141,12 @@ namespace mmio {
         // ================= READ =================
 
         /**
-         * @brief Read the field value
-         * @return The field value
+         * @brief Reads and extracts the field value.
+         *
+         * Reads the full register, applies the mask, and shifts the result
+         * down to index 0.
+         *
+         * @return The extracted field value.
          */
         [[nodiscard]] static constexpr value_type read() noexcept
             requires (readable<policy>)
@@ -130,21 +157,37 @@ namespace mmio {
         // ================= WRITE =================
 
         /**
-         * @brief Write a value to the field
-         * @param[in] v The value to write to the field
+         * @brief Writes a value to the field (Read-Write Policy).
+         *
+         * Performs a Read-Modify-Write cycle:
+         * 1. Reads the register.
+         * 2. Clears the bits corresponding to this field.
+         * 3. Sets the new value for this field.
+         * 4. Writes the result back.
+         *
+         * @note This preserves the state of all other bits (neighbors) in the register.
+         * @param v The value to write (will be masked and shifted automatically).
          */
         static constexpr void write(value_type v) noexcept
             requires (writable<policy> && readable<policy>)
         {
-            Register::modify([&](value_type& r) {
+            Register::modify([v](value_type& r) {
                 r &= ~mask;
                 r |= (v << Offset) & mask;
             });
         }
 
         /**
-         * @brief Write a value to the field
-         * @param[in] v The value to write to the field
+         * @brief Writes a value to the field (Write-Only Policy).
+         *
+         * Performs a Direct Write. Since the register cannot be read,
+         * it is impossible to preserve the neighbors.
+         *
+         * @warning **DESTRUCTIVE OPERATION**: All other bits in the register
+         * will be set to 0. This is typically used for command or
+         * trigger registers where neighbors are irrelevant or reserved.
+         *
+         * @param v The value to write (will be masked and shifted automatically).
          */
         static constexpr void write(value_type v) noexcept
             requires (writable<policy> && !readable<policy>)
@@ -152,20 +195,27 @@ namespace mmio {
             Register::write((v << Offset) & mask);
         }
 
-        // ================= MODIF =================
+        // ================= MODIFY =================
+
         /**
-         * @brief Modify the field with a callable (only if writable)
-         * @tparam F field modification function, callable with signature void(value_type&)
-         * @param f field modification function, callable with signature void(value_type&)
+         * @brief Modifies the field value in-place.
+         *
+         * Extracts the current field value, passes it to the user-provided
+         * function, and writes the updated value back.
+         *
+         * @note Requires Read-Write access.
+         *
+         * @tparam F Callable type with signature `void(value_type&)`.
+         * @param f  The callable that transforms the field value.
          */
         template <typename F>
         static constexpr void modify(F&& f) noexcept
-            requires (writable<policy> && std::invocable<F, value_type&>)
+            requires (writable<policy> && readable<policy> && std::invocable<F, value_type&>)
         {
-            Register::modify([&](value_type& r) {
+            Register::modify([&f](value_type& r) {
                 value_type tmp = (r & mask) >> Offset;
 
-                std::invoke(f, tmp);
+                std::invoke(std::forward<F>(f), tmp);
 
                 r &= ~mask;
                 r |= (tmp << Offset) & mask;
@@ -173,8 +223,10 @@ namespace mmio {
         }
 
         // ================= BIT OPS =================
+
         /**
-         * @brief Set the field bits (only for single-bit fields)
+         * @brief Sets the bit to 1 (Read-Write Policy).
+         * Uses RMW to preserve other bits in the register.
          */
         static constexpr void set() noexcept
             requires (writable<policy> && readable<policy> && (Width == 1))
@@ -183,7 +235,10 @@ namespace mmio {
         }
 
         /**
-         * @brief Set the field bits (only for single-bit fields)
+         * @brief Sets the bit to 1 (Write-Only Policy).
+         *
+         * @warning **DESTRUCTIVE**: Writes the mask directly to the register.
+         * All other bits become 0.
          */
         static constexpr void set() noexcept
             requires (writable<policy> && (!readable<policy>) && (Width == 1))
@@ -192,7 +247,8 @@ namespace mmio {
         }
 
         /**
-         * @brief Clear the field bits (only for single-bit fields)
+         * @brief Clears the bit to 0 (Read-Write Policy).
+         * Uses RMW to preserve other bits in the register.
          */
         static constexpr void clear() noexcept
             requires (writable<policy> && readable<policy> && (Width == 1))
@@ -200,6 +256,15 @@ namespace mmio {
             Register::modify([](value_type& r) { r &= ~mask; });
         }
 
+        /**
+         * @brief Clears the bit to 0 (Write-Only Policy).
+         *
+         * Writes 0 to the entire register.
+         *
+         * @warning **DESTRUCTIVE**: effectively resets the whole register to 0.
+         * @note This is NOT for "Write 1 to Clear" (W1C) bits. For W1C bits,
+         * use `set()` (which writes 1).
+         */
         static constexpr void clear() noexcept
             requires (writable<policy> && !readable<policy> && (Width == 1))
         {
@@ -207,7 +272,10 @@ namespace mmio {
         }
 
         /**
-         * @brief Toggle the field bits (only for single-bit fields)
+         * @brief Toggles the bit value (0->1 or 1->0).
+         *
+         * @note Strictly requires Read-Write access, as the new state depends
+         * on the previous state.
          */
         static constexpr void toggle() noexcept
             requires (writable<policy> && readable<policy> && (Width == 1))
@@ -216,7 +284,9 @@ namespace mmio {
         }
     };
 
-    // Convenient alias for single-bit fields
+    /**
+     * @brief Convenient alias for a single-bit field.
+     */
     template <typename Register, std::size_t Offset>
     using bit = field<Register, Offset, 1>;
 
