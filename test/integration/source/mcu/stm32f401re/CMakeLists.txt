@@ -63,5 +63,8 @@ target_link_options(
     -lm
     -Wl,--end-group
     -Wl,--print-memory-usage
+    -Wl,--defsym=malloc=0
+    -Wl,--defsym=free=0
+    -Wl,--defsym=realloc=0
     -flto
 )
