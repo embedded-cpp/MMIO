@@ -24,11 +24,11 @@ jobs:
 
             - name: Run Cppcheck MISRA
               run: |
-                cppcheck --project=build/unit/compile_commands.json \
+                cppcheck --project=build/test/unit/compile_commands.json \
                          --xml --xml-version=2 \
                          --output-file=cppcheck-report.xml \
                          --enable=all --inline-suppr \
-                         -i build/ # On exclut le dossier de build
+                         -i build
 
             - name: SonarCloud Scan
               uses: SonarSource/sonarqube-scan-action@v6
