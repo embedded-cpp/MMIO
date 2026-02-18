@@ -24,7 +24,7 @@ jobs:
 
             - name: Run Cppcheck MISRA
               run: |
-                cppcheck --project=build/test/unit/compile_commands.json \
+                cppcheck --project=build/unit/compile_commands.json \
                          --xml --xml-version=2 \
                          --output-file=cppcheck-report.xml \
                          --enable=all --inline-suppr \

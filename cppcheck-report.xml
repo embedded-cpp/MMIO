@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<results version="2">
+    <cppcheck version="2.13.0"/>
+    <errors>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;doctest/doctest.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;doctest/doctest.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="test/unit/source/main.cpp" line="3" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;concepts&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;concepts&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="include/mmio/policy/access.hpp" line="23" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;cstddef&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;cstddef&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="include/mmio/traits/size.hpp" line="23" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;cstdint&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;cstdint&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="include/mmio/traits/size.hpp" line="24" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;concepts&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;concepts&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="include/mmio/mmio.hpp" line="25" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;cstddef&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;cstddef&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="include/mmio/mmio.hpp" line="26" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;cstdint&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;cstdint&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="include/mmio/mmio.hpp" line="27" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;functional&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;functional&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="include/mmio/mmio.hpp" line="28" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;type_traits&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;type_traits&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="include/mmio/mmio.hpp" line="29" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;utility&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;utility&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="include/mmio/mmio.hpp" line="30" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;sys/mman.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;sys/mman.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="test/unit/source/sonarqube_excluder.cpp" line="27" column="0"/>
+        </error>
+        <error id="missingInclude" severity="information" msg="Include file: &quot;doctest/doctest.h&quot; not found." verbose="Include file: &quot;doctest/doctest.h&quot; not found.">
+            <location file="test/unit/source/test_register.cpp" line="18" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;cstdint&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;cstdint&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="test/unit/source/test_register.cpp" line="22" column="0"/>
+        </error>
+        <error id="missingIncludeSystem" severity="information" msg="Include file: &lt;sys/mman.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results." verbose="Include file: &lt;sys/mman.h&gt; not found. Please note: Cppcheck does not need standard library headers to get proper results.">
+            <location file="test/unit/source/test_register.cpp" line="23" column="0"/>
+        </error>
+        <error id="constVariablePointer" severity="style" msg="Variable &apos;MOCK_REG&apos; can be declared as pointer to const" verbose="Variable &apos;MOCK_REG&apos; can be declared as pointer to const" cwe="398" file0="test/unit/source/test_register.cpp">
+            <location file="test/unit/source/test_register.cpp" line="189" column="32" info="Variable &apos;MOCK_REG&apos; can be declared as pointer to const"/>
+            <symbol>MOCK_REG</symbol>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &apos;dummy&apos; is never used." verbose="The function &apos;dummy&apos; is never used." cwe="561">
+            <location file="test/unit/source/sonarqube_excluder.cpp" line="35" column="0"/>
+            <symbol>dummy</symbol>
+        </error>
+        <error id="checkersReport" severity="information" msg="Active checkers: 161/592 (use --checkers-report=&lt;filename&gt; to see details)" verbose="Active checkers: 161/592 (use --checkers-report=&lt;filename&gt; to see details)"/>
+    </errors>
+</results>
