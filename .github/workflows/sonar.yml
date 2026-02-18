@@ -11,6 +11,11 @@ jobs:
               with:
                   fetch-depth: 0
 
+            - name: Install Tools
+              run: |
+                sudo apt-get update
+                sudo apt-get install -y cppcheck
+
             - name: Get Analysis Data
               uses: actions/download-artifact@v7
               with:
