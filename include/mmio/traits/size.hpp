@@ -17,7 +17,9 @@
 #ifndef SIZE_HPP
 #define SIZE_HPP
 
-
+//<! Internal
+//<! External
+//<! System
 #include <cstddef>
 #include <cstdint>
 
@@ -29,15 +31,13 @@ namespace mmio {
      * @tparam BitSize: size in bits of a register
      */
     template <std::size_t BitSize>
-    struct SizeTrait {
-        static_assert(BitSize == 8U || BitSize == 16U || BitSize == 32U || BitSize == 64U, "Unsupported register size");
-    };
+    struct size_trait;
 
     /**
      * @brief Specialization of the base trait for 8-bit register
      */
     template <>
-    struct SizeTrait<8U> {
+    struct size_trait<8U> {
         using type = std::uint8_t;
     };
 
@@ -45,7 +45,7 @@ namespace mmio {
      * @brief Specialization of the base trait for 16-bit register
      */
     template <>
-    struct SizeTrait<16U> {
+    struct size_trait<16U> {
         using type = std::uint16_t;
     };
 
@@ -53,7 +53,7 @@ namespace mmio {
      * @brief Specialization of the base trait for 32-bit register
      */
     template <>
-    struct SizeTrait<32U> {
+    struct size_trait<32U> {
         using type = std::uint32_t;
     };
 
@@ -61,9 +61,15 @@ namespace mmio {
      * @brief Specialization of the base trait for 64-bit register
      */
     template <>
-    struct SizeTrait<64U> {
+    struct size_trait<64U> {
         using type = std::uint64_t;
     };
 
+    /**
+     * @brief Concept to check if a type is a valid size trait
+     * @tparam Bits Type to check
+     */
+    template <std::size_t Bits>
+    concept supported_size = requires { typename size_trait<Bits>::type; };
 } // namespace mmio
 #endif // SIZE_HPP

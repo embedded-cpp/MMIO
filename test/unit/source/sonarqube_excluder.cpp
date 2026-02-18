@@ -1,26 +1,56 @@
+/*
+ * Copyright 2026 embedded-cpp contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * @file sonarqube_excluder.cpp
  * @brief This file serves as an anchor for SonarQube to exclude the test_*.cpp files from analysis.
  */
+//<! Internal
+//<! External
 #include "mmio/mmio.hpp"
 #include "mmio/policy/access.hpp"
-#include "mmio/proxy/field.hpp"
 #include "mmio/traits/size.hpp"
+//<! System
+#include <sys/mman.h>
+
+static constexpr std::uintptr_t MOCK_ADDR = 0x10000U;
 
 /**
  * @brief dummy function to anchor SonarQube exclusion of test_*.cpp files
  */
+// GCOVR_EXCL_START
 void dummy() {
-    // Just to use some of the included headers and avoid "unused include" warnings
-    uint32_t dummy = 0;
-    auto reg_addr  = reinterpret_cast<std::uintptr_t>(&dummy);
-    mmio::reg<32, mmio::rw> dummy_reg{reg_addr};
-    dummy_reg.write<0x12345678>();
-    auto val = dummy_reg.read();
-    (void) val;
+    void* mem;
+    mem = mmap(reinterpret_cast<void*>(MOCK_ADDR), 4096, PROT_READ | PROT_WRITE,
+        MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
 
-    auto field = mmio::make_field<4, 4, mmio::rw>(dummy_reg);
-    field.write<0xA>();
-    auto field_val = field.read();
-    (void) field_val;
+    using TEST_REG   = mmio::reg<MOCK_ADDR, 32, mmio::rw>;
+    using TEST_FIELD = mmio::field<TEST_REG, 8, 8>;
+
+    TEST_REG::write(0xDEADBEEF);
+    uint32_t val = TEST_REG::read();
+    (void) val; // Suppress unused variable warning
+    TEST_REG::write(0xA5A5A5A5);
+
+    TEST_FIELD::write(0xAB);
+    uint32_t field_val = TEST_FIELD::read();
+    (void) field_val; // Suppress unused variable warning
+    TEST_FIELD::write(0xCD);
+    if (mem != MAP_FAILED) {
+        munmap(mem, 4096);
+    }
 }
+// GCOVR_EXCL_STOP

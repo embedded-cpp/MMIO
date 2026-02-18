@@ -28,7 +28,7 @@ add_subdirectory(source/mcu/${MCU_NAME})
 mcu_add_executable(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/source/main.cpp)
 target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/source/mcu/${MCU_NAME}/startup.s)
 target_link_libraries(${PROJECT_NAME} PRIVATE peripherals)
-set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)
 
 # enable compiler warnings
 if(NOT TEST_INSTALLED_VERSION)
