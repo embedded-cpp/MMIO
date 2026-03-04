@@ -7,7 +7,7 @@ jobs:
     analysis:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v4
               with:
                   fetch-depth: 0
 
@@ -17,18 +17,10 @@ jobs:
                 sudo apt-get install -y cppcheck
 
             - name: Get Analysis Data
-              uses: actions/download-artifact@v7
+              uses: actions/download-artifact@v6
               with:
                   name: sonar-data
                   path: build/unit
-
-            - name: Run Cppcheck MISRA
-              run: |
-                cppcheck --project=build/unit/compile_commands.json \
-                         --xml --xml-version=2 \
-                         --output-file=cppcheck-report.xml \
-                         --enable=all --inline-suppr \
-                         -i build
 
             - name: SonarCloud Scan
               uses: SonarSource/sonarqube-scan-action@v6

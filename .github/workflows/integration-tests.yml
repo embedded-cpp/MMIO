@@ -17,5 +17,5 @@ jobs:
               run: |
                   cmake -S test/integration -B build/int/${{ matrix.mcu }} \
                     -DMCU_NAME=${{ matrix.mcu }} \
-                    --toolchain cmake/toolchains/arm-none-eabi-gcc.cmake
+                    --toolchain test/integration/cmake/toolchains/arm-none-eabi-gcc.cmake
                   cmake --build build/int/${{ matrix.mcu }} -j$(nproc)
