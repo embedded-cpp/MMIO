@@ -30,8 +30,8 @@ extern "C" void USART2_IRQHandler() {
         char c = static_cast<char>(USART2::DR::DATA::read());
         if (uart_line_len < UART_LINE_BUF_SIZE - 1) {
             size_t idx                   = uart_line_len;
-            uart_line_len                = idx + 1U;
             uart_line_buf[uart_line_len] = c;
+            uart_line_len                = idx + 1U;
         }
 
         if (c == '\r' || c == '\n') {
@@ -49,7 +49,7 @@ extern "C" void USART2_IRQHandler() {
     }
 }
 
-int main(void) {
+int main() {
     // Systick config: 1ms tick
     using SYST_CSR = reg<0xE000E010U, 32U, rw>;
     SYST_CSR::modify([](auto& reg) { reg |= 0x00000001U; }); // Enable the timer
@@ -58,8 +58,6 @@ int main(void) {
 
     // Activate systick interrupt (Peripheral & NVIC)
     SYST_CSR::modify([](auto& reg) { reg |= 0x00000002U; });
-    using NVIC_ISER0 = reg<0xE000E100U, 32U, rw>;
-    NVIC_ISER0::write(1U << 15U); // SysTick interrupt
 
     // Clock
     RCC::AHB1ENR::GPIOAEN::set();

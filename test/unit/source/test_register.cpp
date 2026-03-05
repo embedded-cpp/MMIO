@@ -18,21 +18,21 @@
 #include "doctest/doctest.h"
 //<! External
 #include "mmio/mmio.hpp"
+#include "mmio/policy/access.hpp"
 //<! System
 #include <cstdint>
 #include <sys/mman.h>
 
 using namespace mmio;
 
-static constexpr std::uintptr_t MOCK_ADDR = 0x10000U;
+static constexpr std::uintptr_t mock_addr = 0x10000U;
 
-struct MmapFixture {
+struct mmap_fixture {
     void* mem;
-    MmapFixture() {
-        mem = mmap(reinterpret_cast<void*>(MOCK_ADDR), 4096, PROT_READ | PROT_WRITE,
-            MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
-    }
-    ~MmapFixture() {
+    mmap_fixture()
+        : mem(mmap(reinterpret_cast<void*>(mock_addr), 4096, PROT_READ | PROT_WRITE,
+              MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED_NOREPLACE, -1, 0)) {}
+    ~mmap_fixture() {
         if (mem != MAP_FAILED) {
             munmap(mem, 4096);
         }
@@ -40,22 +40,22 @@ struct MmapFixture {
 };
 
 TEST_SUITE("mmio") {
-    TEST_CASE_FIXTURE(MmapFixture, "read_write") {
+    TEST_CASE_FIXTURE(mmap_fixture, "read_write") {
         SUBCASE("reg") {
             REQUIRE(mem != MAP_FAILED);
             // Init
-            volatile uint32_t* MOCK_REG = reinterpret_cast<volatile uint32_t*>(MOCK_ADDR);
-            using TEST_REG              = reg<MOCK_ADDR, 32, rw>;
-            using TEST_FIELD0           = field<TEST_REG, 0, 8>;
-            using TEST_FIELD8           = field<TEST_REG, 8, 8>;
+            volatile auto* mock_reg = reinterpret_cast<volatile uint32_t*>(mock_addr);
+            using TEST_REG          = reg<mock_addr, 32, rw>;
+            using TEST_FIELD0       = field<TEST_REG, 0, 8>;
+            using TEST_FIELD8       = field<TEST_REG, 8, 8>;
 
             // Check read
-            *MOCK_REG = 0xFFFFFFFF;
+            *mock_reg = 0xFFFFFFFF;
             CHECK(TEST_REG::read() == 0xFFFFFFFF);
 
             // Check write
             TEST_REG::write(0xA5A5A5A5);
-            CHECK(*MOCK_REG == 0xA5A5A5A5);
+            CHECK(*mock_reg == 0xA5A5A5A5);
 
             // Check modify
             TEST_REG::modify([](uint32_t& val) { val ^= 0xFFFFFFFF; });
@@ -63,61 +63,64 @@ TEST_SUITE("mmio") {
 
             // Check write_set
             TEST_REG::write_set<TEST_FIELD0, TEST_FIELD8>();
-            CHECK(*MOCK_REG == 0x0000FFFF);
+            CHECK(*mock_reg == 0x0000FFFF);
         }
 
         SUBCASE("field") {
             REQUIRE(mem != MAP_FAILED);
             // Init
-            volatile uint32_t* MOCK_REG = reinterpret_cast<volatile uint32_t*>(MOCK_ADDR);
-            using TEST_REG              = reg<MOCK_ADDR, 32, rw>;
-            using TEST_FIELD            = field<TEST_REG, 8, 8>;
+            volatile auto* mock_reg = reinterpret_cast<volatile uint32_t*>(mock_addr);
+            using TEST_REG          = reg<mock_addr, 32, rw>;
+            using TEST_FIELD        = field<TEST_REG, 8, 8>;
 
             // Check read/write
-            *MOCK_REG = 0x12345678;
+            *mock_reg = 0x12345678;
             CHECK(TEST_FIELD::read() == 0x56);
             TEST_FIELD::write(0xAB);
-            CHECK(*MOCK_REG == 0x1234AB78);
+            CHECK(*mock_reg == 0x1234AB78);
 
             // Check modify
             TEST_FIELD::modify([](uint32_t& val) { val ^= 0xFF; });
-            CHECK(*MOCK_REG == 0x12345478);
+            CHECK(*mock_reg == 0x12345478);
         }
 
         SUBCASE("bit") {
             REQUIRE(mem != MAP_FAILED);
             // Init
-            volatile uint32_t* MOCK_REG = reinterpret_cast<volatile uint32_t*>(MOCK_ADDR);
-            using TEST_REG              = reg<MOCK_ADDR, 32, rw>;
-            using TEST_BIT              = bit<TEST_REG, 4>;
+            volatile auto* mock_reg = reinterpret_cast<volatile uint32_t*>(mock_addr);
+            using TEST_REG          = reg<mock_addr, 32, rw>;
+            using TEST_BIT          = bit<TEST_REG, 4>;
 
             // Check set/clear/toggle
-            *MOCK_REG = 0x0;
+            *mock_reg = 0x0;
             TEST_BIT::set();
-            CHECK(*MOCK_REG == 0x10);
+            CHECK(*mock_reg == 0x10);
+            CHECK(TEST_BIT::is_set());
             TEST_BIT::clear();
-            CHECK(*MOCK_REG == 0x0);
+            CHECK(*mock_reg == 0x0);
+            CHECK(TEST_BIT::is_clear());
             TEST_BIT::toggle();
-            CHECK(*MOCK_REG == 0x10);
+            CHECK(*mock_reg == 0x10);
+            CHECK(TEST_BIT::is_set());
             TEST_BIT::toggle();
-            CHECK(*MOCK_REG == 0x0);
+            CHECK(*mock_reg == 0x0);
+            CHECK(TEST_BIT::is_clear());
         }
     }
 
-    TEST_CASE_FIXTURE(MmapFixture, "read_only") {
+    TEST_CASE_FIXTURE(mmap_fixture, "read_only") {
         SUBCASE("reg") {
             REQUIRE(mem != MAP_FAILED);
             // Init
-            volatile uint32_t* MOCK_REG = reinterpret_cast<volatile uint32_t*>(MOCK_ADDR);
-            using TEST_REG              = reg<MOCK_ADDR, 32, ro>;
+            volatile auto* mock_reg = reinterpret_cast<volatile uint32_t*>(mock_addr);
+            using TEST_REG          = reg<mock_addr, 32, ro>;
 
             // Check read
-            *MOCK_REG = 0x5A5A5A5A;
+            *mock_reg = 0x5A5A5A5A;
             CHECK(TEST_REG::read() == 0x5A5A5A5A);
 
             // Check write (should not compile)
             // TEST_REG::write(0xFFFFFFFF); // Ignore - should not compile
-
             // Check write_set (should not compile)
             // TEST_REG::write_set<TEST_FIELD0, TEST_FIELD8>();
             // CHECK(*MOCK_REG == 0x0000FFFF); // Ignore - should not compile
@@ -126,12 +129,12 @@ TEST_SUITE("mmio") {
         SUBCASE("field") {
             REQUIRE(mem != MAP_FAILED);
             // Init
-            volatile uint32_t* MOCK_REG = reinterpret_cast<volatile uint32_t*>(MOCK_ADDR);
-            using TEST_REG              = reg<MOCK_ADDR, 32, ro>;
-            using TEST_FIELD            = field<TEST_REG, 8, 8>;
+            volatile auto* mock_reg = reinterpret_cast<volatile uint32_t*>(mock_addr);
+            using TEST_REG          = reg<mock_addr, 32, ro>;
+            using TEST_FIELD        = field<TEST_REG, 8, 8>;
 
             // Check read
-            *MOCK_REG = 0x12345678;
+            *mock_reg = 0x12345678;
             CHECK(TEST_FIELD::read() == 0x56);
 
             // Check write (should not compile)
@@ -141,15 +144,17 @@ TEST_SUITE("mmio") {
         SUBCASE("bit") {
             REQUIRE(mem != MAP_FAILED);
             // Init
-            volatile uint32_t* MOCK_REG = reinterpret_cast<volatile uint32_t*>(MOCK_ADDR);
-            using TEST_REG              = reg<MOCK_ADDR, 32, ro>;
-            using TEST_BIT              = bit<TEST_REG, 4>;
+            volatile auto* mock_reg = reinterpret_cast<volatile uint32_t*>(mock_addr);
+            using TEST_REG          = reg<mock_addr, 32, ro>;
+            using TEST_BIT          = bit<TEST_REG, 4>;
 
             // Check read
-            *MOCK_REG = 0x10;
+            *mock_reg = 0x10;
             CHECK(TEST_BIT::read() == true);
-            *MOCK_REG = 0x0;
+            CHECK(TEST_BIT::is_set());
+            *mock_reg = 0x0;
             CHECK(TEST_BIT::read() == false);
+            CHECK(TEST_BIT::is_clear());
 
             // Check set/clear/toggle (should not compile)
             // TEST_BIT::set();    // Ignore - should not compile
@@ -158,19 +163,19 @@ TEST_SUITE("mmio") {
         }
     }
 
-    TEST_CASE_FIXTURE(MmapFixture, "write_only") {
+    TEST_CASE_FIXTURE(mmap_fixture, "write_only") {
         SUBCASE("reg") {
             REQUIRE(mem != MAP_FAILED);
             // Init
-            volatile uint32_t* MOCK_REG = reinterpret_cast<volatile uint32_t*>(MOCK_ADDR);
-            using TEST_REG              = reg<MOCK_ADDR, 32, wo>;
-            using TEST_FIELD0           = field<TEST_REG, 0, 8>;
-            using TEST_FIELD8           = field<TEST_REG, 8, 8>;
+            volatile auto* mock_reg = reinterpret_cast<volatile uint32_t*>(mock_addr);
+            using TEST_REG          = reg<mock_addr, 32, wo>;
+            using TEST_FIELD0       = field<TEST_REG, 0, 8>;
+            using TEST_FIELD8       = field<TEST_REG, 8, 8>;
 
             // Check write
-            *MOCK_REG = 0x0;
+            *mock_reg = 0x0;
             TEST_REG::write(0xDEADBEEF);
-            CHECK(*MOCK_REG == 0xDEADBEEF);
+            CHECK(*mock_reg == 0xDEADBEEF);
 
             // Check read (should not compile)
             // uint32_t val = TEST_REG::read(); // Ignore - should not compile
@@ -180,19 +185,19 @@ TEST_SUITE("mmio") {
 
             // Check write_set
             TEST_REG::write_set<TEST_FIELD0, TEST_FIELD8>();
-            CHECK(*MOCK_REG == 0x0000FFFF);
+            CHECK(*mock_reg == 0x0000FFFF);
         }
 
         SUBCASE("field") {
             REQUIRE(mem != MAP_FAILED);
             // Init
-            volatile uint32_t* MOCK_REG = reinterpret_cast<volatile uint32_t*>(MOCK_ADDR);
-            using TEST_REG              = reg<MOCK_ADDR, 32, wo>;
-            using TEST_FIELD            = field<TEST_REG, 8, 8>;
+            volatile auto* mock_reg = reinterpret_cast<volatile uint32_t*>(mock_addr);
+            using TEST_REG          = reg<mock_addr, 32, wo>;
+            using TEST_FIELD        = field<TEST_REG, 8, 8>;
 
             // Check write
             TEST_FIELD::write(0xAB);
-            CHECK(*MOCK_REG == 0x0000AB00);
+            CHECK(*mock_reg == 0x0000AB00);
 
             // Check read (should not compile)
             // uint32_t val = TEST_FIELD::read(); // Ignore - should not compile
@@ -204,17 +209,92 @@ TEST_SUITE("mmio") {
         SUBCASE("bit") {
             REQUIRE(mem != MAP_FAILED);
             // Init
-            volatile uint32_t* MOCK_REG = reinterpret_cast<volatile uint32_t*>(MOCK_ADDR);
-            using TEST_REG              = reg<MOCK_ADDR, 32, wo>;
-            using TEST_BIT              = bit<TEST_REG, 0>;
+            volatile auto* mock_reg = reinterpret_cast<volatile uint32_t*>(mock_addr);
+            using TEST_REG          = reg<mock_addr, 32, wo>;
+            using TEST_BIT          = bit<TEST_REG, 0>;
 
             // Check set
-            *MOCK_REG = 0x0;
+            *mock_reg = 0x0;
             TEST_BIT::set();
-            CHECK(*MOCK_REG == 0x1);
+            CHECK(*mock_reg == 0x1);
             TEST_BIT::clear();
-            CHECK(*MOCK_REG == 0x0);
+            CHECK(*mock_reg == 0x0);
+            // TEST_BIT::is_set(); // Ignore - should not compile
+            // TEST_BIT::is_clear(); // Ignore - should not compile
             // TEST_BIT::toggle(); // Ignore - should not compile
+        }
+    }
+
+    TEST_CASE_FIXTURE(mmap_fixture, "write_1_to_clear") {
+        SUBCASE("bit") {
+            REQUIRE(mem != MAP_FAILED);
+            // Init
+            volatile auto* mock_reg = reinterpret_cast<volatile uint32_t*>(mock_addr);
+            using TEST_REG          = reg<mock_addr, 32, w1c>;
+            using TEST_BIT          = bit<TEST_REG, 0>;
+
+            // Check read
+            *mock_reg = 0x1;
+            CHECK(TEST_BIT::read() == 1);
+            CHECK(TEST_BIT::is_set());
+            *mock_reg = 0x0;
+            CHECK(TEST_BIT::is_clear());
+
+            // Check clear
+            *mock_reg = 0x1;
+            TEST_BIT::clear();
+            CHECK(*mock_reg == 0x1); // Cannot works on host because it does not have real W1C behavior, but should
+                                     // compile and call the correct method
+            // TEST_BIT::set(); // Ignore - should not compile
+        }
+    }
+
+    TEST_CASE_FIXTURE(mmap_fixture, "Field corner cases") {
+        SUBCASE("field at MSB") {
+            REQUIRE(mem != MAP_FAILED);
+            // Init
+            volatile auto* mock_reg = reinterpret_cast<volatile uint32_t*>(mock_addr);
+            using TEST_REG          = reg<mock_addr, 32, rw>;
+            using TEST_FIELD        = field<TEST_REG, 31, 1>; // Test MSB field
+
+            // Check read/write
+            *mock_reg = 0xFFFFFFFF;
+            CHECK(TEST_FIELD::is_set());
+            TEST_FIELD::clear();
+            CHECK(TEST_FIELD::is_clear());
+            CHECK(*mock_reg == 0x7FFFFFFF);
+            TEST_FIELD::set();
+            CHECK(*mock_reg == 0xFFFFFFFF);
+        }
+
+        SUBCASE("full-width field") {
+            REQUIRE(mem != MAP_FAILED);
+            // Init
+            volatile auto* mock_reg = reinterpret_cast<volatile uint32_t*>(mock_addr);
+            using TEST_REG          = reg<mock_addr, 32, rw>;
+            using TEST_FIELD        = field<TEST_REG, 0, 32>; // Test full-width field
+
+            // Check read/write
+            *mock_reg = 0x12345678;
+            CHECK(TEST_FIELD::read() == 0x12345678);
+            TEST_FIELD::write(0xFFFFFFFF);
+            CHECK(*mock_reg == 0xFFFFFFFF);
+
+            // Check modify
+            TEST_FIELD::modify([](uint32_t& val) { val ^= 0xFFFFFFFF; });
+            CHECK(*mock_reg == 0x00000000);
+        }
+
+        SUBCASE("Too large value write") {
+            REQUIRE(mem != MAP_FAILED);
+            // Init
+            volatile auto* mock_reg = reinterpret_cast<volatile uint32_t*>(mock_addr);
+            using TEST_REG          = reg<mock_addr, 32, rw>;
+            using TEST_FIELD        = field<TEST_REG, 8, 8>;
+
+            // Check read/write with value larger than field width (should be masked)
+            TEST_FIELD::write(0xFFF);       // Value larger than 8 bits
+            CHECK(*mock_reg == 0x0000FF00); // Should be masked to 8 bits
         }
     }
 }

@@ -39,16 +39,22 @@ namespace mmio {
     struct write_only {};
 
     /**
+     * @brief Tag type for write-1-to-clear registers
+     */
+    struct write_1_to_clear : read_only {};
+
+    /**
      * @brief Tag type for read-write registers
      * Inherits from both read_only and write_only
      */
     struct read_write : read_only, write_only {};
 
     // Convenient aliases
-    using ro = read_only;
-    using wo = write_only;
-    using rw = read_write;
-    using na = no_access;
+    using ro  = read_only;
+    using wo  = write_only;
+    using rw  = read_write;
+    using w1c = write_1_to_clear;
+    using na  = no_access;
 
     /**
      * @brief Concept to check if a type is a valid read access policy
@@ -65,11 +71,18 @@ namespace mmio {
     concept writable = std::derived_from<T, write_only>;
 
     /**
+     * @brief Concept to check if a type is a valid write-1-to-clear access policy
+     * @tparam T Type to check
+     */
+    template <typename T>
+    concept writable_1_to_clear = std::derived_from<T, write_1_to_clear>;
+
+    /**
      * @brief Concept to check if a type is a valid access policy (no_access, readable, or writable)
      * @tparam T Type to check
      */
     template <typename T>
-    concept access_policy = std::same_as<T, no_access> || readable<T> || writable<T>;
+    concept access_policy = std::same_as<T, no_access> || readable<T> || writable<T> || writable_1_to_clear<T>;
 } // namespace mmio
 
 #endif // ACCESS_HPP

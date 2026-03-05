@@ -7,12 +7,17 @@ jobs:
     analysis:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v4
               with:
                   fetch-depth: 0
 
+            - name: Install Tools
+              run: |
+                sudo apt-get update
+                sudo apt-get install -y cppcheck
+
             - name: Get Analysis Data
-              uses: actions/download-artifact@v7
+              uses: actions/download-artifact@v6
               with:
                   name: sonar-data
                   path: build/unit
@@ -25,3 +30,4 @@ jobs:
                   args: >
                       -Dsonar.cfamily.compile-commands=build/unit/compile_commands.json
                       -Dsonar.coverageReportPaths=build/unit/sonarqube.xml
+                      -Dsonar.cxx.cppcheck.reportPath=cppcheck-report.xml

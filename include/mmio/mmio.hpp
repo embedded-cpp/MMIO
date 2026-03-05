@@ -25,7 +25,6 @@
 #include <concepts>
 #include <cstddef>
 #include <cstdint>
-#include <functional>
 #include <type_traits>
 #include <utility>
 
@@ -62,11 +61,14 @@ namespace mmio {
          * @brief Internal helper to get a volatile reference to the hardware address.
          * @return Volatile reference to the register memory.
          */
-        static constexpr volatile value_type& raw() noexcept {
+        static volatile value_type& raw() noexcept {
             return *reinterpret_cast<volatile value_type*>(address);
         }
 
     public:
+        reg()  = delete;
+        ~reg() = delete;
+
         // ================= READ =================
 
         /**
@@ -75,7 +77,7 @@ namespace mmio {
          * @note This operation performs a volatile load from memory.
          * @return The current value of the register.
          */
-        [[nodiscard]] static constexpr value_type read() noexcept
+        [[nodiscard]] static value_type read() noexcept
             requires (readable<AccessPolicy>)
         {
             return raw();
@@ -89,12 +91,29 @@ namespace mmio {
          * @note This operation performs a volatile store to memory.
          * It overwrites the entire content of the register.
          *
-         * @param v The value to write.
+         * @param val The value to write.
          */
-        static constexpr void write(value_type v) noexcept
+        static void write(value_type val) noexcept
             requires (writable<AccessPolicy>)
         {
-            raw() = v;
+            raw() = val;
+        }
+
+        /**
+         * @brief Writes a value to the register, clearing bits that are set to 1.
+         *
+         * @note This operation performs a volatile store to memory.
+         * It overwrites the entire content of the register.
+         *
+         * @warning This method is only meaningful for registers with a Write-1-to-Clear (W1C) policy.
+         * Writing a '1' will clear the corresponding bit, while writing '0' has no effect.
+         *
+         * @param val The value to write.
+         */
+        static void write(value_type val) noexcept
+            requires (writable_1_to_clear<AccessPolicy>)
+        {
+            raw() = val;
         }
 
         /**
@@ -117,14 +136,21 @@ namespace mmio {
          * - To preserve other bits in the register, use `modify()` (Read-Modify-Write).
          * - For a clean initial configuration (Cold Boot), `write_set` is the ideal choice.
          *
-         * @requires The register must have a `writable` access policy.
-         * @requires All `Fields` must be compatible with the register's `value_type`.
+         * @pre The register must have a `writable` access policy.
+         * @pre All `Fields` must be compatible with the register's `value_type`.
          */
+        template <typename F>
+        static constexpr bool belongs_to_this_v = requires {
+            typename F::register_type;
+            requires std::same_as<typename F::register_type, reg>;
+        };
         template <typename... Fields>
-        static constexpr void write_set() noexcept
+            requires (belongs_to_this_v<Fields> && ...)
+        static void write_set() noexcept
             requires writable<policy>
         {
-            write((Fields::mask | ...));
+            static_assert(sizeof...(Fields) > 0, "write_set requires at least one field");
+            write((Fields::mask | ... | value_type{0}));
         }
         // ================= MODIFY =================
 
@@ -138,13 +164,13 @@ namespace mmio {
          * If the register is shared, external locking is required.
          *
          * @tparam F Callable type (e.g., lambda) with signature `void(value_type&)`.
-         * @param f  The callable that modifies the value in-place.
+         * @param func  The callable that modifies the value in-place.
          */
         template <typename F>
             requires (readable<AccessPolicy> && writable<AccessPolicy> && std::invocable<F, value_type&>)
-        static constexpr void modify(F&& f) noexcept {
+        static void modify(F&& func) noexcept(std::is_nothrow_invocable_v<F, value_type&>) {
             value_type tmp = raw();
-            std::invoke(std::forward<F>(f), tmp);
+            func(tmp);
             raw() = tmp;
         }
     };
@@ -162,12 +188,16 @@ namespace mmio {
     template <typename Register, std::size_t Offset, std::size_t Width>
         requires (Offset + Width <= Register::bit_size)
     class field {
-        using value_type = typename Register::value_type;
-        using policy     = typename Register::policy;
-
     public:
-        static constexpr value_type mask = ((value_type(1) << Width) - 1) << Offset;
+        using value_type    = typename Register::value_type; ///< Underlying integer type (e.g., uint32_t)
+        using policy        = typename Register::policy;     ///< Access policy alias from the parent register
+        using register_type = Register;                      ///< Type alias for the parent register
 
+        static constexpr value_type mask =
+            Width == Register::bit_size ? ~value_type{0} : ((value_type(1) << Width) - 1) << Offset;
+
+        field()  = delete;
+        ~field() = delete;
         // ================= READ =================
 
         /**
@@ -178,7 +208,7 @@ namespace mmio {
          *
          * @return The extracted field value.
          */
-        [[nodiscard]] static constexpr value_type read() noexcept
+        [[nodiscard]] static value_type read() noexcept
             requires (readable<policy>)
         {
             return (Register::read() & mask) >> Offset;
@@ -196,14 +226,14 @@ namespace mmio {
          * 4. Writes the result back.
          *
          * @note This preserves the state of all other bits (neighbors) in the register.
-         * @param v The value to write (will be masked and shifted automatically).
+         * @param val The value to write (will be masked and shifted automatically).
          */
-        static constexpr void write(value_type v) noexcept
+        static void write(value_type val) noexcept
             requires (writable<policy> && readable<policy>)
         {
-            Register::modify([v](value_type& r) {
-                r &= ~mask;
-                r |= (v << Offset) & mask;
+            Register::modify([val](value_type& reg_val) {
+                reg_val &= ~mask;
+                reg_val |= (val << Offset) & mask;
             });
         }
 
@@ -217,12 +247,27 @@ namespace mmio {
          * will be set to 0. This is typically used for command or
          * trigger registers where neighbors are irrelevant or reserved.
          *
-         * @param v The value to write (will be masked and shifted automatically).
+         * @param val The value to write (will be masked and shifted automatically).
          */
-        static constexpr void write(value_type v) noexcept
+        static void write(value_type val) noexcept
             requires (writable<policy> && !readable<policy>)
         {
-            Register::write((v << Offset) & mask);
+            Register::write((val << Offset) & mask);
+        }
+
+        /**
+         * @brief Writes a value to the field (Write-1-to-Clear Policy).
+         *
+         * For fields that clear on write (W1C), writing a '1' will clear the bit,
+         * while writing '0' has no effect. This method allows setting bits to be cleared
+         * without affecting other bits in the register.
+         *
+         * @param val The value to write (only bits set to '1' will be cleared).
+         */
+        static void write(value_type val) noexcept
+            requires (writable_1_to_clear<policy>)
+        {
+            Register::write((val << Offset) & mask);
         }
 
         // ================= MODIFY =================
@@ -236,19 +281,17 @@ namespace mmio {
          * @note Requires Read-Write access.
          *
          * @tparam F Callable type with signature `void(value_type&)`.
-         * @param f  The callable that transforms the field value.
+         * @param func  The callable that transforms the field value.
          */
         template <typename F>
-        static constexpr void modify(F&& f) noexcept
+        static void modify(F&& func) noexcept(std::is_nothrow_invocable_v<F, value_type&>)
             requires (writable<policy> && readable<policy> && std::invocable<F, value_type&>)
         {
-            Register::modify([&f](value_type& r) {
-                value_type tmp = (r & mask) >> Offset;
-
-                std::invoke(std::forward<F>(f), tmp);
-
-                r &= ~mask;
-                r |= (tmp << Offset) & mask;
+            Register::modify([func = std::forward<F>(func)](value_type& reg_val) mutable {
+                value_type tmp = (reg_val & mask) >> Offset;
+                func(tmp);
+                reg_val &= ~mask;
+                reg_val |= (tmp << Offset) & mask;
             });
         }
 
@@ -258,10 +301,10 @@ namespace mmio {
          * @brief Sets the bit to 1 (Read-Write Policy).
          * Uses RMW to preserve other bits in the register.
          */
-        static constexpr void set() noexcept
+        static void set() noexcept
             requires (writable<policy> && readable<policy> && (Width == 1))
         {
-            Register::modify([](value_type& r) { r |= mask; });
+            Register::modify([](value_type& reg_val) { reg_val |= mask; });
         }
 
         /**
@@ -270,7 +313,7 @@ namespace mmio {
          * @warning **DESTRUCTIVE**: Writes the mask directly to the register.
          * All other bits become 0.
          */
-        static constexpr void set() noexcept
+        static void set() noexcept
             requires (writable<policy> && (!readable<policy>) && (Width == 1))
         {
             Register::write(mask);
@@ -280,10 +323,10 @@ namespace mmio {
          * @brief Clears the bit to 0 (Read-Write Policy).
          * Uses RMW to preserve other bits in the register.
          */
-        static constexpr void clear() noexcept
+        static void clear() noexcept
             requires (writable<policy> && readable<policy> && (Width == 1))
         {
-            Register::modify([](value_type& r) { r &= ~mask; });
+            Register::modify([](value_type& reg_val) { reg_val &= ~mask; });
         }
 
         /**
@@ -292,13 +335,20 @@ namespace mmio {
          * Writes 0 to the entire register.
          *
          * @warning **DESTRUCTIVE**: effectively resets the whole register to 0.
-         * @note This is NOT for "Write 1 to Clear" (W1C) bits. For W1C bits,
-         * use `set()` (which writes 1).
          */
-        static constexpr void clear() noexcept
+        static void clear() noexcept
             requires (writable<policy> && !readable<policy> && (Width == 1))
         {
             Register::write(0);
+        }
+
+        /**
+         * @brief Clears the bit to 0 (Write-1-to-Clear Policy).
+         */
+        static void clear() noexcept
+            requires (writable_1_to_clear<policy> && (Width == 1))
+        {
+            Register::write(mask);
         }
 
         /**
@@ -307,10 +357,34 @@ namespace mmio {
          * @note Strictly requires Read-Write access, as the new state depends
          * on the previous state.
          */
-        static constexpr void toggle() noexcept
+        static void toggle() noexcept
             requires (writable<policy> && readable<policy> && (Width == 1))
         {
-            Register::modify([](value_type& r) { r ^= mask; });
+            Register::modify([](value_type& reg_val) { reg_val ^= mask; });
+        }
+
+        /**
+         * @brief Check if a bit is set (1)
+         *
+         * @note Requires Read-Only access.
+         * @return true if the bit is set, false otherwise.
+         */
+        static bool is_set() noexcept
+            requires (readable<policy> && (Width == 1))
+        {
+            return (Register::read() & mask) != 0;
+        }
+
+        /**
+         * @brief Check if a bit is clear (0)
+         *
+         * @note Requires Read-Only access.
+         * @return true if the bit is clear, false otherwise.
+         */
+        static bool is_clear() noexcept
+            requires (readable<policy> && (Width == 1))
+        {
+            return (Register::read() & mask) == 0;
         }
     };
 

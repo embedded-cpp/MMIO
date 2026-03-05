@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9...3.31)
+cmake_minimum_required(VERSION 3.28)
 
 # ---- Project ----
 project(
@@ -26,7 +26,7 @@ CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.8.0")
 
 # ---- Create library ----
 add_library(${PROJECT_NAME} INTERFACE)
-set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)
 
 # being a cross-platform targets, we enforce standards conformance on MSVC
 target_compile_options(${PROJECT_NAME} INTERFACE "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive->")
