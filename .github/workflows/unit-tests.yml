@@ -5,7 +5,7 @@ on:
 
 env:
     CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm_modules
-    BUILD_DIR: build/unit
+    BUILD_DIR: build/test/unit
 
 jobs:
     run-tests:
