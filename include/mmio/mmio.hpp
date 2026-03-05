@@ -100,6 +100,23 @@ namespace mmio {
         }
 
         /**
+         * @brief Writes a value to the register, clearing bits that are set to 1.
+         *
+         * @note This operation performs a volatile store to memory.
+         * It overwrites the entire content of the register.
+         *
+         * @warning This method is only meaningful for registers with a Write-1-to-Clear (W1C) policy.
+         * Writing a '1' will clear the corresponding bit, while writing '0' has no effect.
+         *
+         * @param val The value to write.
+         */
+        static void write(value_type val) noexcept
+            requires (writable_1_to_clear<AccessPolicy>)
+        {
+            raw() = val;
+        }
+
+        /**
          * @brief Writes multiple bit-fields simultaneously in a single hardware operation.
          *
          * This function leverages Variadic Templates and Fold Expressions (C++17) to calculate
@@ -122,7 +139,13 @@ namespace mmio {
          * @pre The register must have a `writable` access policy.
          * @pre All `Fields` must be compatible with the register's `value_type`.
          */
+        template <typename F>
+        static constexpr bool belongs_to_this_v = requires {
+            typename F::register_type;
+            requires std::same_as<typename F::register_type, reg>;
+        };
         template <typename... Fields>
+            requires (belongs_to_this_v<Fields> && ...)
         static void write_set() noexcept
             requires writable<policy>
         {
@@ -166,8 +189,9 @@ namespace mmio {
         requires (Offset + Width <= Register::bit_size)
     class field {
     public:
-        using value_type = typename Register::value_type;
-        using policy     = typename Register::policy;
+        using value_type    = typename Register::value_type; ///< Underlying integer type (e.g., uint32_t)
+        using policy        = typename Register::policy;     ///< Access policy alias from the parent register
+        using register_type = Register;                      ///< Type alias for the parent register
 
         static constexpr value_type mask =
             Width == Register::bit_size ? ~value_type{0} : ((value_type(1) << Width) - 1) << Offset;
@@ -227,6 +251,21 @@ namespace mmio {
          */
         static void write(value_type val) noexcept
             requires (writable<policy> && !readable<policy>)
+        {
+            Register::write((val << Offset) & mask);
+        }
+
+        /**
+         * @brief Writes a value to the field (Write-1-to-Clear Policy).
+         *
+         * For fields that clear on write (W1C), writing a '1' will clear the bit,
+         * while writing '0' has no effect. This method allows setting bits to be cleared
+         * without affecting other bits in the register.
+         *
+         * @param val The value to write (only bits set to '1' will be cleared).
+         */
+        static void write(value_type val) noexcept
+            requires (writable_1_to_clear<policy>)
         {
             Register::write((val << Offset) & mask);
         }
@@ -296,13 +335,20 @@ namespace mmio {
          * Writes 0 to the entire register.
          *
          * @warning **DESTRUCTIVE**: effectively resets the whole register to 0.
-         * @note This is NOT for "Write 1 to Clear" (W1C) bits. For W1C bits,
-         * use `set()` (which writes 1).
          */
         static void clear() noexcept
             requires (writable<policy> && !readable<policy> && (Width == 1))
         {
             Register::write(0);
+        }
+
+        /**
+         * @brief Clears the bit to 0 (Write-1-to-Clear Policy).
+         */
+        static void clear() noexcept
+            requires (writable_1_to_clear<policy> && (Width == 1))
+        {
+            Register::write(mask);
         }
 
         /**

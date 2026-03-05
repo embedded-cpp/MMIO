@@ -41,7 +41,7 @@ namespace mmio {
     /**
      * @brief Tag type for write-1-to-clear registers
      */
-    struct write_1_to_clear {};
+    struct write_1_to_clear : read_only {};
 
     /**
      * @brief Tag type for read-write registers

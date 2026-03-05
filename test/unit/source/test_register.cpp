@@ -225,6 +225,30 @@ TEST_SUITE("mmio") {
         }
     }
 
+    TEST_CASE_FIXTURE(mmap_fixture, "write_1_to_clear") {
+        SUBCASE("bit") {
+            REQUIRE(mem != MAP_FAILED);
+            // Init
+            volatile auto* mock_reg = reinterpret_cast<volatile uint32_t*>(mock_addr);
+            using TEST_REG          = reg<mock_addr, 32, w1c>;
+            using TEST_BIT          = bit<TEST_REG, 0>;
+
+            // Check read
+            *mock_reg = 0x1;
+            CHECK(TEST_BIT::read() == 1);
+            CHECK(TEST_BIT::is_set());
+            *mock_reg = 0x0;
+            CHECK(TEST_BIT::is_clear());
+
+            // Check clear
+            *mock_reg = 0x1;
+            TEST_BIT::clear();
+            CHECK(*mock_reg == 0x1); // Cannot works on host because it does not have real W1C behavior, but should
+                                     // compile and call the correct method
+            // TEST_BIT::set(); // Ignore - should not compile
+        }
+    }
+
     TEST_CASE_FIXTURE(mmap_fixture, "Field corner cases") {
         SUBCASE("field at MSB") {
             REQUIRE(mem != MAP_FAILED);
