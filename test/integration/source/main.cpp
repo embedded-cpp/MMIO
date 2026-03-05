@@ -1,10 +1,13 @@
-#include "GPIOA.h"
-#include "GPIOC.h"
-#include "RCC.h"
-#include "USART2.h"
-#include <cstddef> // for size_t
-#include <cstdint> // for uint32_t
+#include "GPIOA.h"  // for GPIOA
+#include "GPIOC.h"  // for GPIOC
+#include "RCC.h"    // for RCC
+#include "USART2.h" // for USART2
+#include <cstddef>  // for size_t
+#include <cstdint>  // for uint32_t
 
+#include "mmio/mmio.hpp" // for reg, rw
+
+using namespace mmio;
 
 constexpr size_t UART_LINE_BUF_SIZE = 128;
 static volatile char uart_line_buf[UART_LINE_BUF_SIZE];
@@ -21,24 +24,24 @@ extern "C" void SysTick_Handler() {
 }
 
 extern "C" void USART2_IRQHandler() {
-    USART2 usart2;
+    // USART2 usart2;
 
-    if (usart2.SR.rxne().read()) {
-        char c = static_cast<char>(usart2.DR.dr().read());
+    if (USART2::SR::RXNE::read()) {
+        char c = static_cast<char>(USART2::DR::DATA::read());
         if (uart_line_len < UART_LINE_BUF_SIZE - 1) {
             size_t idx                   = uart_line_len;
-            uart_line_len                = idx + 1U;
             uart_line_buf[uart_line_len] = c;
+            uart_line_len                = idx + 1U;
         }
 
         if (c == '\r' || c == '\n') {
             uart_line_buf[uart_line_len] = '\0';
 
             for (size_t i = 0; i < uart_line_len; ++i) {
-                while (!usart2.SR.txe().read()) {
+                while (!USART2::SR::TXE::read()) {
                 }
-                usart2.DR.dr().write(static_cast<uint32_t>(uart_line_buf[i]));
-                while (!usart2.SR.tc().read()) {
+                USART2::DR::DATA::write(static_cast<uint32_t>(uart_line_buf[i]));
+                while (!USART2::SR::TC::read()) {
                 }
             }
             uart_line_len = 0;
@@ -46,73 +49,57 @@ extern "C" void USART2_IRQHandler() {
     }
 }
 
-int main(void) {
+int main() {
     // Systick config: 1ms tick
-    mmio::reg<32U, mmio::rw> SYST_CSR{0xE000E010U}; // CLKSOURCE = processor clock
-    SYST_CSR.modify([](auto& reg) { reg |= 0x00000001U; }); // Enable the timer
-    mmio::reg<32U, mmio::rw> SYST_RVR{0xE000E014U};
-    SYST_RVR.write<16000U - 1U>();
+    using SYST_CSR = reg<0xE000E010U, 32U, rw>;
+    SYST_CSR::modify([](auto& reg) { reg |= 0x00000001U; }); // Enable the timer
+    using SYST_RVR = reg<0xE000E014U, 32U, rw>;
+    SYST_RVR::write(16000U - 1U);
 
     // Activate systick interrupt (Peripheral & NVIC)
-    SYST_CSR.modify([](auto& reg) { reg |= 0x00000002U; });
-    mmio::reg<32U, mmio::rw> NVIC_ISER0{0xE000E100U};
-    NVIC_ISER0.write<1U << 15U>(); // SysTick interrupt
+    SYST_CSR::modify([](auto& reg) { reg |= 0x00000002U; });
 
     // Clock
-    RCC rcc;
-    rcc.AHB1ENR.gpioaen().set_bit().gpiocen().set_bit();
+    RCC::AHB1ENR::GPIOAEN::set();
+    RCC::AHB1ENR::GPIOCEN::set();
 
     // GPIO A5: output
-    GPIOA gpioa;
-    gpioa.MODER.moder5().write<0b01U>(); // MODER5 = Output
+    GPIOA::MODER::PIN5::write(0b01U); // MODER5 = Output
 
     // GPIO C13: input
-    GPIOC gpioc;
-    gpioc.MODER.moder13().write<0b00U>(); // MODER13 = Input
-    gpioc.PUPDR.pupdr13().write<0b10U>(); // Pull-down
+    GPIOC::MODER::PIN13::write(0b00U); // MODER13 = Input
+    GPIOC::PUPDR::PIN13::write(0b10U); // Pull-down
 
     // USART2: TX on A2, RX on A3
-    rcc.APB1ENR.usart2en().set_bit();
-    gpioa.MODER.moder2()
-        .write<0b10U>() // A2: AF
-        .moder3()
-        .write<0b10U>(); // A3: AF
-    gpioa.AFRL.afrl2().write<0b0111U>(); // A2: AF7 (USART2_TX)
-    gpioa.AFRL.afrl3().write<0b0111U>(); // A3: AF7 (USART2_RX)
+    RCC::APB1ENR::USART2EN::set();
+
+    GPIOA::MODER::PIN2::write(0b10U);    // A2: AF
+    GPIOA::MODER::PIN3::write(0b10U);    // A3: AF
+    GPIOA::AFRL::AFRLL2::write(0b0111U); // A2: AF7 (USART2_TX)
+    GPIOA::AFRL::AFRLL3::write(0b0111U); // A3: AF7 (USART2_RX)
 
     // USART2 configuration (baudrate 115200 @ 16MHz)
-    USART2 usart2;
     // Baudrate = fclk / (16 * USARTDIV)
     // USARTDIV = 16MHz / (16 * 115200) = 8.6805
     // Mantissa = 8, Fraction = 11 (0.6805 * 16 = 10.89 ~ 11)
-    usart2.BRR.div_mantissa()
-        .write<8U>() // Mantissa
-        .div_fraction()
-        .write<11U>(); // Fraction
+    USART2::BRR::DIV_MANTISSA::write(8U);  // Mantissa
+    USART2::BRR::DIV_FRACTION::write(11U); // Fraction
 
-    usart2.CR1.ue()
-        .set_bit() // USART enable
-        .te()
-        .set_bit() // Transmitter enable
-        .re()
-        .set_bit() // Receiver enable
-        .rxneie()
-        .set_bit() // RXNE interrupt enable
-        .txeie()
-        .clear_bit() // TXE interrupt disable
-        .pce()
-        .clear_bit(); // Parity control disable
+    USART2::CR1::write_set<USART2::CR1::UE, // USART enable
+        USART2::CR1::TE,                    // Transmitter enable
+        USART2::CR1::RE,                    // Receiver enable
+        USART2::CR1::RXNEIE                 // RXNE interrupt enable
+        >();
 
     // NVIC USART2 interrupt enable
-    mmio::reg<32U, mmio::rw> NVIC_ISER1{0xE000E104U};
-    NVIC_ISER1.write<1U << 6U>(); // USART2 interrupt
-
+    using NVIC_ISER1 = reg<0xE000E104U, 32U, rw>;
+    NVIC_ISER1::write(1U << 6U); // USART2 interrupt
 
     while (1) {
-        if (gpioc.IDR.idr13().read()) {
-            gpioa.ODR.odr5().set_bit();
+        if (GPIOC::IDR::PIN13::read()) {
+            GPIOA::ODR::PIN5::set();
         } else {
-            gpioa.ODR.odr5().clear_bit();
+            GPIOA::ODR::PIN5::clear();
         }
     }
 }

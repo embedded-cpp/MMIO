@@ -7,22 +7,24 @@ Checks: >
   portability-*,
   readability-*,
   misc-*,
+  modernize-*,
 
-  -modernize-*,
+  -modernize-use-trailing-return-type,
   -readability-magic-numbers,
   -cppcoreguidelines-owning-memory,
   -cppcoreguidelines-avoid-magic-numbers,
   -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
   -cppcoreguidelines-pro-type-vararg,
   -cppcoreguidelines-avoid-c-arrays,
-
   -performance-noexcept-move-constructor,
   -performance-unnecessary-value-param,
+  -performance-noexcept-move-constructor,
+  -performance-unnecessary-value-param,
+  -modernize-pass-by-value
 
 WarningsAsErrors: '*'
 
-HeaderFilterRegex: '.*'
-AnalyzeTemporaryDtors: false
+HeaderFilterRegex: '../.*'
 FormatStyle: none
 User: ''
 
@@ -73,6 +75,9 @@ CheckOptions:
   - key: bugprone-narrowing-conversions.WarnOnFloatingPointNarrowing
     value: 'true'
 
+  - key: bugprone-dynamic-static-initializers.HeaderFileExtensions
+    value: ""
+
   - key: bugprone-signed-char-misuse
     value: 'true'
 
@@ -82,9 +87,6 @@ CheckOptions:
   - key: cppcoreguidelines-explicit-virtual-functions.AllowOverridesWithoutVirtualKeyword
     value: 'false'
 
-  - key: cppcoreguidelines-init-variables.IncludeStyle
-    value: 'brace'
-
   - key: cppcoreguidelines-narrowing-conversions.IgnoreConversionFromTypes
     value: 'uint8_t,uint16_t,uint32_t,int8_t,int16_t,int32_t'
 
@@ -92,7 +94,7 @@ CheckOptions:
     value: 'true'
 
   - key: cppcoreguidelines-pro-type-reinterpret-cast
-    value: 'true'
+    value: 'false'
 
   - key: cppcoreguidelines-pro-type-static-cast-downcast
     value: 'true'
@@ -116,23 +118,29 @@ CheckOptions:
     value: 'true'
 
   - key: readability-identifier-naming.ClassCase
-    value: 'snake_case'
+    value: 'lower_case'
 
   - key: readability-identifier-naming.StructCase
-    value: 'snake_case'
+    value: 'lower_case'
 
   - key: readability-identifier-naming.FunctionCase
-    value: 'snake_case'
+    value: 'lower_case'
 
   - key: readability-identifier-naming.VariableCase
-    value: 'snake_case'
+    value: 'lower_case'
 
   - key: readability-identifier-naming.MemberCase
-    value: 'snake_case'
+    value: 'lower_case'
 
   - key: readability-identifier-naming.ConstantCase
-    value: 'UPPER_CASE'
+    value: 'lower_case'
 
+  - key: readability-identifier-naming.TemplateParameterCase
+    value: 'CamelCase'
+
+  - key: readability-identifier-naming.StaticConstantCase
+    value: UPPER_CASE
+    
   - key: readability-implicit-bool-conversion.AllowIntegerConditions
     value: 'false'
 
@@ -146,6 +154,9 @@ CheckOptions:
     value: 'true'
 
   - key: misc-unused-parameters.IgnoreMain
+    value: 'true'
+
+  - key: modernize-use-unified-help-messages-cleanly
     value: 'true'
 
   # ============================================================

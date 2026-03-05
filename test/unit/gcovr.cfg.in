@@ -12,6 +12,7 @@ exclude=.*/Catch2/.*
 exclude=.*/googletest/.*
 
 exclude-unreachable-branches = no
+exclude-throw-branches = yes
 
 cobertura = @CMAKE_BINARY_DIR@/cobertura.xml 
 sonarqube = @CMAKE_BINARY_DIR@/sonarqube.xml 
