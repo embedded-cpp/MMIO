@@ -11,16 +11,11 @@ jobs:
               with:
                   fetch-depth: 0
 
-            - name: Install Tools
-              run: |
-                sudo apt-get update
-                sudo apt-get install -y cppcheck
-
             - name: Get Analysis Data
               uses: actions/download-artifact@v6
               with:
                   name: sonar-data
-                  path: build/unit
+                  path: build/test/unit
 
             - name: SonarCloud Scan
               uses: SonarSource/sonarqube-scan-action@v6
@@ -28,6 +23,5 @@ jobs:
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
               with:
                   args: >
-                      -Dsonar.cfamily.compile-commands=build/unit/compile_commands.json
-                      -Dsonar.coverageReportPaths=build/unit/sonarqube.xml
-                      -Dsonar.cxx.cppcheck.reportPath=cppcheck-report.xml
+                      -Dsonar.cfamily.compile-commands=build/test/unit/compile_commands.json
+                      -Dsonar.coverageReportPaths=build/test/unit/sonarqube.xml
