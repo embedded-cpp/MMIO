@@ -12,19 +12,19 @@ jobs:
                   fetch-depth: 0
 
             - name: Get unit-tests artifacts
-              uses: actions/download-artifact@v6
+              uses: actions/download-artifact@v7
               with:
                   name: sonar-data
                   path: build/test/unit
 
             - name: Get SARIF CodeChecker artifacts
-              uses: actions/download-artifact@v6
+              uses: actions/download-artifact@v7
               with:
                   name: codechecker-sarif
                   path: build/codechecker
 
             - name: SonarCloud Scan
-              uses: SonarSource/sonarqube-scan-action@v6
+              uses: SonarSource/sonarqube-scan-action@v8
               env:
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
               with:
