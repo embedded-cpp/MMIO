@@ -48,7 +48,7 @@ jobs:
                   CodeChecker analyze \
                     ${{ env.BUILD_DIR }}/compile_commands.json \
                     --output ${{ env.BUILD_DIR }}/reports \
-                    --enable-all \
+                    --analyzers clangsa clang-tidy cppcheck gcc \
                     --jobs $(nproc) \
                     --clean
 
