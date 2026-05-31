@@ -25,14 +25,14 @@ jobs:
             - name: Install Clang & tools
               run: |
                   sudo apt-get update
-                  sudo apt-get install -y clang clang-tidy clang-tools
+                  sudo apt-get install -y clang clang-tidy clang-tools cppcheck
 
             - name: Install CodeChecker
               run: |
                   pip3 install codechecker
                   CodeChecker version
 
-            - name: Configure — génère compile_commands.json
+            - name: Configure
               run: |
                   cmake \
                     -S test/unit \
@@ -47,16 +47,15 @@ jobs:
               run: |
                   CodeChecker analyze \
                     ${{ env.BUILD_DIR }}/compile_commands.json \
-                    --output ${{ env.BUILD_DIR }}/cc_reports \
+                    --output ${{ env.BUILD_DIR }}/reports \
                     --enable-all \
-                    --analyzers clangsa clang-tidy \
                     --jobs $(nproc) \
                     --clean
 
             - name: Export SARIF
               run: |
                   CodeChecker parse \
-                    ${{ env.BUILD_DIR }}/cc_reports \
+                    ${{ env.BUILD_DIR }}/reports \
                     --export sarif \
                     --output ${{ env.BUILD_DIR }}/codechecker.sarif \
                     --ignore .codechecker/skip.list
@@ -77,7 +76,7 @@ jobs:
               if: always()
               run: |
                   CodeChecker parse \
-                    ${{ env.BUILD_DIR }}/cc_reports \
+                    ${{ env.BUILD_DIR }}/reports \
                     --export html \
                     --output ${{ env.BUILD_DIR }}/cc_html \
                     --ignore .codechecker/skip.list
