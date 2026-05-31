@@ -20,12 +20,10 @@
  */
 //<! Internal
 //<! External
-#include "mmio/mmio.hpp"
-#include "mmio/policy/access.hpp"
+#include "mmio/mmio.hpp" // for field, reg, rw
 //<! System
-#include <cstdint>
-#include <sys/mman.h>
-
+#include <cstdint>    // for uint32_t, uintptr_t
+#include <sys/mman.h> // for mmap, munmap, MAP_ANONYMOUS, MAP_FAILED
 static constexpr std::uintptr_t mock_addr = 0x10000U;
 
 /**

@@ -11,11 +11,17 @@ jobs:
               with:
                   fetch-depth: 0
 
-            - name: Get Analysis Data
+            - name: Get unit-tests artifacts
               uses: actions/download-artifact@v6
               with:
                   name: sonar-data
                   path: build/test/unit
+
+            - name: Get SARIF CodeChecker artifacts
+              uses: actions/download-artifact@v6
+              with:
+                  name: codechecker-sarif
+                  path: build/codechecker
 
             - name: SonarCloud Scan
               uses: SonarSource/sonarqube-scan-action@v6
@@ -25,3 +31,4 @@ jobs:
                   args: >
                       -Dsonar.cfamily.compile-commands=build/test/unit/compile_commands.json
                       -Dsonar.coverageReportPaths=build/test/unit/sonarqube.xml
+                      -Dsonar.sarifReportPaths=build/codechecker/codechecker.sarif

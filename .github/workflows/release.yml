@@ -19,13 +19,18 @@ jobs:
         uses: ./.github/workflows/unit-tests.yml
         secrets: inherit
 
+    codechecker:
+        needs: [style]
+        uses: ./.github/workflows/codechecker.yml
+        secrets: inherit
+
     integration-tests:
         needs: [unit-tests]
         uses: ./.github/workflows/integration-tests.yml
         secrets: inherit
 
     sonar-analysis:
-        needs: [unit-tests]
+        needs: [unit-tests, codechecker]
         uses: ./.github/workflows/sonar.yml
         secrets: inherit
 

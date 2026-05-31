@@ -15,13 +15,12 @@
  */
 
 //<! Internal
-#include "doctest/doctest.h"
+#include "doctest/doctest.h" // for ResultBuilder, CHECK, Subcase
 //<! External
-#include "mmio/mmio.hpp"
-#include "mmio/policy/access.hpp"
+#include "mmio/mmio.hpp" // for reg, field, rw, bit, ro, wo
 //<! System
-#include <cstdint>
-#include <sys/mman.h>
+#include <cstdint>    // for uint32_t, uintptr_t
+#include <sys/mman.h> // for MAP_FAILED, mmap, munmap
 
 using namespace mmio;
 

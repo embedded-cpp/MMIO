@@ -79,3 +79,41 @@ if(ENABLE_TEST_COVERAGE)
         -fkeep-inline-functions
     )
 endif()
+
+# ---- Analyse statique CodeChecker ----
+# Usage : cmake --build <build_dir> --target codechecker Prérequis : - CodeChecker installé : pip install codechecker -
+# cmake configuré avec -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+find_program(CODECHECKER_EXECUTABLE CodeChecker QUIET)
+
+if(CODECHECKER_EXECUTABLE)
+    # Racine du dépôt = 2 niveaux au-dessus de test/unit/
+    get_filename_component(REPO_ROOT "${CMAKE_SOURCE_DIR}/../.." ABSOLUTE)
+
+    add_custom_target(
+        codechecker
+        # Create output directory for CodeChecker reports
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/codechecker/reports
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/codechecker/reports/html
+        # Analyze everything (Without --ignore to have all TUs analyzed, including headers in include/mmio/)
+        COMMAND ${CODECHECKER_EXECUTABLE} analyze ${CMAKE_BINARY_DIR}/compile_commands.json --output
+                ${CMAKE_BINARY_DIR}/codechecker/reports --enable-all --jobs 4 --clean
+        # SARIF : Filtered results (only issues in include/mmio/**) --- IGNORE ---
+        COMMAND ${CODECHECKER_EXECUTABLE} parse ${CMAKE_BINARY_DIR}/codechecker/reports --export sarif --output
+                ${CMAKE_BINARY_DIR}/codechecker/results.sarif --ignore ${REPO_ROOT}/.codechecker/skip.list
+        # HTML : Readable report for manual review (unfiltered to cover all TUs) --- IGNORE ---
+        COMMAND ${CODECHECKER_EXECUTABLE} parse ${CMAKE_BINARY_DIR}/codechecker/reports --export html --output
+                ${CMAKE_BINARY_DIR}/codechecker/html --ignore ${REPO_ROOT}/.codechecker/skip.list
+        COMMAND ${CMAKE_COMMAND} -E echo "Rapport HTML : ${CMAKE_BINARY_DIR}/codechecker/html/index.html"
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        COMMENT "CodeChecker analysis..."
+        VERBATIM
+    )
+
+    message(STATUS "CodeChecker trouvé : ${CODECHECKER_EXECUTABLE}")
+    message(STATUS "  Cible disponible : cmake --build <build_dir> --target codechecker")
+    message(STATUS "  Rappel           : configurer avec -DCMAKE_EXPORT_COMPILE_COMMANDS=ON")
+else()
+    message(STATUS "CodeChecker non trouvé - cible 'codechecker' indisponible")
+    message(STATUS "  Installer avec : pip install codechecker")
+endif()

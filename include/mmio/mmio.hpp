@@ -66,8 +66,12 @@ namespace mmio {
         }
 
     public:
-        reg()  = delete;
-        ~reg() = delete;
+        reg()                      = delete;
+        reg(const reg&)            = delete;
+        reg& operator=(const reg&) = delete;
+        reg(reg&&)                 = delete;
+        reg& operator=(reg&&)      = delete;
+        ~reg()                     = delete;
 
         // ================= READ =================
 
@@ -170,7 +174,7 @@ namespace mmio {
             requires (readable<AccessPolicy> && writable<AccessPolicy> && std::invocable<F, value_type&>)
         static void modify(F&& func) noexcept(std::is_nothrow_invocable_v<F, value_type&>) {
             value_type tmp = raw();
-            func(tmp);
+            std::forward<F>(func)(tmp);
             raw() = tmp;
         }
     };
@@ -196,8 +200,13 @@ namespace mmio {
         static constexpr value_type mask =
             Width == Register::bit_size ? ~value_type{0} : ((value_type(1) << Width) - 1) << Offset;
 
-        field()  = delete;
-        ~field() = delete;
+        field()                        = delete;
+        field(const field&)            = delete;
+        field& operator=(const field&) = delete;
+        field(field&&)                 = delete;
+        field& operator=(field&&)      = delete;
+        ~field()                       = delete;
+
         // ================= READ =================
 
         /**

@@ -3,11 +3,13 @@ Checks: >
   clang-analyzer-*,
   bugprone-*,
   cppcoreguidelines-*,
+  concurrency-*,
   performance-*,
   portability-*,
   readability-*,
   misc-*,
   modernize-*,
+  hicpp-*
 
   -modernize-use-trailing-return-type,
   -readability-magic-numbers,
@@ -22,9 +24,6 @@ Checks: >
   -performance-unnecessary-value-param,
   -modernize-pass-by-value
 
-WarningsAsErrors: '*'
-
-HeaderFilterRegex: '../.*'
 FormatStyle: none
 User: ''
 

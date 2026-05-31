@@ -1,0 +1,90 @@
+name: CodeChecker
+
+on:
+    workflow_call:
+
+env:
+    CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm_modules
+    BUILD_DIR: build/codechecker
+
+jobs:
+    analyze:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v5
+              with:
+                  fetch-depth: 0
+
+            - name: Cache CPM
+              uses: actions/cache@v5
+              with:
+                  path: ${{ env.CPM_SOURCE_CACHE }}
+                  key: ${{ runner.os }}-cpm-${{ hashFiles('**/CMakeLists.txt') }}
+
+            - name: Install Clang & tools
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y clang clang-tidy clang-tools
+
+            - name: Install CodeChecker
+              run: |
+                  pip3 install codechecker
+                  CodeChecker version
+
+            - name: Configure — génère compile_commands.json
+              run: |
+                  cmake \
+                    -S test/unit \
+                    -B ${{ env.BUILD_DIR }} \
+                    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+                    -DCMAKE_BUILD_TYPE=Debug
+
+            - name: Build
+              run: cmake --build ${{ env.BUILD_DIR }} -j$(nproc)
+
+            - name: CodeChecker analysis
+              run: |
+                  CodeChecker analyze \
+                    ${{ env.BUILD_DIR }}/compile_commands.json \
+                    --output ${{ env.BUILD_DIR }}/cc_reports \
+                    --enable-all \
+                    --analyzers clangsa clang-tidy \
+                    --jobs $(nproc) \
+                    --clean
+
+            - name: Export SARIF
+              run: |
+                  CodeChecker parse \
+                    ${{ env.BUILD_DIR }}/cc_reports \
+                    --export sarif \
+                    --output ${{ env.BUILD_DIR }}/codechecker.sarif \
+                    --ignore .codechecker/skip.list
+
+            - name: Normalize SARIF
+              run: |
+                  python3 .codechecker/normalize_sarif.py \
+                    ${{ env.BUILD_DIR }}/codechecker.sarif \
+                    ${{ github.workspace }}
+
+            - name: Upload SARIF
+              uses: actions/upload-artifact@v6
+              with:
+                  name: codechecker-sarif
+                  path: ${{ env.BUILD_DIR }}/codechecker.sarif
+
+            - name: Generate HTML Report
+              if: always()
+              run: |
+                  CodeChecker parse \
+                    ${{ env.BUILD_DIR }}/cc_reports \
+                    --export html \
+                    --output ${{ env.BUILD_DIR }}/cc_html \
+                    --ignore .codechecker/skip.list
+
+            - name: Upload HTML Report
+              if: always()
+              uses: actions/upload-artifact@v6
+              with:
+                  name: codechecker-html
+                  path: ${{ env.BUILD_DIR }}/cc_html
