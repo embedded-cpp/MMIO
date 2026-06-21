@@ -44,7 +44,9 @@ jobs:
               run: cmake --build ${{ env.BUILD_DIR }} -j$(nproc)
 
             - name: CodeChecker analysis
-              run: cmake --build ${{ env.BUILD_DIR }} --target codechecker
+              run: |
+                  cd ${{ github.workspace }}
+                  cmake --build ${{ env.BUILD_DIR }} --target codechecker
 
             - name: Upload SARIF
               uses: actions/upload-artifact@v6

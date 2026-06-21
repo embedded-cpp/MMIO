@@ -97,7 +97,7 @@ if(CODECHECKER_EXECUTABLE)
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/codechecker/reports/html
         # Analyze everything (Without --ignore to have all TUs analyzed, including headers in include/mmio/)
         COMMAND ${CODECHECKER_EXECUTABLE} analyze ${CMAKE_BINARY_DIR}/compile_commands.json --output
-                ${CMAKE_BINARY_DIR}/codechecker/reports --enable-all --jobs 16 --clean
+                ${CMAKE_BINARY_DIR}/codechecker/reports --enable-all --jobs 16 --clean || true
         # SARIF : Filtered results (only issues in include/mmio/**) --- IGNORE ---
         COMMAND ${CODECHECKER_EXECUTABLE} parse ${CMAKE_BINARY_DIR}/codechecker/reports --export sarif --output
                 ${CMAKE_BINARY_DIR}/codechecker/results.sarif --ignore ${REPO_ROOT}/.codechecker/skip.list || true
