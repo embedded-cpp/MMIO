@@ -21,7 +21,7 @@ jobs:
               uses: actions/download-artifact@v7
               with:
                   name: codechecker-sarif
-                  path: build/test/unit/codechecker/results.sarif
+                  path: build/test/unit/codechecker/
 
             - name: SonarCloud Scan
               uses: SonarSource/sonarqube-scan-action@v8
