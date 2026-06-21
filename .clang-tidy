@@ -9,7 +9,7 @@ Checks: >
   readability-*,
   misc-*,
   modernize-*,
-  hicpp-*
+  hicpp-*,
 
   -modernize-use-trailing-return-type,
   -readability-magic-numbers,
@@ -20,146 +20,81 @@ Checks: >
   -cppcoreguidelines-avoid-c-arrays,
   -performance-noexcept-move-constructor,
   -performance-unnecessary-value-param,
-  -performance-noexcept-move-constructor,
-  -performance-unnecessary-value-param,
   -modernize-pass-by-value
 
 FormatStyle: none
 User: ''
 
 CheckOptions:
+  # ============================================================
+  # clang-analyzer (Safety-Critical & Core Sûreté)
+  # ============================================================
+  clang-analyzer-core.CallAndMessageModeling: 'true'
+  clang-analyzer-core.DivideZero: 'true'
+  clang-analyzer-core.NullDereference: 'true'
+  clang-analyzer-core.StackAddressEscape: 'true'
+  clang-analyzer-core.UndefinedBinaryOperatorResult: 'true'
+  clang-analyzer-deadcode.DeadStores: 'true'
+  clang-analyzer-security.insecureAPI.strcpy: 'true'
+  clang-analyzer-security.insecureAPI.memcpy: 'true'
 
   # ============================================================
-  # clang-analyzer (safety critical)
+  # bugprone (MISRA C++:2023 Aligned)
   # ============================================================
-  - key: clang-analyzer-core.CallAndMessageModeling
-    value: 'true'
-
-  - key: clang-analyzer-core.DivideZero
-    value: 'true'
-
-  - key: clang-analyzer-core.NullDereference
-    value: 'true'
-
-  - key: clang-analyzer-core.StackAddressEscape
-    value: 'true'
-
-  - key: clang-analyzer-core.UndefinedBinaryOperatorResult
-    value: 'true'
-
-  - key: clang-analyzer-deadcode.DeadStores
-    value: 'true'
-
-  - key: clang-analyzer-security.insecureAPI.strcpy
-    value: 'true'
-
-  - key: clang-analyzer-security.insecureAPI.memcpy
-    value: 'true'
+  bugprone-assert-side-effect: 'true'
+  bugprone-branch-clone.IgnoreMacros: 'true'
+  bugprone-dangling-handle.IgnoreContainers: 'true'
+  bugprone-exception-escape.FunctionsThatShouldNotThrow: 'main,ISR'
+  bugprone-narrowing-conversions.WarnOnFloatingPointNarrowing: 'true'
+  bugprone-dynamic-static-initializers.HeaderFileExtensions: ''
+  bugprone-signed-char-misuse: 'true'
+  bugprone-switch-missing-default.CheckEnums: 'true'
 
   # ============================================================
-  # bugprone (MISRA-aligned)
+  # cppcoreguidelines (Robustesse)
   # ============================================================
-  - key: bugprone-assert-side-effect
-    value: 'true'
-
-  - key: bugprone-branch-clone.IgnoreMacros
-    value: 'true'
-
-  - key: bugprone-dangling-handle.IgnoreContainers
-    value: 'true'
-
-  - key: bugprone-exception-escape.FunctionsThatShouldNotThrow
-    value: 'main,ISR'
-
-  - key: bugprone-narrowing-conversions.WarnOnFloatingPointNarrowing
-    value: 'true'
-
-  - key: bugprone-dynamic-static-initializers.HeaderFileExtensions
-    value: ""
-
-  - key: bugprone-signed-char-misuse
-    value: 'true'
-
-  # ============================================================
-  # cppcoreguidelines
-  # ============================================================
-  - key: cppcoreguidelines-explicit-virtual-functions.AllowOverridesWithoutVirtualKeyword
-    value: 'false'
-
-  - key: cppcoreguidelines-narrowing-conversions.IgnoreConversionFromTypes
-    value: 'uint8_t,uint16_t,uint32_t,int8_t,int16_t,int32_t'
-
-  - key: cppcoreguidelines-pro-type-const-cast
-    value: 'true'
-
-  - key: cppcoreguidelines-pro-type-reinterpret-cast
-    value: 'false'
-
-  - key: cppcoreguidelines-pro-type-static-cast-downcast
-    value: 'true'
-
-  - key: cppcoreguidelines-special-member-functions.AllowMissingMoveFunctions
-    value: 'true'
+  cppcoreguidelines-explicit-virtual-functions.AllowOverridesWithoutVirtualKeyword: 'false'
+  cppcoreguidelines-narrowing-conversions.IgnoreConversionFromTypes: 'uint8_t,uint16_t,uint32_t,int8_t,int16_t,int32_t'
+  cppcoreguidelines-pro-type-const-cast: 'true'
+  cppcoreguidelines-pro-type-reinterpret-cast: 'true'
+  cppcoreguidelines-pro-type-static-cast-downcast: 'true'
+  cppcoreguidelines-special-member-functions.AllowMissingMoveFunctions: 'true'
+  cppcoreguidelines-init-variables.MathHeaderFunctions: 'true'
 
   # ============================================================
   # performance 
   # ============================================================
-  - key: performance-for-range-copy.WarnOnAllAutoCopies
-    value: 'false'
-
-  - key: performance-move-const-arg.CheckTriviallyCopyableMove
-    value: 'false'
+  performance-for-range-copy.WarnOnAllAutoCopies: 'false'
+  performance-move-const-arg.CheckTriviallyCopyableMove: 'false'
 
   # ============================================================
-  # readability (style strict & readable)
+  # readability (Nomenclature & Uniformité)
   # ============================================================
-  - key: readability-identifier-naming.IgnoreMacros
-    value: 'true'
-
-  - key: readability-identifier-naming.ClassCase
-    value: 'lower_case'
-
-  - key: readability-identifier-naming.StructCase
-    value: 'lower_case'
-
-  - key: readability-identifier-naming.FunctionCase
-    value: 'lower_case'
-
-  - key: readability-identifier-naming.VariableCase
-    value: 'lower_case'
-
-  - key: readability-identifier-naming.MemberCase
-    value: 'lower_case'
-
-  - key: readability-identifier-naming.ConstantCase
-    value: 'lower_case'
-
-  - key: readability-identifier-naming.TemplateParameterCase
-    value: 'CamelCase'
-
-  - key: readability-identifier-naming.StaticConstantCase
-    value: UPPER_CASE
-    
-  - key: readability-implicit-bool-conversion.AllowIntegerConditions
-    value: 'false'
+  readability-identifier-naming.IgnoreMacros: 'true'
+  readability-identifier-naming.ClassCase: 'lower_case'
+  readability-identifier-naming.StructCase: 'lower_case'
+  readability-identifier-naming.FunctionCase: 'lower_case'
+  readability-identifier-naming.VariableCase: 'lower_case'
+  readability-identifier-naming.MemberCase: 'lower_case'
+  readability-identifier-naming.ConstantCase: 'lower_case'
+  readability-identifier-naming.TemplateParameterCase: 'CamelCase'
+  readability-identifier-naming.StaticConstantCase: 'UPPER_CASE'
+  readability-implicit-bool-conversion.AllowIntegerConditions: 'false'
 
   # ============================================================
   # misc
   # ============================================================
-  - key: misc-non-private-member-variables-in-classes.IgnoreClassesWithAllPublicMembers
-    value: 'true'
+  misc-non-private-member-variables-in-classes.IgnoreClassesWithAllPublicMembers: 'true'
+  misc-unused-parameters.IgnoreVirtual: 'true'
+  misc-unused-parameters.IgnoreMain: 'true'
 
-  - key: misc-unused-parameters.IgnoreVirtual
-    value: 'true'
-
-  - key: misc-unused-parameters.IgnoreMain
-    value: 'true'
-
-  - key: modernize-use-unified-help-messages-cleanly
-    value: 'true'
+  # ============================================================
+  # modernize (C++20 / C++23 Idiomatic)
+  # ============================================================
+  modernize-use-unified-help-messages-cleanly: 'true'
+  modernize-use-designated-initializers.IgnoreMacros: 'true'
 
   # ============================================================
   # portability
   # ============================================================
-  - key: portability-simd-intrinsics.Suggest
-    value: 'false'
+  portability-simd-intrinsics.Suggest: 'false'
