@@ -34,7 +34,7 @@ jobs:
                   clang-tidy --version
                   clang-tools --version
                   cppcheck --version
-                  CodeChecker --version
+                  CodeChecker version
 
             - name: Configure
               run: |
