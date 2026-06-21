@@ -29,7 +29,7 @@ jobs:
 
             - name: Install CodeChecker
               run: |
-                  pip3 install codechecker==6.28.1 --only-binary :all:
+                  pip3 install codechecker --only-binary :all:
                   CodeChecker version
 
             - name: Configure
