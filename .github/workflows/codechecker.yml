@@ -78,7 +78,7 @@ jobs:
                   CodeChecker parse \
                     ${{ env.BUILD_DIR }}/reports \
                     --export html \
-                    --output ${{ env.BUILD_DIR }}/cc_html \
+                    --output ${{ env.BUILD_DIR }}/html \
                     --ignore .codechecker/skip.list
 
             - name: Upload HTML Report
@@ -86,4 +86,4 @@ jobs:
               uses: actions/upload-artifact@v6
               with:
                   name: codechecker-html
-                  path: ${{ env.BUILD_DIR }}/cc_html
+                  path: ${{ env.BUILD_DIR }}/html
