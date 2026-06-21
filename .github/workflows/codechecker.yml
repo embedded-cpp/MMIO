@@ -22,15 +22,19 @@ jobs:
                   path: ${{ env.CPM_SOURCE_CACHE }}
                   key: ${{ runner.os }}-cpm-${{ hashFiles('**/CMakeLists.txt') }}
 
-            - name: Install Clang & tools
+            - name: Install analyzers
               run: |
                   sudo apt-get update
-                  sudo apt-get install -y clang clang-tidy clang-tools cppcheck
+                  sudo apt-get install -y pipx
 
-            - name: Install CodeChecker
-              run: |
-                  pip3 install codechecker
-                  CodeChecker version
+                  pipx install clang-tidy clang-tools cppcheck codechecker
+                  pipx ensurepath
+
+                  clang --version
+                  clang-tidy --version
+                  clang-tools --version
+                  cppcheck --version
+                  CodeChecker --version
 
             - name: Configure
               run: |
