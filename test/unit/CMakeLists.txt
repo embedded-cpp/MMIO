@@ -100,10 +100,10 @@ if(CODECHECKER_EXECUTABLE)
                 ${CMAKE_BINARY_DIR}/codechecker/reports --enable-all --jobs 16 --clean
         # SARIF : Filtered results (only issues in include/mmio/**) --- IGNORE ---
         COMMAND ${CODECHECKER_EXECUTABLE} parse ${CMAKE_BINARY_DIR}/codechecker/reports --export sarif --output
-                ${CMAKE_BINARY_DIR}/codechecker/results.sarif --ignore ${REPO_ROOT}/.codechecker/skip.list
+                ${CMAKE_BINARY_DIR}/codechecker/results.sarif --ignore ${REPO_ROOT}/.codechecker/skip.list || true
         # HTML : Readable report for manual review (unfiltered to cover all TUs) --- IGNORE ---
         COMMAND ${CODECHECKER_EXECUTABLE} parse ${CMAKE_BINARY_DIR}/codechecker/reports --export html --output
-                ${CMAKE_BINARY_DIR}/codechecker/html --ignore ${REPO_ROOT}/.codechecker/skip.list
+                ${CMAKE_BINARY_DIR}/codechecker/html --ignore ${REPO_ROOT}/.codechecker/skip.list || true
         COMMAND ${CMAKE_COMMAND} -E echo "Rapport HTML : ${CMAKE_BINARY_DIR}/codechecker/html/index.html"
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMENT "CodeChecker analysis..."

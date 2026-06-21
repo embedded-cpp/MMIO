@@ -29,7 +29,7 @@ jobs:
 
             - name: Install CodeChecker
               run: |
-                  pip3 install codechecker
+                  pip3 install codechecker=6.28.1 --only-binary :all:
                   CodeChecker version
 
             - name: Configure
@@ -44,46 +44,17 @@ jobs:
               run: cmake --build ${{ env.BUILD_DIR }} -j$(nproc)
 
             - name: CodeChecker analysis
-              run: |
-                  CodeChecker analyze \
-                    ${{ env.BUILD_DIR }}/compile_commands.json \
-                    --output ${{ env.BUILD_DIR }}/reports \
-                    --analyzers clangsa clang-tidy cppcheck gcc \
-                    --jobs $(nproc) \
-                    --clean
-
-            - name: Export SARIF
-              run: |
-                  CodeChecker parse \
-                    ${{ env.BUILD_DIR }}/reports \
-                    --export sarif \
-                    --output ${{ env.BUILD_DIR }}/codechecker.sarif \
-                    --ignore .codechecker/skip.list
-
-            - name: Normalize SARIF
-              run: |
-                  python3 .codechecker/normalize_sarif.py \
-                    ${{ env.BUILD_DIR }}/codechecker.sarif \
-                    ${{ github.workspace }}
+              run: cmake --build ${{ env.BUILD_DIR }} --target codechecker
 
             - name: Upload SARIF
               uses: actions/upload-artifact@v6
               with:
                   name: codechecker-sarif
-                  path: ${{ env.BUILD_DIR }}/codechecker.sarif
-
-            - name: Generate HTML Report
-              if: always()
-              run: |
-                  CodeChecker parse \
-                    ${{ env.BUILD_DIR }}/reports \
-                    --export html \
-                    --output ${{ env.BUILD_DIR }}/html \
-                    --ignore .codechecker/skip.list
+                  path: ${{ env.BUILD_DIR }}/codechecker/results.sarif
 
             - name: Upload HTML Report
               if: always()
               uses: actions/upload-artifact@v6
               with:
                   name: codechecker-html
-                  path: ${{ env.BUILD_DIR }}/html
+                  path: ${{ env.BUILD_DIR }}/codechecker/html
