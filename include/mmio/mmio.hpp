@@ -55,7 +55,7 @@ namespace mmio {
         // Compile-time check to ensure the address is aligned to the register size.
         // Prevents unaligned access faults on architectures like ARM.
         static_assert(
-            Addr % (BitSize / Bits8) == 0, "MMIO register address is not properly aligned for its data width.");
+            Addr % (BitSize / BITS_8) == 0, "MMIO register address is not properly aligned for its data width.");
 
     private:
         /**

@@ -26,13 +26,13 @@
 namespace mmio {
 
     /// @brief Compile-time constant for number of bits in an 8-bit value.
-    inline constexpr std::size_t Bits8 = 8U;
+    inline constexpr std::size_t BITS_8 = 8U;
     /// @brief Compile-time constant for number of bits in an 16-bit value.
-    inline constexpr std::size_t Bits16 = 16U;
+    inline constexpr std::size_t BITS_16 = 16U;
     /// @brief Compile-time constant for number of bits in an 32-bit value.
-    inline constexpr std::size_t Bits32 = 32U;
+    inline constexpr std::size_t BITS_32 = 32U;
     /// @brief Compile-time constant for number of bits in an 64-bit value.
-    inline constexpr std::size_t Bits64 = 64U;
+    inline constexpr std::size_t BITS_64 = 64U;
 
     /**
      * @brief Base trait for the size of the register
@@ -45,7 +45,7 @@ namespace mmio {
      * @brief Specialization of the base trait for 8-bit register
      */
     template <>
-    struct size_trait<8U> {
+    struct size_trait<BITS_8> {
         using type = std::uint8_t;
     };
 
@@ -53,7 +53,7 @@ namespace mmio {
      * @brief Specialization of the base trait for 16-bit register
      */
     template <>
-    struct size_trait<16U> {
+    struct size_trait<BITS_16> {
         using type = std::uint16_t;
     };
 
@@ -61,7 +61,7 @@ namespace mmio {
      * @brief Specialization of the base trait for 32-bit register
      */
     template <>
-    struct size_trait<32U> {
+    struct size_trait<BITS_32> {
         using type = std::uint32_t;
     };
 
@@ -69,7 +69,7 @@ namespace mmio {
      * @brief Specialization of the base trait for 64-bit register
      */
     template <>
-    struct size_trait<64U> {
+    struct size_trait<BITS_64> {
         using type = std::uint64_t;
     };
 
