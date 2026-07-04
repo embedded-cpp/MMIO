@@ -49,13 +49,13 @@ namespace mmio {
         using value_type = size_trait<BitSize>::type; ///< Underlying integer type (e.g., uint32_t)
         using policy     = AccessPolicy;              ///< Access policy alias
 
-        static constexpr std::size_t bit_size   = BitSize; ///< Register width in bits
-        static constexpr std::uintptr_t address = Addr;    ///< Physical address
+        static constexpr std::size_t BIT_SIZE   = BitSize; ///< Register width in bits
+        static constexpr std::uintptr_t ADDRESS = Addr;    ///< Physical address
 
         // Compile-time check to ensure the address is aligned to the register size.
         // Prevents unaligned access faults on architectures like ARM.
         static_assert(
-            Addr % (BitSize / BITS_8) == 0, "MMIO register address is not properly aligned for its data width.");
+            ADDRESS % (BIT_SIZE / BITS_8) == 0, "MMIO register address is not properly aligned for its data width.");
 
     private:
         /**
@@ -63,16 +63,16 @@ namespace mmio {
          * @return Volatile reference to the register memory.
          */
         static auto raw() noexcept -> volatile value_type& {
-            return *reinterpret_cast<volatile value_type*>(address); // NOLINT(performance-no-int-to-ptr)
+            return *reinterpret_cast<volatile value_type*>(ADDRESS); // NOLINT(performance-no-int-to-ptr)
         }
 
     public:
-        reg()                      = delete;
-        reg(const reg&)            = delete;
-        reg& operator=(const reg&) = delete;
-        reg(reg&&)                 = delete;
-        reg& operator=(reg&&)      = delete;
-        ~reg()                     = delete;
+        reg()                              = delete;
+        reg(const reg&)                    = delete;
+        reg(reg&&)                         = delete;
+        ~reg()                             = delete;
+        auto operator=(const reg&) -> reg& = delete;
+        auto operator=(reg&&) -> reg&      = delete;
 
         // ================= READ =================
 
@@ -126,7 +126,7 @@ namespace mmio {
          * @tparam F The field type to check.
          */
         template <typename F>
-        static constexpr bool belongs_to_this_v = requires {
+        static constexpr bool BELONGS_TO_THIS_V = requires {
             typename F::register_type;
             requires std::same_as<typename F::register_type, reg>;
         };
@@ -155,12 +155,12 @@ namespace mmio {
          * @pre All `Fields` must be compatible with the register's `value_type`.
          */
         template <typename... Fields>
-            requires (belongs_to_this_v<Fields> && ...)
+            requires (BELONGS_TO_THIS_V<Fields> && ...)
         static void write_set() noexcept
             requires writable<policy>
         {
             static_assert(sizeof...(Fields) > 0, "write_set requires at least one field");
-            write((Fields::mask | ... | value_type{0}));
+            write((Fields::MASK | ... | value_type{0}));
         }
         // ================= MODIFY =================
 
@@ -196,22 +196,22 @@ namespace mmio {
      * @tparam Width    The width of the field in bits.
      */
     template <typename Register, std::size_t Offset, std::size_t Width>
-        requires (Offset + Width <= Register::bit_size)
+        requires (Offset + Width <= Register::BIT_SIZE)
     class field {
     public:
         using value_type    = Register::value_type; ///< Underlying integer type (e.g., uint32_t)
         using policy        = Register::policy;     ///< Access policy alias from the parent register
         using register_type = Register;             ///< Type alias for the parent register
 
-        static constexpr value_type mask =
-            Width == Register::bit_size ? ~value_type{0} : ((value_type(1) << Width) - 1) << Offset;
+        static constexpr value_type MASK =
+            Width == Register::BIT_SIZE ? ~value_type{0} : ((value_type(1) << Width) - 1) << Offset;
 
-        field()                        = delete;
-        field(const field&)            = delete;
-        field& operator=(const field&) = delete;
-        field(field&&)                 = delete;
-        field& operator=(field&&)      = delete;
-        ~field()                       = delete;
+        field()                                = delete;
+        field(const field&)                    = delete;
+        field(field&&)                         = delete;
+        ~field()                               = delete;
+        auto operator=(const field&) -> field& = delete;
+        auto operator=(field&&) -> field&      = delete;
 
         // ================= READ =================
 
@@ -226,7 +226,7 @@ namespace mmio {
         [[nodiscard]] static auto read() noexcept -> value_type
             requires (readable<policy>)
         {
-            return (Register::read() & mask) >> Offset;
+            return (Register::read() & MASK) >> Offset;
         }
 
         // ================= WRITE =================
@@ -247,8 +247,8 @@ namespace mmio {
             requires (writable<policy> && readable<policy>)
         {
             Register::modify([val](value_type& reg_val) -> void {
-                reg_val &= ~mask;
-                reg_val |= (val << Offset) & mask;
+                reg_val &= ~MASK;
+                reg_val |= (val << Offset) & MASK;
             });
         }
 
@@ -267,7 +267,7 @@ namespace mmio {
         static void write(value_type val) noexcept
             requires (writable<policy> && !readable<policy>)
         {
-            Register::write((val << Offset) & mask);
+            Register::write((val << Offset) & MASK);
         }
 
         /**
@@ -282,7 +282,7 @@ namespace mmio {
         static void write(value_type val) noexcept
             requires (writable_1_to_clear<policy>)
         {
-            Register::write((val << Offset) & mask);
+            Register::write((val << Offset) & MASK);
         }
 
         // ================= MODIFY =================
@@ -303,10 +303,10 @@ namespace mmio {
             requires (writable<policy> && readable<policy> && std::invocable<F, value_type&>)
         {
             Register::modify([callable = std::forward<F>(func)](value_type& reg_val) mutable -> void {
-                value_type tmp = (reg_val & mask) >> Offset;
+                value_type tmp = (reg_val & MASK) >> Offset;
                 callable(tmp);
-                reg_val &= ~mask;
-                reg_val |= (tmp << Offset) & mask;
+                reg_val &= ~MASK;
+                reg_val |= (tmp << Offset) & MASK;
             });
         }
 
@@ -319,19 +319,19 @@ namespace mmio {
         static void set() noexcept
             requires (writable<policy> && readable<policy> && (Width == 1))
         {
-            Register::modify([](value_type& reg_val) -> void { reg_val |= mask; });
+            Register::modify([](value_type& reg_val) -> void { reg_val |= MASK; });
         }
 
         /**
          * @brief Sets the bit to 1 (Write-Only Policy).
          *
-         * @warning **DESTRUCTIVE**: Writes the mask directly to the register.
+         * @warning **DESTRUCTIVE**: Writes the MASK directly to the register.
          * All other bits become 0.
          */
         static void set() noexcept
             requires (writable<policy> && (!readable<policy>) && (Width == 1))
         {
-            Register::write(mask);
+            Register::write(MASK);
         }
 
         /**
@@ -341,7 +341,7 @@ namespace mmio {
         static void clear() noexcept
             requires (writable<policy> && readable<policy> && (Width == 1))
         {
-            Register::modify([](value_type& reg_val) -> void { reg_val &= ~mask; });
+            Register::modify([](value_type& reg_val) -> void { reg_val &= ~MASK; });
         }
 
         /**
@@ -363,7 +363,7 @@ namespace mmio {
         static void clear() noexcept
             requires (writable_1_to_clear<policy> && (Width == 1))
         {
-            Register::write(mask);
+            Register::write(MASK);
         }
 
         /**
@@ -375,7 +375,7 @@ namespace mmio {
         static void toggle() noexcept
             requires (writable<policy> && readable<policy> && (Width == 1))
         {
-            Register::modify([](value_type& reg_val) -> void { reg_val ^= mask; });
+            Register::modify([](value_type& reg_val) -> void { reg_val ^= MASK; });
         }
 
         /**
@@ -387,7 +387,7 @@ namespace mmio {
         static auto is_set() noexcept -> bool
             requires (readable<policy> && (Width == 1))
         {
-            return (Register::read() & mask) != 0;
+            return (Register::read() & MASK) != 0;
         }
 
         /**
@@ -399,7 +399,7 @@ namespace mmio {
         static auto is_clear() noexcept -> bool
             requires (readable<policy> && (Width == 1))
         {
-            return (Register::read() & mask) == 0;
+            return (Register::read() & MASK) == 0;
         }
     };
 

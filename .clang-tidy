@@ -90,6 +90,7 @@ CheckOptions:
   modernize-use-trailing-return-type.IgnoreConstructors: true
   modernize-use-trailing-return-type.IgnoreDestructors: true
   modernize-use-trailing-return-type.IgnoreOperators: true
+  modernize-use-trailing-return-type.IgnoreMacros: true
 
   # ============================================================
   # portability
