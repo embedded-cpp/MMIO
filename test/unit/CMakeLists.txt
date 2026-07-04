@@ -98,7 +98,7 @@ if(CODECHECKER_EXECUTABLE)
         # Analyze everything (without --ignore so all TUs are analyzed, including headers in include/mmio/)
         COMMAND
             ${CODECHECKER_EXECUTABLE} analyze ${CMAKE_BINARY_DIR}/compile_commands.json --output
-            ${CMAKE_BINARY_DIR}/codechecker/reports --enable-all -d core.FixedAddressDereference --analyzer-config
+            ${CMAKE_BINARY_DIR}/codechecker/reports --enable-all --analyzer-config
             clang-tidy:take-config-from-directory=true --jobs 16 --clean || true
         # SARIF: filtered results (only issues in include/mmio/**) --- IGNORE ---
         COMMAND ${CODECHECKER_EXECUTABLE} parse ${CMAKE_BINARY_DIR}/codechecker/reports --export sarif --output
