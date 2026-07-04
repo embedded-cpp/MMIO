@@ -63,7 +63,7 @@ namespace mmio {
          * @return Volatile reference to the register memory.
          */
         static auto raw() noexcept -> volatile value_type& {
-            return *reinterpret_cast<volatile value_type*>(address);
+            return *reinterpret_cast<volatile value_type*>(address); // NOLINT(performance-no-int-to-ptr)
         }
 
     public:
@@ -246,7 +246,7 @@ namespace mmio {
         static void write(value_type val) noexcept
             requires (writable<policy> && readable<policy>)
         {
-            Register::modify([val](value_type& reg_val) {
+            Register::modify([val](value_type& reg_val) -> void {
                 reg_val &= ~mask;
                 reg_val |= (val << Offset) & mask;
             });
@@ -302,7 +302,7 @@ namespace mmio {
         static void modify(F&& func) noexcept(std::is_nothrow_invocable_v<F, value_type&>)
             requires (writable<policy> && readable<policy> && std::invocable<F, value_type&>)
         {
-            Register::modify([callable = std::forward<F>(func)](value_type& reg_val) mutable {
+            Register::modify([callable = std::forward<F>(func)](value_type& reg_val) mutable -> void {
                 value_type tmp = (reg_val & mask) >> Offset;
                 callable(tmp);
                 reg_val &= ~mask;
@@ -319,7 +319,7 @@ namespace mmio {
         static void set() noexcept
             requires (writable<policy> && readable<policy> && (Width == 1))
         {
-            Register::modify([](value_type& reg_val) { reg_val |= mask; });
+            Register::modify([](value_type& reg_val) -> void { reg_val |= mask; });
         }
 
         /**
@@ -341,7 +341,7 @@ namespace mmio {
         static void clear() noexcept
             requires (writable<policy> && readable<policy> && (Width == 1))
         {
-            Register::modify([](value_type& reg_val) { reg_val &= ~mask; });
+            Register::modify([](value_type& reg_val) -> void { reg_val &= ~mask; });
         }
 
         /**
@@ -375,7 +375,7 @@ namespace mmio {
         static void toggle() noexcept
             requires (writable<policy> && readable<policy> && (Width == 1))
         {
-            Register::modify([](value_type& reg_val) { reg_val ^= mask; });
+            Register::modify([](value_type& reg_val) -> void { reg_val ^= mask; });
         }
 
         /**

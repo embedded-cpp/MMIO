@@ -76,7 +76,6 @@ namespace mmio {
 
     /**
      * @brief Concept to check if the type 'T' is a valid access policy (no_access, readable, or writable)
-     * @param T Type to check
      */
     template <typename T>
     concept access_policy = std::same_as<T, no_access> || readable<T> || writable<T> || writable_1_to_clear<T>;

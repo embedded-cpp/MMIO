@@ -74,10 +74,9 @@ namespace mmio {
     };
 
     /**
-     * @brief Concept to check if a type is a valid size trait
-     * @param Bits Type to check
+     * @brief Concept to check if 'T' is a type with a valid size
      */
-    template <std::size_t Bits>
-    concept supported_size = requires { typename size_trait<Bits>::type; };
+    template <std::size_t T>
+    concept supported_size = requires { typename size_trait<T>::type; };
 } // namespace mmio
 #endif // SIZE_HPP
