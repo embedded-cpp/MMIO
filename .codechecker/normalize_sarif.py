@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Normalise les chemins de fichiers dans un rapport SARIF pour qu'ils soient
-relatifs à la racine du dépôt.
+Normalize file paths in a SARIF report so they are
+relative to the repository root.
 
-SonarCloud exige des chemins relatifs correspondant à sonar.sources.
-Les chemins absolus produits par CodeChecker ne fonctionnent pas entre jobs CI.
+SonarCloud requires relative paths matching sonar.sources.
+The absolute paths produced by CodeChecker do not work across CI jobs.
 
-Usage : python3 .codechecker/normalize_sarif.py <sarif_file> <repo_root>
+Usage: python3 .codechecker/normalize_sarif.py <sarif_file> <repo_root>
 """
 
 import json
@@ -16,21 +16,21 @@ import sys
 
 def _to_relative(uri: str, root: str) -> str:
     """
-    Convertit un URI (absolu, ou préfixé 'file://') en chemin relatif à root.
-    Retourne l'URI inchangé s'il n'est pas sous root.
+    Convert a URI (absolute, or prefixed with 'file://') into a path relative to root.
+    Return the URI unchanged if it is not under root.
     """
     path = uri[len("file://") :] if uri.startswith("file://") else uri
     if os.path.isabs(path):
         try:
             return os.path.relpath(path, root)
         except ValueError:
-            # Windows : drives différents
+            # Windows: different drives
             return path
     return path
 
 
 def _normalize_artifact_location(location: dict, root: str) -> bool:
-    """Normalise le champ 'uri' d'un artifactLocation. Retourne True si modifié."""
+    """Normalize the 'uri' field of an artifactLocation. Return True if modified."""
     uri = location.get("uri", "")
     if not uri:
         return False
@@ -43,8 +43,8 @@ def _normalize_artifact_location(location: dict, root: str) -> bool:
 
 def normalize_sarif(sarif_path: str, repo_root: str) -> int:
     """
-    Normalise tous les chemins de fichiers dans le rapport SARIF.
-    Retourne le nombre de chemins modifiés.
+    Normalize all file paths in the SARIF report.
+    Return the number of paths modified.
     """
     with open(sarif_path, encoding="utf-8") as f:
         sarif = json.load(f)
@@ -53,12 +53,12 @@ def normalize_sarif(sarif_path: str, repo_root: str) -> int:
     root = os.path.abspath(repo_root)
 
     for run in sarif.get("runs", []):
-        # Déclarations d'artefacts
+        # Artifact declarations
         for artifact in run.get("artifacts", []):
             if _normalize_artifact_location(artifact.get("location", {}), root):
                 fixed += 1
 
-        # Résultats
+        # Results
         for result in run.get("results", []):
             for loc in result.get("locations", []):
                 phys = loc.get("physicalLocation", {})
@@ -84,12 +84,12 @@ def main() -> None:
     sarif_file, repo_root = sys.argv[1], sys.argv[2]
 
     if not os.path.isfile(sarif_file):
-        print(f"Erreur : fichier SARIF introuvable : {sarif_file}", file=sys.stderr)
+        print(f"Error: SARIF file not found: {sarif_file}", file=sys.stderr)
         sys.exit(1)
 
     count = normalize_sarif(sarif_file, os.path.abspath(repo_root))
-    print(f"Normalisé : {count} chemin(s) dans {sarif_file}")
-    print(f"Racine de référence : {os.path.abspath(repo_root)}")
+    print(f"Normalized: {count} path(s) in {sarif_file}")
+    print(f"Reference root: {os.path.abspath(repo_root)}")
 
 
 if __name__ == "__main__":

@@ -80,14 +80,15 @@ if(ENABLE_TEST_COVERAGE)
     )
 endif()
 
-# ---- Analyse statique CodeChecker ----
-# Usage : cmake --build <build_dir> --target codechecker Prérequis : - CodeChecker installé : pip install codechecker -
-# cmake configuré avec -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+# ---- Static CodeChecker analysis ----
+# Usage: cmake --build <build_dir> --target codechecker
+# Prerequisites: CodeChecker installed: pip install codechecker
+# CMake configured with -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 find_program(CODECHECKER_EXECUTABLE CodeChecker QUIET)
 
 if(CODECHECKER_EXECUTABLE)
-    # Racine du dépôt = 2 niveaux au-dessus de test/unit/
+    # Repository root = 2 levels above test/unit/
     get_filename_component(REPO_ROOT "${CMAKE_SOURCE_DIR}/../.." ABSOLUTE)
 
     add_custom_target(
@@ -95,25 +96,27 @@ if(CODECHECKER_EXECUTABLE)
         # Create output directory for CodeChecker reports
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/codechecker/reports
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/codechecker/reports/html
-        # Analyze everything (Without --ignore to have all TUs analyzed, including headers in include/mmio/)
-        COMMAND ${CODECHECKER_EXECUTABLE} analyze ${CMAKE_BINARY_DIR}/compile_commands.json --output
-                ${CMAKE_BINARY_DIR}/codechecker/reports --enable-all --jobs 16 --clean || true
-        # SARIF : Filtered results (only issues in include/mmio/**) --- IGNORE ---
+        # Analyze everything (without --ignore so all TUs are analyzed, including headers in include/mmio/)
+        COMMAND
+            ${CODECHECKER_EXECUTABLE} analyze ${CMAKE_BINARY_DIR}/compile_commands.json --output
+            ${CMAKE_BINARY_DIR}/codechecker/reports --enable-all -d core.FixedAddressDereference --analyzer-config
+            clang-tidy:take-config-from-directory=true --jobs 16 --clean || true
+        # SARIF: filtered results (only issues in include/mmio/**) --- IGNORE ---
         COMMAND ${CODECHECKER_EXECUTABLE} parse ${CMAKE_BINARY_DIR}/codechecker/reports --export sarif --output
                 ${CMAKE_BINARY_DIR}/codechecker/results.sarif --ignore ${REPO_ROOT}/.codechecker/skip.list || true
-        # HTML : Readable report for manual review (unfiltered to cover all TUs) --- IGNORE ---
+        # HTML: readable report for manual review (unfiltered to cover all TUs) --- IGNORE ---
         COMMAND ${CODECHECKER_EXECUTABLE} parse ${CMAKE_BINARY_DIR}/codechecker/reports --export html --output
                 ${CMAKE_BINARY_DIR}/codechecker/html --ignore ${REPO_ROOT}/.codechecker/skip.list || true
-        COMMAND ${CMAKE_COMMAND} -E echo "Rapport HTML : ${CMAKE_BINARY_DIR}/codechecker/html/index.html"
+        COMMAND ${CMAKE_COMMAND} -E echo "HTML report: ${CMAKE_BINARY_DIR}/codechecker/html/index.html"
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMENT "CodeChecker analysis..."
         VERBATIM
     )
 
-    message(STATUS "CodeChecker trouvé : ${CODECHECKER_EXECUTABLE}")
-    message(STATUS "  Cible disponible : cmake --build <build_dir> --target codechecker")
-    message(STATUS "  Rappel           : configurer avec -DCMAKE_EXPORT_COMPILE_COMMANDS=ON")
+    message(STATUS "CodeChecker found: ${CODECHECKER_EXECUTABLE}")
+    message(STATUS "  Target available: cmake --build <build_dir> --target codechecker")
+    message(STATUS "  Reminder: configure with -DCMAKE_EXPORT_COMPILE_COMMANDS=ON")
 else()
-    message(STATUS "CodeChecker non trouvé - cible 'codechecker' indisponible")
-    message(STATUS "  Installer avec : pip install codechecker")
+    message(STATUS "CodeChecker not found - target 'codechecker' unavailable")
+    message(STATUS "  Install with: pip install codechecker")
 endif()

@@ -28,7 +28,7 @@ namespace mmio {
 
     /**
      * @brief Base trait for the size of the register
-     * @tparam BitSize: size in bits of a register
+     * @tparam BitSize: size in bits of a register
      */
     template <std::size_t BitSize>
     struct size_trait;
