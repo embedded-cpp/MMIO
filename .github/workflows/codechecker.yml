@@ -27,12 +27,11 @@ jobs:
                   sudo apt-get update
                   sudo apt-get install -y pipx
 
-                  pipx install clang-tidy clang-tools cppcheck codechecker
+                  pipx install clang-tidy==22.1.8 cppcheck==1.5.1 codechecker==6.28.2
                   pipx ensurepath
 
                   clang --version
                   clang-tidy --version
-                  clang-tools --version
                   cppcheck --version
                   CodeChecker version
 

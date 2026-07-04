@@ -18,7 +18,11 @@ jobs:
                   key: ${{ github.workflow }}-cpm-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
 
             - name: Install format dependencies
-              run: pip3 install clang-format==21.1.8 cmake_format==0.6.13 pyyaml
+            
+              run: |
+                sudo apt-get update
+                sudo apt-get install -y pipx
+                pipx install clang-format==22.1.5 cmake_format==0.6.13 pyyaml==6.0.3
 
             - name: configure
               run: cmake -Stest/unit -Bbuild
