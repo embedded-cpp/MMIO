@@ -23,7 +23,7 @@ jobs:
                 sudo apt-get update
                 sudo apt-get install -y pipx
                 pipx install clang-format==22.1.5 cmakelang==0.6.13
-                pip3 install pyyaml==6.0.3
+                pipx inject cmakelang pyyaml==6.0.3     
 
             - name: configure
               run: cmake -Stest/unit -Bbuild
