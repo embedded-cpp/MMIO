@@ -25,7 +25,7 @@ jobs:
               run: |
                 sudo apt-get update
                 sudo apt-get install -y pipx
-                pipx install gcov==8.6
+                pipx install gcovr==8.6
 
             - name: Build & Test
               run: |
