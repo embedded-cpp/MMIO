@@ -246,7 +246,7 @@ namespace mmio {
         static void write(value_type val) noexcept
             requires (writable<policy> && readable<policy>)
         {
-            Register::modify([val](value_type& reg_val) -> void {
+            Register::modify([val](value_type& reg_val) -> auto {
                 reg_val &= ~MASK;
                 reg_val |= (val << Offset) & MASK;
             });
@@ -302,7 +302,7 @@ namespace mmio {
         static void modify(F&& func) noexcept(std::is_nothrow_invocable_v<F, value_type&>)
             requires (writable<policy> && readable<policy> && std::invocable<F, value_type&>)
         {
-            Register::modify([callable = std::forward<F>(func)](value_type& reg_val) mutable -> void {
+            Register::modify([callable = std::forward<F>(func)](value_type& reg_val) mutable -> auto {
                 value_type tmp = (reg_val & MASK) >> Offset;
                 callable(tmp);
                 reg_val &= ~MASK;
@@ -319,7 +319,7 @@ namespace mmio {
         static void set() noexcept
             requires (writable<policy> && readable<policy> && (Width == 1))
         {
-            Register::modify([](value_type& reg_val) -> void { reg_val |= MASK; });
+            Register::modify([](value_type& reg_val) -> auto { reg_val |= MASK; });
         }
 
         /**
@@ -341,7 +341,7 @@ namespace mmio {
         static void clear() noexcept
             requires (writable<policy> && readable<policy> && (Width == 1))
         {
-            Register::modify([](value_type& reg_val) -> void { reg_val &= ~MASK; });
+            Register::modify([](value_type& reg_val) -> auto { reg_val &= ~MASK; });
         }
 
         /**
@@ -375,7 +375,7 @@ namespace mmio {
         static void toggle() noexcept
             requires (writable<policy> && readable<policy> && (Width == 1))
         {
-            Register::modify([](value_type& reg_val) -> void { reg_val ^= MASK; });
+            Register::modify([](value_type& reg_val) -> auto { reg_val ^= MASK; });
         }
 
         /**
