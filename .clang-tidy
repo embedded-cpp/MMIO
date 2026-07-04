@@ -70,7 +70,7 @@ CheckOptions:
   readability-identifier-naming.FunctionCase: "lower_case"
   readability-identifier-naming.VariableCase: "lower_case"
   readability-identifier-naming.MemberCase: "lower_case"
-  readability-identifier-naming.ConstantCase: "lower_case"
+  readability-identifier-naming.ConstantCase: "UPPER_CASE"
   readability-identifier-naming.TemplateParameterCase: "CamelCase"
   readability-identifier-naming.StaticConstantCase: "UPPER_CASE"
   readability-implicit-bool-conversion.AllowIntegerConditions: "false"
