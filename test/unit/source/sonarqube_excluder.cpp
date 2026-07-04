@@ -33,7 +33,7 @@ static constexpr std::uintptr_t mock_addr = 0x10000U;
 void dummy() {
     void* mem = nullptr;
     mem       = mmap(reinterpret_cast<void*>(mock_addr), 4096, PROT_READ | PROT_WRITE,
-              MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
+        MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
 
     using TEST_REG   = mmio::reg<mock_addr, 32, mmio::rw>;
     using TEST_FIELD = mmio::field<TEST_REG, 8, 8>;
