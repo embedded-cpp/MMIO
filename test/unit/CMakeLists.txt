@@ -81,8 +81,8 @@ if(ENABLE_TEST_COVERAGE)
 endif()
 
 # ---- Static CodeChecker analysis ----
-# Usage: cmake --build <build_dir> --target codechecker
 # Prerequisites: CodeChecker installed: pip install codechecker
+# Usage: cmake --build <build_dir> --target codechecker
 # CMake configured with -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 find_program(CODECHECKER_EXECUTABLE CodeChecker QUIET)
