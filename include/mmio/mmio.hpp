@@ -62,7 +62,7 @@ namespace mmio {
          * @brief Internal helper to get a volatile reference to the hardware address.
          * @return Volatile reference to the register memory.
          */
-        static volatile value_type& raw() noexcept {
+        static auto raw() noexcept -> volatile value_type& {
             return *reinterpret_cast<volatile value_type*>(address);
         }
 
@@ -82,7 +82,7 @@ namespace mmio {
          * @note This operation performs a volatile load from memory.
          * @return The current value of the register.
          */
-        [[nodiscard]] static value_type read() noexcept
+        [[nodiscard]] static auto read() noexcept -> value_type
             requires (readable<AccessPolicy>)
         {
             return raw();
@@ -122,9 +122,8 @@ namespace mmio {
         }
 
         /**
-         * @brief Checks if a field belongs to this register.
+         * @brief Returns 'true' if a field belongs to this register, false otherwise.
          * @tparam F The field type to check.
-         * @return `true` if the field belongs to this register, `false` otherwise.
          */
         template <typename F>
         static constexpr bool belongs_to_this_v = requires {
@@ -224,7 +223,7 @@ namespace mmio {
          *
          * @return The extracted field value.
          */
-        [[nodiscard]] static value_type read() noexcept
+        [[nodiscard]] static auto read() noexcept -> value_type
             requires (readable<policy>)
         {
             return (Register::read() & mask) >> Offset;
@@ -385,7 +384,7 @@ namespace mmio {
          * @note Requires Read-Only access.
          * @return true if the bit is set, false otherwise.
          */
-        static bool is_set() noexcept
+        static auto is_set() noexcept -> bool
             requires (readable<policy> && (Width == 1))
         {
             return (Register::read() & mask) != 0;
@@ -397,7 +396,7 @@ namespace mmio {
          * @note Requires Read-Only access.
          * @return true if the bit is clear, false otherwise.
          */
-        static bool is_clear() noexcept
+        static auto is_clear() noexcept -> bool
             requires (readable<policy> && (Width == 1))
         {
             return (Register::read() & mask) == 0;

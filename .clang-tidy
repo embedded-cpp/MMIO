@@ -87,6 +87,7 @@ CheckOptions:
   # ============================================================
   modernize-use-unified-help-messages-cleanly: "true"
   modernize-use-designated-initializers.IgnoreMacros: "true"
+  modernize-use-trailing-return-type.IgnoreConstructors: true
 
   # ============================================================
   # portability
