@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-//<! Internal
+// Internal
 #include "doctest/doctest.h" // for ResultBuilder, CHECK, Subcase
-//<! External
+// External
 #include "mmio/mmio.hpp" // for reg, field, rw, bit, ro, wo
-//<! System
+// System
 #include <cstdint>    // for uint32_t, uintptr_t
 #include <sys/mman.h> // for MAP_FAILED, mmap, munmap
 

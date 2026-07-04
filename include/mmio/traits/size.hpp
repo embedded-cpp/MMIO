@@ -17,18 +17,26 @@
 #ifndef SIZE_HPP
 #define SIZE_HPP
 
-//<! Internal
-//<! External
-//<! System
+// Internal
+// External
+// System
 #include <cstddef>
 #include <cstdint>
 
 namespace mmio {
 
+    /// @brief Compile-time constant for number of bits in an 8-bit value.
+    inline constexpr std::size_t Bits8 = 8U;
+    /// @brief Compile-time constant for number of bits in an 16-bit value.
+    inline constexpr std::size_t Bits16 = 16U;
+    /// @brief Compile-time constant for number of bits in an 32-bit value.
+    inline constexpr std::size_t Bits32 = 32U;
+    /// @brief Compile-time constant for number of bits in an 64-bit value.
+    inline constexpr std::size_t Bits64 = 64U;
 
     /**
      * @brief Base trait for the size of the register
-     * @tparam BitSize: size in bits of a register
+     * @tparam BitSize size in bits of a register
      */
     template <std::size_t BitSize>
     struct size_trait;
@@ -67,7 +75,7 @@ namespace mmio {
 
     /**
      * @brief Concept to check if a type is a valid size trait
-     * @tparam Bits Type to check
+     * @param Bits Type to check
      */
     template <std::size_t Bits>
     concept supported_size = requires { typename size_trait<Bits>::type; };

@@ -17,9 +17,9 @@
 #ifndef ACCESS_HPP
 #define ACCESS_HPP
 
-//<! Internal
-//<! External
-//<! System
+// Internal
+// External
+// System
 #include <concepts>
 
 namespace mmio {

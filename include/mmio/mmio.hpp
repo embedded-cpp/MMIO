@@ -17,11 +17,11 @@
 #ifndef MMIO_HPP
 #define MMIO_HPP
 
-//<! Internal
+// Internal
 #include "mmio/policy/access.hpp" // IWYU pragma: export
 #include "mmio/traits/size.hpp"   // IWYU pragma: export
-//<! External
-//<! System
+// External
+// System
 #include <concepts>
 #include <cstddef>
 #include <cstdint>
@@ -46,15 +46,16 @@ namespace mmio {
         requires (supported_size<BitSize>)
     class reg {
     public:
-        using value_type = typename size_trait<BitSize>::type; ///< Underlying integer type (e.g., uint32_t)
-        using policy     = AccessPolicy;                       ///< Access policy alias
+        using value_type = size_trait<BitSize>::type; ///< Underlying integer type (e.g., uint32_t)
+        using policy     = AccessPolicy;              ///< Access policy alias
 
         static constexpr std::size_t bit_size   = BitSize; ///< Register width in bits
         static constexpr std::uintptr_t address = Addr;    ///< Physical address
 
         // Compile-time check to ensure the address is aligned to the register size.
         // Prevents unaligned access faults on architectures like ARM.
-        static_assert(Addr % (BitSize / 8) == 0, "MMIO register address is not properly aligned for its data width.");
+        static_assert(
+            Addr % (BitSize / Bits8) == 0, "MMIO register address is not properly aligned for its data width.");
 
     private:
         /**
@@ -121,6 +122,17 @@ namespace mmio {
         }
 
         /**
+         * @brief Checks if a field belongs to this register.
+         * @tparam F The field type to check.
+         * @return `true` if the field belongs to this register, `false` otherwise.
+         */
+        template <typename F>
+        static constexpr bool belongs_to_this_v = requires {
+            typename F::register_type;
+            requires std::same_as<typename F::register_type, reg>;
+        };
+
+        /**
          * @brief Writes multiple bit-fields simultaneously in a single hardware operation.
          *
          * This function leverages Variadic Templates and Fold Expressions (C++17) to calculate
@@ -143,11 +155,6 @@ namespace mmio {
          * @pre The register must have a `writable` access policy.
          * @pre All `Fields` must be compatible with the register's `value_type`.
          */
-        template <typename F>
-        static constexpr bool belongs_to_this_v = requires {
-            typename F::register_type;
-            requires std::same_as<typename F::register_type, reg>;
-        };
         template <typename... Fields>
             requires (belongs_to_this_v<Fields> && ...)
         static void write_set() noexcept
@@ -193,9 +200,9 @@ namespace mmio {
         requires (Offset + Width <= Register::bit_size)
     class field {
     public:
-        using value_type    = typename Register::value_type; ///< Underlying integer type (e.g., uint32_t)
-        using policy        = typename Register::policy;     ///< Access policy alias from the parent register
-        using register_type = Register;                      ///< Type alias for the parent register
+        using value_type    = Register::value_type; ///< Underlying integer type (e.g., uint32_t)
+        using policy        = Register::policy;     ///< Access policy alias from the parent register
+        using register_type = Register;             ///< Type alias for the parent register
 
         static constexpr value_type mask =
             Width == Register::bit_size ? ~value_type{0} : ((value_type(1) << Width) - 1) << Offset;
@@ -296,9 +303,9 @@ namespace mmio {
         static void modify(F&& func) noexcept(std::is_nothrow_invocable_v<F, value_type&>)
             requires (writable<policy> && readable<policy> && std::invocable<F, value_type&>)
         {
-            Register::modify([func = std::forward<F>(func)](value_type& reg_val) mutable {
+            Register::modify([callable = std::forward<F>(func)](value_type& reg_val) mutable {
                 value_type tmp = (reg_val & mask) >> Offset;
-                func(tmp);
+                callable(tmp);
                 reg_val &= ~mask;
                 reg_val |= (tmp << Offset) & mask;
             });

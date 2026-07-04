@@ -18,10 +18,10 @@
  * @file sonarqube_excluder.cpp
  * @brief This file serves as an anchor for SonarQube to exclude the test_*.cpp files from analysis.
  */
-//<! Internal
-//<! External
+// Internal
+// External
 #include "mmio/mmio.hpp" // for field, reg, rw
-//<! System
+// System
 #include <cstdint>    // for uint32_t, uintptr_t
 #include <sys/mman.h> // for mmap, munmap, MAP_ANONYMOUS, MAP_FAILED
 static constexpr std::uintptr_t mock_addr = 0x10000U;
