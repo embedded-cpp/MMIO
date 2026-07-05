@@ -62,17 +62,17 @@ namespace mmio {
          * @brief Internal helper to get a volatile reference to the hardware address.
          * @return Volatile reference to the register memory.
          */
-        static auto raw() noexcept -> volatile value_type& {
+        static volatile value_type& raw() noexcept {
             return *reinterpret_cast<volatile value_type*>(ADDRESS); // NOLINT(performance-no-int-to-ptr)
         }
 
     public:
-        reg()                              = delete;
-        reg(const reg&)                    = delete;
-        reg(reg&&)                         = delete;
-        ~reg()                             = delete;
-        auto operator=(const reg&) -> reg& = delete;
-        auto operator=(reg&&) -> reg&      = delete;
+        reg()                      = delete;
+        reg(const reg&)            = delete;
+        reg(reg&&)                 = delete;
+        ~reg()                     = delete;
+        reg& operator=(const reg&) = delete;
+        reg& operator=(reg&&)      = delete;
 
         // ================= READ =================
 
@@ -82,7 +82,7 @@ namespace mmio {
          * @note This operation performs a volatile load from memory.
          * @return The current value of the register.
          */
-        [[nodiscard]] static auto read() noexcept -> value_type
+        [[nodiscard]] static value_type read() noexcept
             requires (readable<AccessPolicy>)
         {
             return raw();
@@ -206,12 +206,12 @@ namespace mmio {
         static constexpr value_type MASK =
             Width == Register::BIT_SIZE ? ~value_type{0} : ((value_type(1) << Width) - 1) << Offset;
 
-        field()                                = delete;
-        field(const field&)                    = delete;
-        field(field&&)                         = delete;
-        ~field()                               = delete;
-        auto operator=(const field&) -> field& = delete;
-        auto operator=(field&&) -> field&      = delete;
+        field()                        = delete;
+        field(const field&)            = delete;
+        field(field&&)                 = delete;
+        ~field()                       = delete;
+        field& operator=(const field&) = delete;
+        field& operator=(field&&)      = delete;
 
         // ================= READ =================
 
@@ -223,7 +223,7 @@ namespace mmio {
          *
          * @return The extracted field value.
          */
-        [[nodiscard]] static auto read() noexcept -> value_type
+        [[nodiscard]] static value_type read() noexcept
             requires (readable<policy>)
         {
             return (Register::read() & MASK) >> Offset;
@@ -246,7 +246,7 @@ namespace mmio {
         static void write(value_type val) noexcept
             requires (writable<policy> && readable<policy>)
         {
-            Register::modify([val](value_type& reg_val) -> auto {
+            Register::modify([val](value_type& reg_val) {
                 reg_val &= ~MASK;
                 reg_val |= (val << Offset) & MASK;
             });
@@ -302,7 +302,7 @@ namespace mmio {
         static void modify(F&& func) noexcept(std::is_nothrow_invocable_v<F, value_type&>)
             requires (writable<policy> && readable<policy> && std::invocable<F, value_type&>)
         {
-            Register::modify([callable = std::forward<F>(func)](value_type& reg_val) mutable -> auto {
+            Register::modify([callable = std::forward<F>(func)](value_type& reg_val) mutable {
                 value_type tmp = (reg_val & MASK) >> Offset;
                 callable(tmp);
                 reg_val &= ~MASK;
@@ -319,7 +319,7 @@ namespace mmio {
         static void set() noexcept
             requires (writable<policy> && readable<policy> && (Width == 1))
         {
-            Register::modify([](value_type& reg_val) -> auto { reg_val |= MASK; });
+            Register::modify([](value_type& reg_val) { reg_val |= MASK; });
         }
 
         /**
@@ -341,7 +341,7 @@ namespace mmio {
         static void clear() noexcept
             requires (writable<policy> && readable<policy> && (Width == 1))
         {
-            Register::modify([](value_type& reg_val) -> auto { reg_val &= ~MASK; });
+            Register::modify([](value_type& reg_val) { reg_val &= ~MASK; });
         }
 
         /**
@@ -375,7 +375,7 @@ namespace mmio {
         static void toggle() noexcept
             requires (writable<policy> && readable<policy> && (Width == 1))
         {
-            Register::modify([](value_type& reg_val) -> auto { reg_val ^= MASK; });
+            Register::modify([](value_type& reg_val) { reg_val ^= MASK; });
         }
 
         /**
@@ -384,7 +384,7 @@ namespace mmio {
          * @note Requires Read-Only access.
          * @return true if the bit is set, false otherwise.
          */
-        static auto is_set() noexcept -> bool
+        static bool is_set() noexcept
             requires (readable<policy> && (Width == 1))
         {
             return (Register::read() & MASK) != 0;
@@ -396,7 +396,7 @@ namespace mmio {
          * @note Requires Read-Only access.
          * @return true if the bit is clear, false otherwise.
          */
-        static auto is_clear() noexcept -> bool
+        static bool is_clear() noexcept
             requires (readable<policy> && (Width == 1))
         {
             return (Register::read() & MASK) == 0;

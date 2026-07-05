@@ -14,7 +14,8 @@ Checks: >
   -clang-diagnostic-*-compat*,
   -clang-analyzer-core.FixedAddressDereference,
   -core.FixedAddressDereference,
-  -cppcoreguidelines-pro-type-reinterpret-cast
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -modernize-use-trailing-return-type
 
 FormatStyle: none
 User: ""
