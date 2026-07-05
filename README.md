@@ -11,27 +11,27 @@
 
 # MMIO
 
-**MMIO** is a modern C++ library for safe, type-driven access to memory‑mapped I/O registers.  
-It provides clean abstractions for fields, access policies, and size traits while preserving the performance of low‑level register operations.
+**MMIO** is a modern C++ library for safe, type-driven access to memory-mapped I/O registers.
+It provides clean abstractions for fields, access policies, and size traits while preserving the performance of low-level register operations.
 
 ## Features
 
-- **Type‑safe register access** via policies and field proxies
-- **Header‑only design** for easy integration
-- **Zero‑cost abstractions** using templates and traits
-- **Built‑in tests** for core behavior
+- **Type-safe register access** via policies and field proxies
+- **Header-only design** for easy integration
+- **Zero-cost abstractions** using templates and traits
+- **Built-in tests** for core behavior
 - **Doxygen-ready documentation** pipeline
 
 ## Project Layout
 
 - `include/`
-  - `policy/` – access policy definitions
-  - `proxy/` – field access wrappers
-  - `traits/` – utilities like size traits
-  - `mmio.hpp` – main public header
-- `test/` – tests
-- `documentation/` – Doxygen configuration and pages
-- `all/` – meta build for library + tests + docs
+  - `policy/` - access policy definitions
+  - `proxy/` - field access wrappers
+  - `traits/` - utilities like size traits
+  - `mmio.hpp` - main public header
+- `test/` - tests
+- `documentation/` - Doxygen configuration and pages
+- `all/` - meta build for library + tests + docs
 
 ## Requirements
 
@@ -124,7 +124,7 @@ A: Yes. The core library is intended to be used as headers only.
 A: No. The abstractions are designed to optimize away to direct register access.
 
 **Q: Can I use this without CMake?**  
-A: Yes. Since it’s header-only, you can just include the headers directly.
+A: Yes. Since it's header-only, you can just include the headers directly.
 
 **Q: Is this suitable for bare-metal targets?**  
 A: Yes. The library is designed with embedded systems and low-level targets in mind.

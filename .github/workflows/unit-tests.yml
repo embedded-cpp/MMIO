@@ -22,7 +22,10 @@ jobs:
                   key: ${{ runner.os }}-cpm-${{ hashFiles('**/CMakeLists.txt') }}
 
             - name: Install Tools
-              run: sudo apt update && sudo apt install -y gcovr
+              run: |
+                sudo apt-get update
+                sudo apt-get install -y pipx
+                pipx install gcovr==8.6
 
             - name: Build & Test
               run: |

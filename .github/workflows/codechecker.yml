@@ -1,0 +1,65 @@
+name: CodeChecker
+
+on:
+    workflow_call:
+
+env:
+    CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm_modules
+    BUILD_DIR: build/test/unit
+
+jobs:
+    analyze:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v5
+              with:
+                  fetch-depth: 0
+
+            - name: Cache CPM
+              uses: actions/cache@v5
+              with:
+                  path: ${{ env.CPM_SOURCE_CACHE }}
+                  key: ${{ runner.os }}-cpm-${{ hashFiles('**/CMakeLists.txt') }}
+
+            - name: Install analyzers
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y pipx
+
+                  pipx install clang-tidy==22.1.7 cppcheck==1.5.1 codechecker==6.28.2
+                  pipx ensurepath
+
+                  clang --version
+                  clang-tidy --version
+                  cppcheck --version
+                  CodeChecker version
+
+            - name: Configure
+              run: |
+                  cmake \
+                    -S test/unit \
+                    -B ${{ env.BUILD_DIR }} \
+                    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+                    -DCMAKE_BUILD_TYPE=Debug
+
+            - name: Build
+              run: cmake --build ${{ env.BUILD_DIR }} -j$(nproc)
+
+            - name: CodeChecker analysis
+              run: |
+                  cd ${{ github.workspace }}
+                  cmake --build ${{ env.BUILD_DIR }} --target codechecker
+
+            - name: Upload SARIF
+              uses: actions/upload-artifact@v6
+              with:
+                  name: codechecker-sarif
+                  path: ${{ env.BUILD_DIR }}/codechecker/results.sarif
+
+            - name: Upload HTML Report
+              if: always()
+              uses: actions/upload-artifact@v6
+              with:
+                  name: codechecker-html
+                  path: ${{ env.BUILD_DIR }}/codechecker/html

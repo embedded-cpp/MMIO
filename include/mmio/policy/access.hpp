@@ -17,9 +17,9 @@
 #ifndef ACCESS_HPP
 #define ACCESS_HPP
 
-//<! Internal
-//<! External
-//<! System
+// Internal
+// External
+// System
 #include <concepts>
 
 namespace mmio {
@@ -57,29 +57,25 @@ namespace mmio {
     using na  = no_access;
 
     /**
-     * @brief Concept to check if a type is a valid read access policy
-     * @tparam T Type to check
+     * @brief Concept to check if the type 'T' is a valid read access policy
      */
     template <typename T>
     concept readable = std::derived_from<T, read_only>;
 
     /**
-     * @brief Concept to check if a type is a valid write access policy
-     * @tparam T Type to check
+     * @brief Concept to check if the type 'T' is a valid write access policy
      */
     template <typename T>
     concept writable = std::derived_from<T, write_only>;
 
     /**
-     * @brief Concept to check if a type is a valid write-1-to-clear access policy
-     * @tparam T Type to check
+     * @brief Concept to check if the type 'T' is a valid write-1-to-clear access policy
      */
     template <typename T>
     concept writable_1_to_clear = std::derived_from<T, write_1_to_clear>;
 
     /**
-     * @brief Concept to check if a type is a valid access policy (no_access, readable, or writable)
-     * @tparam T Type to check
+     * @brief Concept to check if the type 'T' is a valid access policy (no_access, readable, or writable)
      */
     template <typename T>
     concept access_policy = std::same_as<T, no_access> || readable<T> || writable<T> || writable_1_to_clear<T>;

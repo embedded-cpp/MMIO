@@ -23,7 +23,8 @@ jobs:
 
             - name: Install python dependencies
               run: |
-                  pip3 install jinja2==3.1.6 Pygments==2.19.1
+                  pipx install jinja2==3.1.6 Pygments==2.20.0
+                  pipx ensurepath
 
             - name: Install Doxygen
               uses: ssciwr/doxygen-install@v1

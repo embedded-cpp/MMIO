@@ -18,14 +18,12 @@
  * @file sonarqube_excluder.cpp
  * @brief This file serves as an anchor for SonarQube to exclude the test_*.cpp files from analysis.
  */
-//<! Internal
-//<! External
-#include "mmio/mmio.hpp"
-#include "mmio/policy/access.hpp"
-//<! System
-#include <cstdint>
-#include <sys/mman.h>
-
+// Internal
+// External
+#include "mmio/mmio.hpp" // for field, reg, rw
+// System
+#include <cstdint>    // for uint32_t, uintptr_t
+#include <sys/mman.h> // for mmap, munmap, MAP_ANONYMOUS, MAP_FAILED
 static constexpr std::uintptr_t mock_addr = 0x10000U;
 
 /**
@@ -35,7 +33,7 @@ static constexpr std::uintptr_t mock_addr = 0x10000U;
 void dummy() {
     void* mem = nullptr;
     mem       = mmap(reinterpret_cast<void*>(mock_addr), 4096, PROT_READ | PROT_WRITE,
-              MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
+        MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
 
     using TEST_REG   = mmio::reg<mock_addr, 32, mmio::rw>;
     using TEST_FIELD = mmio::field<TEST_REG, 8, 8>;

@@ -1,0 +1,21 @@
+# =============================================================================
+# CodeChecker result filter - used only in `CodeChecker parse`.
+# Syntax: '-' excludes, '+' forces inclusion. The first matching rule wins.
+# Default (no rules): included.
+#
+# DO NOT use with `CodeChecker analyze`: the test TUs are
+# the only compilation units that include the mmio headers.
+# Excluding them from analyze would remove all analysis of the library.
+# =============================================================================
+
+# Exclude test files (TUs, runner, SonarQube anchor)
+-*/test/unit/source/*
+
+# Exclude external packages downloaded by CPM.cmake
+-*/cpm_modules/*
+
+# Exclude CMake FetchContent dependencies
+-*/_deps/*
+
+# Exclude system and compiler headers
+-/usr/*
