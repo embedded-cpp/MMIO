@@ -23,7 +23,7 @@ jobs:
 
             - name: Install python dependencies
               run: |
-                  pipx install jinja2==3.1.6 Pygments==2.20.0
+                  pipx install uv
                   pipx ensurepath
 
             - name: Install Doxygen
@@ -33,11 +33,11 @@ jobs:
 
             - name: Build
               run: |
-                  cmake -Sdocumentation -Bbuild/documentation
-                  cmake --build build/documentation --target GenerateDocs
+                  cmake -S doc -B build/doc
+                  cmake --build build/doc --target generate_docs
 
             - name: Publish
               uses: peaceiris/actions-gh-pages@v4
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
-                  publish_dir: ./build/documentation/doxygen/html
+                  publish_dir: ./build/doc/site

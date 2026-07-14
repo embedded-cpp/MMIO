@@ -10,4 +10,4 @@ include(../cmake/tools.cmake)
 enable_testing()
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../test/unit ${CMAKE_BINARY_DIR}/test/unit)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../documentation ${CMAKE_BINARY_DIR}/documentation)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../doc ${CMAKE_BINARY_DIR}/doc)

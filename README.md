@@ -11,127 +11,54 @@
 
 # MMIO
 
-**MMIO** is a modern C++ library for safe, type-driven access to memory-mapped I/O registers.
-It provides clean abstractions for fields, access policies, and size traits while preserving the performance of low-level register operations.
+MMIO is a lightweight C++20 library for expressing memory-mapped I/O access in a clear, type-safe way. It is designed for embedded and low-level software where register-level code must stay readable, maintainable, and close to the hardware.
 
-## Features
+## Why use MMIO?
 
-- **Type-safe register access** via policies and field proxies
-- **Header-only design** for easy integration
-- **Zero-cost abstractions** using templates and traits
-- **Built-in tests** for core behavior
-- **Doxygen-ready documentation** pipeline
+- Write register access with expressive types instead of scattered bit masks.
+- Keep driver code readable while preserving low-level control.
+- Use strongly-typed register and field abstractions for safer embedded development.
+- Build against a header-only API that fits naturally into existing firmware projects.
 
-## Project Layout
+## What you get
 
-- `include/`
-  - `policy/` - access policy definitions
-  - `proxy/` - field access wrappers
-  - `traits/` - utilities like size traits
-  - `mmio.hpp` - main public header
-- `test/` - tests
-- `documentation/` - Doxygen configuration and pages
-- `all/` - meta build for library + tests + docs
+- `mmio::reg` for typed access to a hardware register address
+- `mmio::field` for bit-field access with masking and shifting
+- access policies such as `ro`, `wo`, `rw`, and `w1c`
+- compile-time support for common register sizes and alignment checks
 
-## Requirements
-
-- A C++ compiler with modern C++ support (C++17 or newer recommended)
-- CMake (for building tests, docs, and integration)
-- Doxygen (optional, for docs generation)
-
-## Integration
-
-### Use as a subproject (recommended)
-
-Add the repository as a submodule or fetch it in your build, then:
-```cmake 
-add_subdirectory(path/to/MMIO)
-target_link_libraries(your_target PRIVATE MMIO)
-```
-
-### Header-only usage
-
-You can also include the main header directly:
-```cpp 
-#include "mmio/mmio.hpp"
-```
-
-## Quick Start
-Include the library and start defining registers and fields in a header shared by your drivers or HAL code.
-
-## Register / Field Example
-Below is a generic example illustrating the common structure used with MMIO-style libraries.
-Adapt the names and parameters to your own register layout and policies.
+## A simple example
 
 ```cpp
 #include "mmio/mmio.hpp"
 
-Example structure (pseudocode-style):
-using CTRL = mmio::reg<0x40000000, mmio::rw, std::uint32_t>;
+using CTRL = mmio::reg<0x40000000, 32, mmio::rw>;
 using ENABLE = mmio::field<CTRL, 0, 1>;
-using MODE = mmio::field<CTRL, 1, 2>;
-ENABLE::mmio::set_bit();
-MODE::mmio::write(0b10);
-auto current = mmio::MODE::read();
+
+ENABLE::write(1);
+auto value = ENABLE::read();
 ```
 
-## Design Goals
-- **Safety first**: prevent invalid accesses at compile time whenever possible.
-- **Zero overhead**: abstractions compile down to the same instructions as raw register access.
-- **Clarity**: expressive field definitions that are easy to read and audit.
-- **Portability**: usable across embedded toolchains with minimal dependencies.
-- **Scalability**: reusable building blocks for large register maps.
+## Getting started
 
+The documentation includes a dedicated guide for integration and usage:
 
-## Build Everything (recommended)
+- [Getting started](doc/tabs/getting_started.md)
+- [Examples](doc/tabs/examples.md)
+- [Contributing](doc/tabs/contributing.md)
+
+## Build locally
+
+If you want to build the project, run the tests, or generate the documentation:
+
 ```bash
 cmake -S all -B build
 cmake --build build
+ctest --test-dir build --output-on-failure
+cmake -S doc -B build/doc
+cmake --build build/doc --target generate_docs
 ```
-
-## Run Tests
-```bash
- cmake -S all -B build/test
- cmake --build build/test
- ctest --test-dir build/test --output-on-failure
-```
-
-## Build Documentation
-```bash
-cmake -S documentation -B build/doc
-cmake --build build/doc --target GenerateDocs
-```
-
-## Code Formatting
-```bash
-cmake --build build --target fix-format
-```
-
-## Continuous Integration
-The project includes CI workflows for:
-
-- **Linux / Windows / macOS** builds
-- **Formatting checks**
-- **Unit tests**
-- **Documentation generation**
-- **Installation verification**
-
-## FAQ
-**Q: Is MMIO header-only?**  
-A: Yes. The core library is intended to be used as headers only.
-
-**Q: Does this add runtime overhead?**  
-A: No. The abstractions are designed to optimize away to direct register access.
-
-**Q: Can I use this without CMake?**  
-A: Yes. Since it's header-only, you can just include the headers directly.
-
-**Q: Is this suitable for bare-metal targets?**  
-A: Yes. The library is designed with embedded systems and low-level targets in mind.
-
-## Contributing
-Contributions are welcome!  
-Please open an issue first for major changes and keep the code style consistent by running the formatter.
 
 ## License
+
 This project is licensed under the [LICENSE](LICENSE).
