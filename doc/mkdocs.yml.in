@@ -1,0 +1,142 @@
+site_name: MMIO
+docs_dir: "@MMIO_DOCS_DIR@"
+site_dir: "@MMIO_SITE_DIR@"
+
+theme: 
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Light mode
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - content.code.copy
+
+nav:
+  - Getting Started: getting_started.md
+  - Examples: examples.md
+  - Contributing: contributing.md
+  - API:
+    - Overview: mmio/pages.md
+    - Annotated: mmio/annotated.md
+    - Classes:
+        - Index: mmio/classes.md
+        - Class Members: mmio/class_members.md
+        - Member Functions: mmio/class_member_functions.md
+        - Member Variables: mmio/class_member_variables.md
+        - Member Typedefs: mmio/class_member_typedefs.md
+        - Member Enums: mmio/class_member_enums.md
+    - Files: mmio/files.md
+    - Namespaces:
+        - Index: mmio/namespaces.md
+        - Namespace Members: mmio/namespace_members.md
+        - Member Functions: mmio/namespace_member_functions.md
+        - Member Variables: mmio/namespace_member_variables.md
+        - Member Typedefs: mmio/namespace_member_typedefs.md
+        - Member Enums: mmio/namespace_member_enums.md
+    - Modules: mmio/modules.md
+    - Hierarchy: mmio/hierarchy.md
+    - Functions: mmio/functions.md
+    - Macros: mmio/macros.md
+    - Variables: mmio/variables.md
+    - Links: mmio/links.md
+    - Reference:
+        - Namespace: mmio/namespacemmio.md
+        - Class: mmio/classmmio_1_1field.md
+        - Structs:
+            - No Access: mmio/structmmio_1_1no__access.md
+            - Read Only: mmio/structmmio_1_1read__only.md
+            - Read Write: mmio/structmmio_1_1read__write.md
+            - Size Trait: mmio/structmmio_1_1size__trait.md
+            - Size Trait 8: mmio/structmmio_1_1size__trait_3_01BITS__8_01_4.md
+            - Size Trait 16: mmio/structmmio_1_1size__trait_3_01BITS__16_01_4.md
+            - Size Trait 32: mmio/structmmio_1_1size__trait_3_01BITS__32_01_4.md
+            - Size Trait 64: mmio/structmmio_1_1size__trait_3_01BITS__64_01_4.md
+            - Write 1 To Clear: mmio/structmmio_1_1write__1__to__clear.md
+            - Write Only: mmio/structmmio_1_1write__only.md
+        - Files:
+            - Main Header: mmio/mmio_8hpp.md
+            - Access Header: mmio/access_8hpp.md
+            - Size Header: mmio/size_8hpp.md
+        - Reg Class: mmio/classmmio_1_1reg.md
+
+hooks:
+  - @MMIO_HOOKS_DIR@/admonition.py
+
+plugins:
+  - search
+  - mkdoxy:
+      projects:
+        mmio:
+          src-dirs: "@MMIO_INCLUDE_DIR@"
+          full-doc: true
+          doxy-cfg:
+            PROJECT_NAME: "MMIO"
+
+            ALLOW_UNICODE_NAMES: YES        
+            FULL_PATH_NAMES: YES            
+            STRIP_FROM_PATH: "@MMIO_INCLUDE_DIR@ @MMIO_PROJECT_ROOT@" 
+            
+            # --- Inputs & Parsing ---
+            RECURSIVE: YES                   
+            FILE_PATTERNS: "*.hpp *.cpp *.h"
+            EXTENSION_MAPPING: "hpp=C++"     
+            
+            # --- C++ ---
+            IDL_PROPERTY_SUPPORT: NO         
+            INLINE_INHERITED_MEMB: YES       
+            BUILTIN_STL_SUPPORT: YES         
+            EXTRACT_ALL: YES                 
+            EXTRACT_PRIVATE: NO
+            EXTRACT_STATIC: YES              
+            
+            # --- XML ---
+            GENERATE_XML: YES                
+            XML_PROGRAMLISTING: NO        
+            GENERATE_HTML: YES             
+            GENERATE_LATEX: NO               
+            
+            # --- Graphism ---
+            HAVE_DOT: YES                    
+            DOT_IMAGE_FORMAT: "svg"          
+            INTERACTIVE_SVG: YES             
+            COLLABORATION_GRAPH: YES         
+            TEMPLATE_RELATIONS: YES
+            GRAPHICAL_HIERARCHY: YES         
+            DIRECTORY_GRAPH: YES             
+            DOT_TRANSPARENT: YES
+            CALL_GRAPH: YES
+            CALLER_GRAPH: YES
+            CLASS_GRAPH: YES
+            COLLABORATION_GRAPH: YES
+            GROUP_GRAPHS: YES
+            INCLUDE_GRAPH: YES
+            INCLUDED_BY_GRAPH: YES
+            REFERENCED_BY_RELATION: YES
+            REFERENCES_RELATION: YES
+            DOT_MULTI_TARGETS: YES
+            DOT_CLEANUP: YES
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
