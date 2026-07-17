@@ -38,9 +38,9 @@ namespace mmio {
      * It enforces access policies (Read-Only, Write-Only, Read-Write) and
      * data width constraints at compile time using C++20 concepts.
      *
-     * @tparam Addr        The physical base address of the register.
-     * @tparam BitSize     The width of the register in bits (e.g., 8, 16, 32, 64).
-     * @tparam AccessPolicy The access permission policy (ro, wo, rw).
+     * @tparam Addr         The physical base address of the register.
+     * @tparam BitSize      The width of the register in bits (e.g., 8, 16, 32, 64).
+     * @tparam AccessPolicy The access permission policy (ro, wo, rw, etc..).
      */
     template <std::uintptr_t Addr, std::size_t BitSize, access_policy AccessPolicy>
         requires (supported_size<BitSize>)
@@ -65,6 +65,16 @@ namespace mmio {
         static volatile value_type& raw() noexcept {
             return *reinterpret_cast<volatile value_type*>(ADDRESS); // NOLINT(performance-no-int-to-ptr)
         }
+
+        /**
+         * @brief Returns 'true' if a field belongs to this register, false otherwise.
+         * @tparam F The field type to check.
+         */
+        template <typename F>
+        static constexpr bool BELONGS_TO_THIS_V = requires {
+            typename F::register_type;
+            requires std::same_as<typename F::register_type, reg>;
+        };
 
     public:
         reg()                      = delete;
@@ -121,15 +131,6 @@ namespace mmio {
             raw() = val;
         }
 
-        /**
-         * @brief Returns 'true' if a field belongs to this register, false otherwise.
-         * @tparam F The field type to check.
-         */
-        template <typename F>
-        static constexpr bool BELONGS_TO_THIS_V = requires {
-            typename F::register_type;
-            requires std::same_as<typename F::register_type, reg>;
-        };
 
         /**
          * @brief Writes multiple bit-fields simultaneously in a single hardware operation.
@@ -191,16 +192,17 @@ namespace mmio {
      * Provides safer manipulation of sub-sections of a register by handling
      * bit-shifting and masking automatically.
      *
-     * @tparam Register The parent `reg` class.
-     * @tparam Offset   The starting bit position (LSB index) of the field.
-     * @tparam Width    The width of the field in bits.
+     * @tparam Register     The parent `reg` class.
+     * @tparam Offset       The starting bit position (LSB index) of the field.
+     * @tparam Width        The width of the field in bits.
+     * @tparam AccessPolicy The access permission policy (ro, wo, rw, etc..).
      */
-    template <typename Register, std::size_t Offset, std::size_t Width>
+    template <typename Register, std::size_t Offset, std::size_t Width, access_policy AccessPolicy = Register::policy>
         requires (Offset + Width <= Register::BIT_SIZE)
     class field {
     public:
         using value_type    = Register::value_type; ///< Underlying integer type (e.g., uint32_t)
-        using policy        = Register::policy;     ///< Access policy alias from the parent register
+        using policy        = AccessPolicy;         ///< Access policy alias from the parent register
         using register_type = Register;             ///< Type alias for the parent register
 
         static constexpr value_type MASK =
