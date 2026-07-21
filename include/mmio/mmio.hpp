@@ -38,9 +38,9 @@ namespace mmio {
      * It enforces access policies (Read-Only, Write-Only, Read-Write) and
      * data width constraints at compile time using C++20 concepts.
      *
-     * @tparam Addr        The physical base address of the register.
-     * @tparam BitSize     The width of the register in bits (e.g., 8, 16, 32, 64).
-     * @tparam AccessPolicy The access permission policy (ro, wo, rw).
+     * @tparam Addr         The physical base address of the register.
+     * @tparam BitSize      The width of the register in bits (e.g., 8, 16, 32, 64).
+     * @tparam AccessPolicy The access permission policy (ro, wo, rw, etc..).
      */
     template <std::uintptr_t Addr, std::size_t BitSize, access_policy AccessPolicy>
         requires (supported_size<BitSize>)
@@ -65,6 +65,16 @@ namespace mmio {
         static volatile value_type& raw() noexcept {
             return *reinterpret_cast<volatile value_type*>(ADDRESS); // NOLINT(performance-no-int-to-ptr)
         }
+
+        /**
+         * @brief Internal trait: true if field F belongs to this register.
+         * @tparam F The field type to check.
+         */
+        template <typename F>
+        static constexpr bool BELONGS_TO_THIS_V = requires {
+            typename F::register_type;
+            requires std::same_as<typename F::register_type, reg>;
+        };
 
     public:
         reg()                      = delete;
@@ -121,15 +131,6 @@ namespace mmio {
             raw() = val;
         }
 
-        /**
-         * @brief Returns 'true' if a field belongs to this register, false otherwise.
-         * @tparam F The field type to check.
-         */
-        template <typename F>
-        static constexpr bool BELONGS_TO_THIS_V = requires {
-            typename F::register_type;
-            requires std::same_as<typename F::register_type, reg>;
-        };
 
         /**
          * @brief Writes multiple bit-fields simultaneously in a single hardware operation.

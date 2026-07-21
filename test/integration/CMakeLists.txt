@@ -2,14 +2,15 @@ cmake_minimum_required(VERSION 3.28)
 project(mmioTestsMcu LANGUAGES CXX ASM)
 
 # ---- Options ----
-
-option(TEST_INSTALLED_VERSION "Test the version found by find_package" OFF)
-set(MCU_NAME ${MCU_NAME})
-string(TOLOWER ${MCU_NAME} MCU_NAME)
+# MCU_NAME: Target MCU identifier (e.g., stm32f401re). Used to select the board-specific sources and toolchain settings
+# under source/mcu/<MCU_NAME>.
+if(NOT DEFINED MCU_NAME)
+    message(FATAL_ERROR "MCU_NAME must be specified")
+endif()
+string(TOLOWER "${MCU_NAME}" MCU_NAME)
 
 # --- Import tools ----
 include(cmake/target.cmake)
-include(../../cmake/tools.cmake)
 
 # ---- Dependencies ----
 
@@ -31,6 +32,4 @@ target_link_libraries(${PROJECT_NAME} PRIVATE peripherals)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)
 
 # enable compiler warnings
-if(NOT TEST_INSTALLED_VERSION)
-    target_compile_options(mmio INTERFACE -Wall -Wpedantic -Wextra -Werror)
-endif()
+target_compile_options(mmio INTERFACE -Wall -Wpedantic -Wextra -Werror)
