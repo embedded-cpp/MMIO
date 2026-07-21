@@ -192,17 +192,16 @@ namespace mmio {
      * Provides safer manipulation of sub-sections of a register by handling
      * bit-shifting and masking automatically.
      *
-     * @tparam Register     The parent `reg` class.
-     * @tparam Offset       The starting bit position (LSB index) of the field.
-     * @tparam Width        The width of the field in bits.
-     * @tparam AccessPolicy The access permission policy (ro, wo, rw, etc..).
+     * @tparam Register The parent `reg` class.
+     * @tparam Offset   The starting bit position (LSB index) of the field.
+     * @tparam Width    The width of the field in bits.
      */
-    template <typename Register, std::size_t Offset, std::size_t Width, access_policy AccessPolicy = Register::policy>
+    template <typename Register, std::size_t Offset, std::size_t Width>
         requires (Offset + Width <= Register::BIT_SIZE)
     class field {
     public:
         using value_type    = Register::value_type; ///< Underlying integer type (e.g., uint32_t)
-        using policy        = AccessPolicy;         ///< Access policy alias from the parent register
+        using policy        = Register::policy;     ///< Access policy alias from the parent register
         using register_type = Register;             ///< Type alias for the parent register
 
         static constexpr value_type MASK =
