@@ -1,7 +1,8 @@
 [![Develop](https://github.com/embedded-cpp/mmio/actions/workflows/develop.yml/badge.svg)](https://github.com/embedded-cpp/mmio/actions/workflows/develop.yml)
 [![Release](https://github.com/embedded-cpp/mmio/actions/workflows/release.yml/badge.svg)](https://github.com/embedded-cpp/mmio/actions/workflows/release.yml)
 [![Documentation](https://img.shields.io/badge/docs-online-brightgreen)](https://embedded-cpp.github.io/mmio/)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=embedded-cpp_mmio&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=embedded-cpp_mmio)
+[![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=embedded-cpp_mmio&metric=alert_status&token=0414d3703cd49f8a7de6c25ba8d49b4826a9bcb9)](https://sonarcloud.io/summary/new_code?id=embedded-cpp_mmio)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=embedded-cpp_mmio&metric=coverage&token=0414d3703cd49f8a7de6c25ba8d49b4826a9bcb9)](https://sonarcloud.io/summary/new_code?id=embedded-cpp_mmio)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 
