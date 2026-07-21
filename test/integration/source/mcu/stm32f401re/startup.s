@@ -1,4 +1,8 @@
-
+/*
+ * Minimal Cortex-M4 startup used by the STM32F401RE integration tests.
+ * Initializes .data/.bss, runs static constructors, then calls main().
+ * Linker script must provide: _estack, _sidata, _sdata, _edata, _sbss, _ebss.
+ */
   .syntax unified
   .cpu cortex-m4
   .fpu softvfp
