@@ -1,7 +1,7 @@
-[![Develop](https://github.com/embedded-cpp/MMIO/actions/workflows/develop.yml/badge.svg)](https://github.com/embedded-cpp/MMIO/actions/workflows/develop.yml)
-[![Release](https://github.com/embedded-cpp/MMIO/actions/workflows/release.yml/badge.svg)](https://github.com/embedded-cpp/MMIO/actions/workflows/release.yml)
-[![Documentation](https://img.shields.io/badge/docs-online-brightgreen)](https://embedded-cpp.github.io/MMIO/)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=embedded-cpp_MMIO&metric=alert_status&token=0414d3703cd49f8a7de6c25ba8d49b4826a9bcb9)](https://sonarcloud.io/summary/new_code?id=embedded-cpp_MMIO)
+[![Develop](https://github.com/embedded-cpp/mmio/actions/workflows/develop.yml/badge.svg)](https://github.com/embedded-cpp/mmio/actions/workflows/develop.yml)
+[![Release](https://github.com/embedded-cpp/mmio/actions/workflows/release.yml/badge.svg)](https://github.com/embedded-cpp/mmio/actions/workflows/release.yml)
+[![Documentation](https://img.shields.io/badge/docs-online-brightgreen)](https://embedded-cpp.github.io/mmio/)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=embedded-cpp_mmio&metric=alert_status&token=0414d3703cd49f8a7de6c25ba8d49b4826a9bcb9)](https://sonarcloud.io/summary/new_code?id=embedded-cpp_mmio)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 <p align="center">
@@ -9,11 +9,11 @@
 </p>
 
 
-# MMIO
+# mmio
 
-MMIO is a lightweight C++20 library for expressing memory-mapped I/O access in a clear, type-safe way. It is designed for embedded and low-level software where register-level code must stay readable, maintainable, and close to the hardware.
+mmio is a lightweight C++20 library for expressing memory-mapped I/O access in a clear, type-safe way. It is designed for embedded and low-level software where register-level code must stay readable, maintainable, and close to the hardware.
 
-## Why use MMIO?
+## Why use mmio?
 
 - Write register access with expressive types instead of scattered bit masks.
 - Keep driver code readable while preserving low-level control.

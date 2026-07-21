@@ -1,10 +1,10 @@
-# MMIO documentation
+# mmio documentation
 
-Welcome to the documentation for MMIO, a lightweight C++20 library for expressing memory-mapped I/O access in a clear and type-safe way.
+Welcome to the documentation for mmio, a lightweight C++20 library for expressing memory-mapped I/O access in a clear and type-safe way.
 
-## Why MMIO?
+## Why mmio?
 
-MMIO helps you write register-level code that is easier to read, safer to maintain, and closer to the hardware than raw pointer-based patterns.
+mmio helps you write register-level code that is easier to read, safer to maintain, and closer to the hardware than raw pointer-based patterns.
 
 It is especially useful for:
 

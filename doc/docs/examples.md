@@ -1,6 +1,6 @@
 # Examples
 
-The best way to understand MMIO is to look at how it is used in practice. The integration tests in the repository provide a realistic example of register-oriented firmware code.
+The best way to understand mmio is to look at how it is used in practice. The integration tests in the repository provide a realistic example of register-oriented firmware code.
 
 ## Register access with `mmio::reg`
 
@@ -34,7 +34,7 @@ GPIOA::MODER::PIN5::write(0b01U);
 USART2::CR1::write_set<USART2::CR1::UE, USART2::CR1::TE, USART2::CR1::RE>();
 ```
 
-This shows how MMIO can be used to describe both low-level register writes and higher-level peripheral configuration in a concise way.
+This shows how mmio can be used to describe both low-level register writes and higher-level peripheral configuration in a concise way.
 
 ## Practical reference
 

@@ -1,6 +1,6 @@
 # Contributing
 
-Contributions are welcome. If you would like to improve MMIO, please open an issue or start a discussion first so the direction of the change can be discussed clearly.
+Contributions are welcome. If you would like to improve mmio, please open an issue or start a discussion first so the direction of the change can be discussed clearly.
 
 ## Contribution guidelines
 
