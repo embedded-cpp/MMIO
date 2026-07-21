@@ -69,7 +69,6 @@ namespace mmio {
         /**
          * @brief Internal trait: true if field F belongs to this register.
          * @tparam F The field type to check.
-         * @note This is an internal implementation detail and is not part of the public API.
          */
         template <typename F>
         static constexpr bool BELONGS_TO_THIS_V = requires {
