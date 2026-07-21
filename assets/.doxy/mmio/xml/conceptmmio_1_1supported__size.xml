@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="conceptmmio_1_1supported__size" kind="concept">
+    <compoundname>mmio::supported_size</compoundname>
+    <includes refid="size_8hpp" local="no">size.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>std::size_t</type>
+        <declname>T</declname>
+        <defname>T</defname>
+      </param>
+    </templateparamlist>
+    <initializer>template&lt;std::size_t T&gt;
+concept <ref refid="conceptmmio_1_1supported__size" kindref="compound">mmio::supported_size</ref> =  requires { typename size_trait&lt;T&gt;::type; }    </initializer>
+    <briefdescription>
+<para>Concept to check if &apos;T&apos; is a type with a valid size. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="mmio/traits/size.hpp" line="80" column="5"/>
+  </compounddef>
+</doxygen>

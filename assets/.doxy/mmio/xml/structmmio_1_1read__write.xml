@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="structmmio_1_1read__write" kind="struct" language="C++" prot="public">
+    <compoundname>mmio::read_write</compoundname>
+    <basecompoundref refid="structmmio_1_1read__only" prot="public" virt="non-virtual">mmio::read_only</basecompoundref>
+    <basecompoundref refid="structmmio_1_1write__only" prot="public" virt="non-virtual">mmio::write_only</basecompoundref>
+    <includes refid="access_8hpp" local="no">access.hpp</includes>
+    <briefdescription>
+<para>Tag type for read-write registers Inherits from both <ref refid="structmmio_1_1read__only" kindref="compound">read_only</ref> and <ref refid="structmmio_1_1write__only" kindref="compound">write_only</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>mmio::read_only</label>
+        <link refid="structmmio_1_1read__only"/>
+      </node>
+      <node id="1">
+        <label>mmio::read_write</label>
+        <link refid="structmmio_1_1read__write"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>mmio::write_only</label>
+        <link refid="structmmio_1_1write__only"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>mmio::read_only</label>
+        <link refid="structmmio_1_1read__only"/>
+      </node>
+      <node id="1">
+        <label>mmio::read_write</label>
+        <link refid="structmmio_1_1read__write"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>mmio::write_only</label>
+        <link refid="structmmio_1_1write__only"/>
+      </node>
+    </collaborationgraph>
+    <location file="mmio/policy/access.hpp" line="50" column="5" bodyfile="mmio/policy/access.hpp" bodystart="50" bodyend="50"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

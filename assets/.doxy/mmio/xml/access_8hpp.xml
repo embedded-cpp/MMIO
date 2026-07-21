@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="access_8hpp" kind="file" language="C++">
+    <compoundname>access.hpp</compoundname>
+    <includes local="no">concepts</includes>
+    <includedby refid="mmio_8hpp" local="yes">mmio/mmio.hpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>mmio/policy/access.hpp</label>
+        <link refid="access_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>concepts</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>mmio/mmio.hpp</label>
+        <link refid="mmio_8hpp"/>
+      </node>
+      <node id="1">
+        <label>mmio/policy/access.hpp</label>
+        <link refid="access_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structmmio_1_1no__access" prot="public">mmio::no_access</innerclass>
+    <innerclass refid="structmmio_1_1read__only" prot="public">mmio::read_only</innerclass>
+    <innerclass refid="structmmio_1_1write__only" prot="public">mmio::write_only</innerclass>
+    <innerclass refid="structmmio_1_1write__1__to__clear" prot="public">mmio::write_1_to_clear</innerclass>
+    <innerclass refid="structmmio_1_1read__write" prot="public">mmio::read_write</innerclass>
+    <innernamespace refid="namespacemmio">mmio</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="mmio/policy/access.hpp"/>
+  </compounddef>
+</doxygen>

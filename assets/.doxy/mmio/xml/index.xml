@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.13.2" xml:lang="en-US">
+  <compound refid="classmmio_1_1field" kind="class"><name>mmio::field</name>
+    <member refid="classmmio_1_1field_1a1d300c188628f768763dabc930c42abf" kind="typedef"><name>value_type</name></member>
+    <member refid="classmmio_1_1field_1a17673c3046901a88c1e6e06fdeec8ec9" kind="typedef"><name>policy</name></member>
+    <member refid="classmmio_1_1field_1ac35b57a90a4294e38aa69f55301c3c16" kind="typedef"><name>register_type</name></member>
+    <member refid="classmmio_1_1field_1a4f52a754969f5ff77dab9cbd6063085f" kind="variable"><name>MASK</name></member>
+    <member refid="classmmio_1_1field_1ae66dbfba12ddcb9826f7b6f31a6bcb29" kind="function"><name>field</name></member>
+    <member refid="classmmio_1_1field_1ac487999eaa4cb9e9e11356c95218210e" kind="function"><name>field</name></member>
+    <member refid="classmmio_1_1field_1a9fc577c7ba40fdad838e49528425f019" kind="function"><name>field</name></member>
+    <member refid="classmmio_1_1field_1ada09558ba2600c6a3e347e308dfbf01c" kind="function"><name>~field</name></member>
+    <member refid="classmmio_1_1field_1a3c9e58c712ca4a1e6cea9609623b5aae" kind="function"><name>operator=</name></member>
+    <member refid="classmmio_1_1field_1acb90c01261ef9cee85760e2307565303" kind="function"><name>operator=</name></member>
+    <member refid="classmmio_1_1field_1abae3cfefa690ec32183b49adb29acdb2" kind="function"><name>read</name></member>
+    <member refid="classmmio_1_1field_1adc03aec9f9dea01a2c1d276843d19faa" kind="function"><name>write</name></member>
+    <member refid="classmmio_1_1field_1adc498a25170e0a04f37c68aa57b48bc8" kind="function"><name>write</name></member>
+    <member refid="classmmio_1_1field_1a9f4d8a71ee1596120102b0e15e74f8a6" kind="function"><name>write</name></member>
+    <member refid="classmmio_1_1field_1a2feb899fb9f554c998fe26e3c29be4a5" kind="function"><name>modify</name></member>
+    <member refid="classmmio_1_1field_1a8ad43f356b8489a26d5bc890aba2db2b" kind="function"><name>set</name></member>
+    <member refid="classmmio_1_1field_1ae73f9d7e51869e8adfc02e2fe937e563" kind="function"><name>set</name></member>
+    <member refid="classmmio_1_1field_1a1b8c8a6ddfcbe1bb8b3a02613c16a24e" kind="function"><name>clear</name></member>
+    <member refid="classmmio_1_1field_1a2708f47dc11b1009a90c1426dc1d8e5c" kind="function"><name>clear</name></member>
+    <member refid="classmmio_1_1field_1a9fde2940ff7f682c671256babe72a4a8" kind="function"><name>clear</name></member>
+    <member refid="classmmio_1_1field_1a1a29223a91a9f8e18b960de53c101f65" kind="function"><name>toggle</name></member>
+    <member refid="classmmio_1_1field_1ab95f273c895e836f8e514e0e454064de" kind="function"><name>is_set</name></member>
+    <member refid="classmmio_1_1field_1aefcf83a55208b171b04f11279be4cace" kind="function"><name>is_clear</name></member>
+  </compound>
+  <compound refid="structmmio_1_1no__access" kind="struct"><name>mmio::no_access</name>
+  </compound>
+  <compound refid="structmmio_1_1read__only" kind="struct"><name>mmio::read_only</name>
+  </compound>
+  <compound refid="structmmio_1_1read__write" kind="struct"><name>mmio::read_write</name>
+  </compound>
+  <compound refid="classmmio_1_1reg" kind="class"><name>mmio::reg</name>
+    <member refid="classmmio_1_1reg_1a910320c0c98fd389363a880f8c12ea3a" kind="typedef"><name>value_type</name></member>
+    <member refid="classmmio_1_1reg_1a91afe8fe8c49cf7cceaf5d756872dbe5" kind="typedef"><name>policy</name></member>
+    <member refid="classmmio_1_1reg_1a61aa1240357416e090315d9b97e199b9" kind="variable"><name>BIT_SIZE</name></member>
+    <member refid="classmmio_1_1reg_1ad6e8d3c711a7cd89515ddd97ac74819f" kind="variable"><name>ADDRESS</name></member>
+    <member refid="classmmio_1_1reg_1a5451fef381c8bb599c82b73e148565c2" kind="variable"><name>BELONGS_TO_THIS_V</name></member>
+    <member refid="classmmio_1_1reg_1a95dfd9371dd9fe2d105449afdc0bf584" kind="function"><name>raw</name></member>
+    <member refid="classmmio_1_1reg_1a441216290aa9e925d166c550750ab391" kind="function"><name>reg</name></member>
+    <member refid="classmmio_1_1reg_1a139c01a6c3f0db1009c46a6b944225c6" kind="function"><name>reg</name></member>
+    <member refid="classmmio_1_1reg_1a40d608f643c9e770f157b57200bd1531" kind="function"><name>reg</name></member>
+    <member refid="classmmio_1_1reg_1a718ff439443f1ecd11e9b0b6e1f612b4" kind="function"><name>~reg</name></member>
+    <member refid="classmmio_1_1reg_1a5219e3896e1f389d31c0485e80f3698d" kind="function"><name>operator=</name></member>
+    <member refid="classmmio_1_1reg_1abf4abf6e174a69f4c27ca4377d7ac7a0" kind="function"><name>operator=</name></member>
+    <member refid="classmmio_1_1reg_1a73a9bec0080cea3e794c81ccb5661299" kind="function"><name>read</name></member>
+    <member refid="classmmio_1_1reg_1aed555162086ec32693599ecd16268755" kind="function"><name>write</name></member>
+    <member refid="classmmio_1_1reg_1a98997c6be3810e6646d7ad066881bfc5" kind="function"><name>write</name></member>
+    <member refid="classmmio_1_1reg_1a555a75f89cb81f1dfea278a12ec4ccd2" kind="function"><name>write_set</name></member>
+    <member refid="classmmio_1_1reg_1a16c8deb412363df91bccbf5bf2b076ed" kind="function"><name>modify</name></member>
+  </compound>
+  <compound refid="structmmio_1_1size__trait" kind="struct"><name>mmio::size_trait</name>
+  </compound>
+  <compound refid="structmmio_1_1size__trait_3_01BITS__16_01_4" kind="struct"><name>mmio::size_trait&lt; BITS_16 &gt;</name>
+    <member refid="structmmio_1_1size__trait_3_01BITS__16_01_4_1a18f6a82f8c0321216288ea7fcd67182c" kind="typedef"><name>type</name></member>
+  </compound>
+  <compound refid="structmmio_1_1size__trait_3_01BITS__32_01_4" kind="struct"><name>mmio::size_trait&lt; BITS_32 &gt;</name>
+    <member refid="structmmio_1_1size__trait_3_01BITS__32_01_4_1ac417a11b8491b296f64d25cf982ea5ee" kind="typedef"><name>type</name></member>
+  </compound>
+  <compound refid="structmmio_1_1size__trait_3_01BITS__64_01_4" kind="struct"><name>mmio::size_trait&lt; BITS_64 &gt;</name>
+    <member refid="structmmio_1_1size__trait_3_01BITS__64_01_4_1a8534072534c0f93a72b153d445f851cf" kind="typedef"><name>type</name></member>
+  </compound>
+  <compound refid="structmmio_1_1size__trait_3_01BITS__8_01_4" kind="struct"><name>mmio::size_trait&lt; BITS_8 &gt;</name>
+    <member refid="structmmio_1_1size__trait_3_01BITS__8_01_4_1a9461c0680abad60e24bd61fee51b296e" kind="typedef"><name>type</name></member>
+  </compound>
+  <compound refid="structmmio_1_1write__1__to__clear" kind="struct"><name>mmio::write_1_to_clear</name>
+  </compound>
+  <compound refid="structmmio_1_1write__only" kind="struct"><name>mmio::write_only</name>
+  </compound>
+  <compound refid="conceptmmio_1_1access__policy" kind="concept"><name>mmio::access_policy</name>
+  </compound>
+  <compound refid="conceptmmio_1_1readable" kind="concept"><name>mmio::readable</name>
+  </compound>
+  <compound refid="conceptmmio_1_1supported__size" kind="concept"><name>mmio::supported_size</name>
+  </compound>
+  <compound refid="conceptmmio_1_1writable" kind="concept"><name>mmio::writable</name>
+  </compound>
+  <compound refid="conceptmmio_1_1writable__1__to__clear" kind="concept"><name>mmio::writable_1_to_clear</name>
+  </compound>
+  <compound refid="namespacemmio" kind="namespace"><name>mmio</name>
+    <member refid="namespacemmio_1ac3e8d4c53be3314ee88a405ef55be74b" kind="typedef"><name>bit</name></member>
+    <member refid="namespacemmio_1a93f079c6a15df8ff85f5f95358f37b32" kind="typedef"><name>ro</name></member>
+    <member refid="namespacemmio_1a12aa225f2d0a8d9c73f118271b75dc19" kind="typedef"><name>wo</name></member>
+    <member refid="namespacemmio_1a9f3f7ab19427b1bf5703dbbd71637331" kind="typedef"><name>rw</name></member>
+    <member refid="namespacemmio_1a9034b7cf41dd249f17bdf93443802211" kind="typedef"><name>w1c</name></member>
+    <member refid="namespacemmio_1a4d5d22cecf96deb8c0c6ce7009571dad" kind="typedef"><name>na</name></member>
+    <member refid="namespacemmio_1ae05dc41c1b81bd34c6c651b1ad5eb5c2" kind="variable"><name>BITS_8</name></member>
+    <member refid="namespacemmio_1a0c9a897ed1603d2053fb969b405a2527" kind="variable"><name>BITS_16</name></member>
+    <member refid="namespacemmio_1a3bf183f159e3323b62735a00a261d95d" kind="variable"><name>BITS_32</name></member>
+    <member refid="namespacemmio_1a739ae615ee3a436f9c56c92c097475a8" kind="variable"><name>BITS_64</name></member>
+  </compound>
+  <compound refid="namespacestd" kind="namespace"><name>std</name>
+  </compound>
+  <compound refid="mmio_8hpp" kind="file"><name>mmio.hpp</name>
+  </compound>
+  <compound refid="access_8hpp" kind="file"><name>access.hpp</name>
+  </compound>
+  <compound refid="size_8hpp" kind="file"><name>size.hpp</name>
+  </compound>
+  <compound refid="dir_7e85fa84ad57e667b0cf7f2cb06e363c" kind="dir"><name>mmio</name>
+  </compound>
+  <compound refid="dir_28d10093cea38eaa04dd4665942fba83" kind="dir"><name>mmio/policy</name>
+  </compound>
+  <compound refid="dir_aedc6e2ffcbaccb23936d3b894a050fd" kind="dir"><name>mmio/traits</name>
+  </compound>
+</doxygenindex>

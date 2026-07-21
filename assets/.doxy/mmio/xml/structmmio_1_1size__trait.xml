@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="structmmio_1_1size__trait" kind="struct" language="C++" prot="public">
+    <compoundname>mmio::size_trait</compoundname>
+    <templateparamlist>
+      <param>
+        <type>std::size_t</type>
+        <declname>BitSize</declname>
+        <defname>BitSize</defname>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+<para>Base trait for the size of the register. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>BitSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>size in bits of a register </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>mmio::size_trait&lt; BITS_16 &gt;</label>
+        <link refid="structmmio_1_1size__trait_3_01BITS__16_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; BITS_16 &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>mmio::size_trait&lt; BITS_32 &gt;</label>
+        <link refid="structmmio_1_1size__trait_3_01BITS__32_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; BITS_32 &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>mmio::size_trait&lt; BITS_64 &gt;</label>
+        <link refid="structmmio_1_1size__trait_3_01BITS__64_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; BITS_64 &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>mmio::size_trait&lt; BITS_8 &gt;</label>
+        <link refid="structmmio_1_1size__trait_3_01BITS__8_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; BITS_8 &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>mmio::size_trait&lt; BitSize &gt;</label>
+        <link refid="structmmio_1_1size__trait"/>
+      </node>
+      <node id="2">
+        <label>mmio::type&lt; BitSize &gt;</label>
+        <link refid="structmmio_1_1size__trait"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; BitSize &gt;::type</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="mmio/traits/size.hpp" line="42" column="5" bodyfile="mmio/traits/size.hpp" bodystart="42" bodyend="-1"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

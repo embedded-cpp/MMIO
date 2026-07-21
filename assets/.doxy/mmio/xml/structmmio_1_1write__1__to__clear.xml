@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="structmmio_1_1write__1__to__clear" kind="struct" language="C++" prot="public">
+    <compoundname>mmio::write_1_to_clear</compoundname>
+    <basecompoundref refid="structmmio_1_1read__only" prot="public" virt="non-virtual">mmio::read_only</basecompoundref>
+    <includes refid="access_8hpp" local="no">access.hpp</includes>
+    <briefdescription>
+<para>Tag type for write-1-to-clear registers. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>mmio::read_only</label>
+        <link refid="structmmio_1_1read__only"/>
+      </node>
+      <node id="1">
+        <label>mmio::write_1_to_clear</label>
+        <link refid="structmmio_1_1write__1__to__clear"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>mmio::read_only</label>
+        <link refid="structmmio_1_1read__only"/>
+      </node>
+      <node id="1">
+        <label>mmio::write_1_to_clear</label>
+        <link refid="structmmio_1_1write__1__to__clear"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="mmio/policy/access.hpp" line="44" column="5" bodyfile="mmio/policy/access.hpp" bodystart="44" bodyend="44"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

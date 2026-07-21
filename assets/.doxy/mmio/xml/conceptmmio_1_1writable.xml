@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="conceptmmio_1_1writable" kind="concept">
+    <compoundname>mmio::writable</compoundname>
+    <includes refid="access_8hpp" local="no">access.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+    <initializer>template&lt;typename T&gt;
+concept <ref refid="conceptmmio_1_1writable" kindref="compound">mmio::writable</ref> =  std::derived_from&lt;T, write_only&gt;    </initializer>
+    <briefdescription>
+<para>Concept to check if the type &apos;T&apos; is a valid write access policy. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="mmio/policy/access.hpp" line="69" column="5"/>
+  </compounddef>
+</doxygen>

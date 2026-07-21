@@ -1,0 +1,489 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="classmmio_1_1reg" kind="class" language="C++" prot="public">
+    <compoundname>mmio::reg</compoundname>
+    <includes refid="mmio_8hpp" local="no">mmio.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>std::uintptr_t</type>
+        <declname>Addr</declname>
+        <defname>Addr</defname>
+      </param>
+      <param>
+        <type>std::size_t</type>
+        <declname>BitSize</declname>
+        <defname>BitSize</defname>
+      </param>
+      <param>
+        <type>access_policy</type>
+        <declname>AccessPolicy</declname>
+        <defname>AccessPolicy</defname>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmmio_1_1reg_1a910320c0c98fd389363a880f8c12ea3a" prot="public" static="no">
+        <type><ref refid="structmmio_1_1size__trait" kindref="compound">size_trait</ref>&lt; BitSize &gt;::type</type>
+        <definition>using mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::value_type =  size_trait&lt;BitSize&gt;::type</definition>
+        <argsstring></argsstring>
+        <name>value_type</name>
+        <qualifiedname>mmio::reg::value_type</qualifiedname>
+        <briefdescription>
+<para>Underlying integer type (e.g., uint32_t) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="mmio/mmio.hpp" line="49" column="9" bodyfile="mmio/mmio.hpp" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmmio_1_1reg_1a91afe8fe8c49cf7cceaf5d756872dbe5" prot="public" static="no">
+        <type>AccessPolicy</type>
+        <definition>using mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::policy =  AccessPolicy</definition>
+        <argsstring></argsstring>
+        <name>policy</name>
+        <qualifiedname>mmio::reg::policy</qualifiedname>
+        <briefdescription>
+<para>Access policy alias. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="mmio/mmio.hpp" line="50" column="9" bodyfile="mmio/mmio.hpp" bodystart="50" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classmmio_1_1reg_1a61aa1240357416e090315d9b97e199b9" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>std::size_t</type>
+        <definition>std::size_t mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::BIT_SIZE</definition>
+        <argsstring></argsstring>
+        <name>BIT_SIZE</name>
+        <qualifiedname>mmio::reg::BIT_SIZE</qualifiedname>
+        <initializer>= BitSize</initializer>
+        <briefdescription>
+<para>Register width in bits. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="mmio/mmio.hpp" line="52" column="38" bodyfile="mmio/mmio.hpp" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmmio_1_1reg_1ad6e8d3c711a7cd89515ddd97ac74819f" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>std::uintptr_t</type>
+        <definition>std::uintptr_t mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::ADDRESS</definition>
+        <argsstring></argsstring>
+        <name>ADDRESS</name>
+        <qualifiedname>mmio::reg::ADDRESS</qualifiedname>
+        <initializer>= Addr</initializer>
+        <briefdescription>
+<para>Physical address. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="mmio/mmio.hpp" line="53" column="41" bodyfile="mmio/mmio.hpp" bodystart="53" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classmmio_1_1reg_1a5451fef381c8bb599c82b73e148565c2" prot="private" static="yes" constexpr="yes" mutable="no">
+        <templateparamlist>
+          <param>
+            <type>typename F</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::BELONGS_TO_THIS_V</definition>
+        <argsstring></argsstring>
+        <name>BELONGS_TO_THIS_V</name>
+        <qualifiedname>mmio::reg::BELONGS_TO_THIS_V</qualifiedname>
+        <initializer>= requires {
+            typename F::register_type;
+            requires std::same_as&lt;typename F::register_type, <ref refid="classmmio_1_1reg" kindref="compound">reg</ref>&gt;;
+        }</initializer>
+        <briefdescription>
+<para>Internal trait: true if field F belongs to this register. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>F</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The field type to check. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="mmio/mmio.hpp" line="74" column="31" bodyfile="mmio/mmio.hpp" bodystart="74" bodyend="77"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classmmio_1_1reg_1a95dfd9371dd9fe2d105449afdc0bf584" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>volatile <ref refid="classmmio_1_1reg_1a910320c0c98fd389363a880f8c12ea3a" kindref="member">value_type</ref> &amp;</type>
+        <definition>static volatile value_type &amp; mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::raw</definition>
+        <argsstring>() noexcept</argsstring>
+        <name>raw</name>
+        <qualifiedname>mmio::reg::raw</qualifiedname>
+        <briefdescription>
+<para>Internal helper to get a volatile reference to the hardware address. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Volatile reference to the register memory. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="mmio/mmio.hpp" line="65" column="36" bodyfile="mmio/mmio.hpp" bodystart="65" bodyend="67"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmmio_1_1reg_1a441216290aa9e925d166c550750ab391" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::reg</definition>
+        <argsstring>()=delete</argsstring>
+        <name>reg</name>
+        <qualifiedname>mmio::reg::reg</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="mmio/mmio.hpp" line="80" column="9"/>
+        <referencedby refid="classmmio_1_1reg_1a5219e3896e1f389d31c0485e80f3698d">mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::operator=</referencedby>
+        <referencedby refid="classmmio_1_1reg_1abf4abf6e174a69f4c27ca4377d7ac7a0">mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::operator=</referencedby>
+        <referencedby refid="classmmio_1_1reg_1a139c01a6c3f0db1009c46a6b944225c6">mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::reg</referencedby>
+        <referencedby refid="classmmio_1_1reg_1a40d608f643c9e770f157b57200bd1531">mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::reg</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmmio_1_1reg_1a139c01a6c3f0db1009c46a6b944225c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::reg</definition>
+        <argsstring>(const reg &amp;)=delete</argsstring>
+        <name>reg</name>
+        <qualifiedname>mmio::reg::reg</qualifiedname>
+        <param>
+          <type>const <ref refid="classmmio_1_1reg" kindref="compound">reg</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="mmio/mmio.hpp" line="81" column="9"/>
+        <references refid="classmmio_1_1reg_1a441216290aa9e925d166c550750ab391">mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::reg</references>
+      </memberdef>
+      <memberdef kind="function" id="classmmio_1_1reg_1a40d608f643c9e770f157b57200bd1531" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::reg</definition>
+        <argsstring>(reg &amp;&amp;)=delete</argsstring>
+        <name>reg</name>
+        <qualifiedname>mmio::reg::reg</qualifiedname>
+        <param>
+          <type><ref refid="classmmio_1_1reg" kindref="compound">reg</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="mmio/mmio.hpp" line="82" column="9"/>
+        <references refid="classmmio_1_1reg_1a441216290aa9e925d166c550750ab391">mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::reg</references>
+      </memberdef>
+      <memberdef kind="function" id="classmmio_1_1reg_1a718ff439443f1ecd11e9b0b6e1f612b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::~reg</definition>
+        <argsstring>()=delete</argsstring>
+        <name>~reg</name>
+        <qualifiedname>mmio::reg::~reg</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="mmio/mmio.hpp" line="83" column="9"/>
+      </memberdef>
+      <memberdef kind="function" id="classmmio_1_1reg_1a5219e3896e1f389d31c0485e80f3698d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmmio_1_1reg" kindref="compound">reg</ref> &amp;</type>
+        <definition>reg &amp; mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::operator=</definition>
+        <argsstring>(const reg &amp;)=delete</argsstring>
+        <name>operator=</name>
+        <qualifiedname>mmio::reg::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="classmmio_1_1reg" kindref="compound">reg</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="mmio/mmio.hpp" line="84" column="13"/>
+        <references refid="classmmio_1_1reg_1a441216290aa9e925d166c550750ab391">mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::reg</references>
+      </memberdef>
+      <memberdef kind="function" id="classmmio_1_1reg_1abf4abf6e174a69f4c27ca4377d7ac7a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmmio_1_1reg" kindref="compound">reg</ref> &amp;</type>
+        <definition>reg &amp; mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::operator=</definition>
+        <argsstring>(reg &amp;&amp;)=delete</argsstring>
+        <name>operator=</name>
+        <qualifiedname>mmio::reg::operator=</qualifiedname>
+        <param>
+          <type><ref refid="classmmio_1_1reg" kindref="compound">reg</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="mmio/mmio.hpp" line="85" column="13"/>
+        <references refid="classmmio_1_1reg_1a441216290aa9e925d166c550750ab391">mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::reg</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmmio_1_1reg_1a73a9bec0080cea3e794c81ccb5661299" prot="public" static="yes" nodiscard="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classmmio_1_1reg_1a910320c0c98fd389363a880f8c12ea3a" kindref="member">value_type</ref></type>
+        <definition>static value_type mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::read</definition>
+        <argsstring>() noexcept</argsstring>
+        <name>read</name>
+        <qualifiedname>mmio::reg::read</qualifiedname>
+    <requiresclause>(readable&lt;AccessPolicy&gt;)    </requiresclause>
+        <briefdescription>
+<para>Reads the full value of the register. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This operation performs a volatile load from memory. </para>
+</simplesect>
+<simplesect kind="return"><para>The current value of the register. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="mmio/mmio.hpp" line="95" column="28" bodyfile="mmio/mmio.hpp" bodystart="95" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="classmmio_1_1reg_1aed555162086ec32693599ecd16268755" prot="public" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::write</definition>
+        <argsstring>(value_type val) noexcept</argsstring>
+        <name>write</name>
+        <qualifiedname>mmio::reg::write</qualifiedname>
+        <param>
+          <type><ref refid="classmmio_1_1reg_1a910320c0c98fd389363a880f8c12ea3a" kindref="member">value_type</ref></type>
+          <declname>val</declname>
+        </param>
+    <requiresclause>(writable&lt;AccessPolicy&gt;)    </requiresclause>
+        <briefdescription>
+<para>Writes a value to the register. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This operation performs a volatile store to memory. It overwrites the entire content of the register.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The value to write. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="mmio/mmio.hpp" line="111" column="21" bodyfile="mmio/mmio.hpp" bodystart="111" bodyend="115"/>
+        <referencedby refid="classmmio_1_1reg_1a555a75f89cb81f1dfea278a12ec4ccd2" compoundref="mmio_8hpp" startline="160" endline="165">mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::write_set</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmmio_1_1reg_1a98997c6be3810e6646d7ad066881bfc5" prot="public" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::write</definition>
+        <argsstring>(value_type val) noexcept</argsstring>
+        <name>write</name>
+        <qualifiedname>mmio::reg::write</qualifiedname>
+        <param>
+          <type><ref refid="classmmio_1_1reg_1a910320c0c98fd389363a880f8c12ea3a" kindref="member">value_type</ref></type>
+          <declname>val</declname>
+        </param>
+    <requiresclause>(writable_1_to_clear&lt;AccessPolicy&gt;)    </requiresclause>
+        <briefdescription>
+<para>Writes a value to the register, clearing bits that are set to 1. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This operation performs a volatile store to memory. It overwrites the entire content of the register.</para>
+</simplesect>
+<simplesect kind="warning"><para>This method is only meaningful for registers with a Write-1-to-Clear (W1C) policy. Writing a &apos;1&apos; will clear the corresponding bit, while writing &apos;0&apos; has no effect.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>val</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The value to write. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="mmio/mmio.hpp" line="128" column="21" bodyfile="mmio/mmio.hpp" bodystart="128" bodyend="132"/>
+      </memberdef>
+      <memberdef kind="function" id="classmmio_1_1reg_1a555a75f89cb81f1dfea278a12ec4ccd2" prot="public" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>Fields</declname>
+            <defname>Fields</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::write_set</definition>
+        <argsstring>() noexcept writable&lt; policy &gt;</argsstring>
+        <name>write_set</name>
+        <qualifiedname>mmio::reg::write_set</qualifiedname>
+    <requiresclause>(BELONGS_TO_THIS_V&lt;Fields&gt; &amp;&amp; ...)    </requiresclause>
+        <briefdescription>
+<para>Writes multiple bit-fields simultaneously in a single hardware operation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function leverages Variadic Templates and Fold Expressions (C++17) to calculate a merged global mask at compile-time. It ensures that only a single write instruction (STORE) is generated to configure all specified fields.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>Fields</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A list of <computeroutput><ref refid="classmmio_1_1field" kindref="compound">mmio::field</ref></computeroutput> or <computeroutput><ref refid="namespacemmio_1ac3e8d4c53be3314ee88a405ef55be74b" kindref="member">mmio::bit</ref></computeroutput> types belonging exclusively to this register.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para><bold>Optimization:</bold> The expression <computeroutput>(Fields::mask | ...)</computeroutput> is entirely resolved by the compiler. The resulting machine code is typically reduced to an immediate constant load followed by a memory transfer, which is the fastest operation possible.</para>
+</simplesect>
+<simplesect kind="warning"><para><bold>Destructive Behavior:</bold> Since this function calls <computeroutput><ref refid="classmmio_1_1reg_1aed555162086ec32693599ecd16268755" kindref="member">write()</ref></computeroutput>, ALL register bits not included in the provided <computeroutput>Fields</computeroutput> types will be cleared to zero (0).<itemizedlist>
+<listitem><para>To preserve other bits in the register, use <computeroutput><ref refid="classmmio_1_1reg_1a16c8deb412363df91bccbf5bf2b076ed" kindref="member">modify()</ref></computeroutput> (Read-Modify-Write).</para>
+</listitem><listitem><para>For a clean initial configuration (Cold Boot), <computeroutput>write_set</computeroutput> is the ideal choice.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="pre"><para>The register must have a <computeroutput>writable</computeroutput> access policy. </para>
+</simplesect>
+<simplesect kind="pre"><para>All <computeroutput>Fields</computeroutput> must be compatible with the register&apos;s <computeroutput><ref refid="classmmio_1_1reg_1a910320c0c98fd389363a880f8c12ea3a" kindref="member">value_type</ref></computeroutput>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="mmio/mmio.hpp" line="160" column="21" bodyfile="mmio/mmio.hpp" bodystart="160" bodyend="165"/>
+        <references refid="classmmio_1_1reg_1aed555162086ec32693599ecd16268755" compoundref="mmio_8hpp" startline="111" endline="115">mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::write</references>
+      </memberdef>
+      <memberdef kind="function" id="classmmio_1_1reg_1a16c8deb412363df91bccbf5bf2b076ed" prot="public" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" noexceptexpression="std::is_nothrow_invocable_v&lt; F, value_type &amp; &gt;" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename F</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void mmio::reg&lt; Addr, BitSize, AccessPolicy &gt;::modify</definition>
+        <argsstring>(F &amp;&amp;func)</argsstring>
+        <name>modify</name>
+        <qualifiedname>mmio::reg::modify</qualifiedname>
+        <param>
+          <type>F &amp;&amp;</type>
+          <declname>func</declname>
+        </param>
+    <requiresclause>(readable&lt;AccessPolicy&gt; &amp;&amp; writable&lt;AccessPolicy&gt; &amp;&amp; std::invocable&lt;F, value_type&amp;&gt;)    </requiresclause>
+        <briefdescription>
+<para>Modifies the register value using a Read-Modify-Write (RMW) cycle. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function reads the current value, applies the provided callable transformation, and writes the result back.</para>
+<para><simplesect kind="note"><para>This operation is NOT atomic regarding interrupts or multi-threading. If the register is shared, external locking is required.</para>
+</simplesect>
+<parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>F</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callable type (e.g., lambda) with signature <computeroutput>void(<ref refid="classmmio_1_1reg_1a910320c0c98fd389363a880f8c12ea3a" kindref="member">value_type</ref>&amp;)</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The callable that modifies the value in-place. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="mmio/mmio.hpp" line="182" column="21" bodyfile="mmio/mmio.hpp" bodystart="182" bodyend="186"/>
+      </memberdef>
+    </sectiondef>
+    <requiresclause>(supported_size&lt;BitSize&gt;)    </requiresclause>
+    <briefdescription>
+<para>Represents a memory-mapped hardware register. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This class is a zero-overhead wrapper around a specific memory address. It enforces access policies (Read-Only, Write-Only, Read-Write) and data width constraints at compile time using C++20 concepts.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>Addr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The physical base address of the register. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>BitSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The width of the register in bits (e.g., 8, 16, 32, 64). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>AccessPolicy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The access permission policy (ro, wo, rw, etc..). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="mmio/mmio.hpp" line="47" column="5" bodyfile="mmio/mmio.hpp" bodystart="47" bodyend="187"/>
+    <listofallmembers>
+      <member refid="classmmio_1_1reg_1ad6e8d3c711a7cd89515ddd97ac74819f" prot="public" virt="non-virtual"><scope>mmio::reg</scope><name>ADDRESS</name></member>
+      <member refid="classmmio_1_1reg_1a5451fef381c8bb599c82b73e148565c2" prot="private" virt="non-virtual"><scope>mmio::reg</scope><name>BELONGS_TO_THIS_V</name></member>
+      <member refid="classmmio_1_1reg_1a61aa1240357416e090315d9b97e199b9" prot="public" virt="non-virtual"><scope>mmio::reg</scope><name>BIT_SIZE</name></member>
+      <member refid="classmmio_1_1reg_1a16c8deb412363df91bccbf5bf2b076ed" prot="public" virt="non-virtual"><scope>mmio::reg</scope><name>modify</name></member>
+      <member refid="classmmio_1_1reg_1a5219e3896e1f389d31c0485e80f3698d" prot="public" virt="non-virtual"><scope>mmio::reg</scope><name>operator=</name></member>
+      <member refid="classmmio_1_1reg_1abf4abf6e174a69f4c27ca4377d7ac7a0" prot="public" virt="non-virtual"><scope>mmio::reg</scope><name>operator=</name></member>
+      <member refid="classmmio_1_1reg_1a91afe8fe8c49cf7cceaf5d756872dbe5" prot="public" virt="non-virtual"><scope>mmio::reg</scope><name>policy</name></member>
+      <member refid="classmmio_1_1reg_1a95dfd9371dd9fe2d105449afdc0bf584" prot="private" virt="non-virtual"><scope>mmio::reg</scope><name>raw</name></member>
+      <member refid="classmmio_1_1reg_1a73a9bec0080cea3e794c81ccb5661299" prot="public" virt="non-virtual"><scope>mmio::reg</scope><name>read</name></member>
+      <member refid="classmmio_1_1reg_1a441216290aa9e925d166c550750ab391" prot="public" virt="non-virtual"><scope>mmio::reg</scope><name>reg</name></member>
+      <member refid="classmmio_1_1reg_1a139c01a6c3f0db1009c46a6b944225c6" prot="public" virt="non-virtual"><scope>mmio::reg</scope><name>reg</name></member>
+      <member refid="classmmio_1_1reg_1a40d608f643c9e770f157b57200bd1531" prot="public" virt="non-virtual"><scope>mmio::reg</scope><name>reg</name></member>
+      <member refid="classmmio_1_1reg_1a910320c0c98fd389363a880f8c12ea3a" prot="public" virt="non-virtual"><scope>mmio::reg</scope><name>value_type</name></member>
+      <member refid="classmmio_1_1reg_1aed555162086ec32693599ecd16268755" prot="public" virt="non-virtual"><scope>mmio::reg</scope><name>write</name></member>
+      <member refid="classmmio_1_1reg_1a98997c6be3810e6646d7ad066881bfc5" prot="public" virt="non-virtual"><scope>mmio::reg</scope><name>write</name></member>
+      <member refid="classmmio_1_1reg_1a555a75f89cb81f1dfea278a12ec4ccd2" prot="public" virt="non-virtual"><scope>mmio::reg</scope><name>write_set</name></member>
+      <member refid="classmmio_1_1reg_1a718ff439443f1ecd11e9b0b6e1f612b4" prot="public" virt="non-virtual"><scope>mmio::reg</scope><name>~reg</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
