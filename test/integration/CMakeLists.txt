@@ -9,7 +9,6 @@ string(TOLOWER ${MCU_NAME} MCU_NAME)
 
 # --- Import tools ----
 include(cmake/target.cmake)
-include(../../cmake/tools.cmake)
 
 # ---- Dependencies ----
 
