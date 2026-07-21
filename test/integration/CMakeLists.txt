@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.28)
 project(mmioTestsMcu LANGUAGES CXX ASM)
 
 # ---- Options ----
-# MCU_NAME: Target MCU identifier (e.g., stm32f401re). Used to select the
-# board-specific sources and toolchain settings under source/mcu/<MCU_NAME>.
+# MCU_NAME: Target MCU identifier (e.g., stm32f401re). Used to select the board-specific sources and toolchain settings
+# under source/mcu/<MCU_NAME>.
 if(NOT DEFINED MCU_NAME)
     message(FATAL_ERROR "MCU_NAME must be specified")
 endif()
