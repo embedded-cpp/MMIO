@@ -40,9 +40,7 @@ auto value = ENABLE::read();
 
 The documentation includes a dedicated guide for integration and usage:
 
-- [Getting started](doc/tabs/getting_started.md)
-- [Examples](doc/tabs/examples.md)
-- [Contributing](doc/tabs/contributing.md)
+- [Documentation](https://embedded-cpp.github.io/mmio)
 
 ## Build locally
 
