@@ -38,4 +38,4 @@ This shows how mmio can be used to describe both low-level register writes and h
 
 ## Practical reference
 
-The integration example in [test/integration/source/main.cpp](../../test/integration/source/main.cpp) is a good starting point for seeing the library in use with STM32-style peripheral headers.
+The integration example in [test/integration/source/main.cpp](https://github.com/embedded-cpp/mmio/blob/main/test/integration/source/main.cpp) is a good starting point for seeing the library in use with STM32-style peripheral headers.
