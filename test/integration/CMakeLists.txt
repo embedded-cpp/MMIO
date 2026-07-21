@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.28)
 project(mmioTestsMcu LANGUAGES CXX ASM)
 
 # ---- Options ----
-
-option(TEST_INSTALLED_VERSION "Test the version found by find_package" OFF)
-set(MCU_NAME ${MCU_NAME})
+if(NOT DEFINED MCU_NAME)
+    message(FATAL_ERROR "MCU_NAME must be specified")
+endif()
 string(TOLOWER ${MCU_NAME} MCU_NAME)
 
 # --- Import tools ----
